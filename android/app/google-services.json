@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "956798767942",
+    "project_id": "kdcchitty",
+    "storage_bucket": "kdcchitty.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956798767942:android:443e469bdf4aa041ef8b47",
+        "android_client_info": {
+          "package_name": "com.kdc.crm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXtTCsN4sQMHh7KxSSMggbhBY0Lr2_7jc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
