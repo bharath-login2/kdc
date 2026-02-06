@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -6,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:kdc_chitty_mainnew/models/clients/deleteMainClientModel.dart';
 import 'package:kdc_chitty_mainnew/models/clients/receiptDeleteModel.dart';
 import 'package:kdc_chitty_mainnew/models/lead_management/addMileStoneModel.dart';
+import 'package:kdc_chitty_mainnew/models/lead_management/callResultReasonModel.dart';
 import 'package:kdc_chitty_mainnew/models/lead_management/fileManagerPermissionModel.dart';
 import 'package:kdc_chitty_mainnew/models/userManagement/editUserBasicDetailsModel.dart';
 import '../../models/commonConfigureModel.dart';
@@ -133,12 +135,12 @@ class HttpService {
       : "https://kdc.login2.in/index.php/Mobile_app_api_v1/";
 
   static Future configure(token) async {
-    var params = {
-      "token": token,
-    };
+    var params = {"token": token};
     try {
-      var result = await _dio.get("${baseUrl}check_package_expired",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}check_package_expired",
+        queryParameters: params,
+      );
       if (kDebugMode) {
         print(result);
       }
@@ -164,9 +166,7 @@ class HttpService {
 
   static Future commonSettings() async {
     try {
-      var result = await _dio.get(
-        "${baseUrl}contact_us",
-      );
+      var result = await _dio.get("${baseUrl}contact_us");
       CommonSettingsModel model = CommonSettingsModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -178,7 +178,7 @@ class HttpService {
     var params = {
       "phoneNumber": username,
       "password": pass,
-      "firebaseId": firebaseToken
+      "firebaseId": firebaseToken,
     };
     try {
       var result = await _dio.get("${baseUrl}login", queryParameters: params);
@@ -192,8 +192,10 @@ class HttpService {
   static Future loginCheck(token, firebaseToken) async {
     var params = {"token": token, "firebaseId": firebaseToken};
     try {
-      var result =
-          await _dio.get("${baseUrl}if_token_expired", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}if_token_expired",
+        queryParameters: params,
+      );
       LoginCheckModel model = LoginCheckModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -202,13 +204,12 @@ class HttpService {
   }
 
   static Future sendOtp(phoneNumber, otp) async {
-    var params = {
-      "phoneNumber": phoneNumber,
-      "otp": otp,
-    };
+    var params = {"phoneNumber": phoneNumber, "otp": otp};
     try {
-      var result =
-          await _dio.get("${baseUrl}send_otp", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}send_otp",
+        queryParameters: params,
+      );
       SendOtpModel model = SendOtpModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -216,9 +217,14 @@ class HttpService {
     }
   }
 
-/* Lead Management  Starts Here..*/
+  /* Lead Management  Starts Here..*/
   static Future leadDashboard(
-      token, fromDate, toDate, fromDate1, toDate1) async {
+    token,
+    fromDate,
+    toDate,
+    fromDate1,
+    toDate1,
+  ) async {
     var params = {
       "token": token,
       "fromDate": fromDate,
@@ -227,8 +233,10 @@ class HttpService {
       "toDate1": toDate1,
     };
     try {
-      var result =
-          await _dio.get("${baseUrl}lead_dashboard", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}lead_dashboard",
+        queryParameters: params,
+      );
       LeadDashboardModel model = LeadDashboardModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -237,7 +245,12 @@ class HttpService {
   }
 
   static Future leadDashboard1(
-      token, fromDate, toDate, fromDate1, toDate1) async {
+    token,
+    fromDate,
+    toDate,
+    fromDate1,
+    toDate1,
+  ) async {
     var params = {
       "token": token,
       "fromDate": fromDate,
@@ -246,10 +259,13 @@ class HttpService {
       "toDate1": toDate1,
     };
     try {
-      var result = await _dio.get("${baseUrl}lead_category_staff_wise",
-          queryParameters: params);
-      LeadCategoryStaffWiseModel model =
-          LeadCategoryStaffWiseModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}lead_category_staff_wise",
+        queryParameters: params,
+      );
+      LeadCategoryStaffWiseModel model = LeadCategoryStaffWiseModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -257,7 +273,13 @@ class HttpService {
   }
 
   static Future leadDashboardStaff(
-      token, fromDate, toDate, fromDate1, toDate1, staffId) async {
+    token,
+    fromDate,
+    toDate,
+    fromDate1,
+    toDate1,
+    staffId,
+  ) async {
     var params = {
       "token": token,
       "fromDate": fromDate,
@@ -267,8 +289,10 @@ class HttpService {
       "staffId": staffId,
     };
     try {
-      var result =
-          await _dio.get("${baseUrl}staff_dashboard", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}staff_dashboard",
+        queryParameters: params,
+      );
       LeadDashboardModel model = LeadDashboardModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -277,20 +301,29 @@ class HttpService {
   }
 
   static Future leadDashboard1Staff(
-      token, fromDate, toDate, fromDate1, toDate1, staffId) async {
+    token,
+    fromDate,
+    toDate,
+    fromDate1,
+    toDate1,
+    staffId,
+  ) async {
     var params = {
       "token": token,
       "fromDate": fromDate,
       "toDate": toDate,
       "fromDate1": fromDate1,
       "toDate1": toDate1,
-      "staffId": staffId
+      "staffId": staffId,
     };
     try {
-      var result = await _dio.get("${baseUrl}staff_lead_category_wise",
-          queryParameters: params);
-      LeadCategoryStaffWiseModel model =
-          LeadCategoryStaffWiseModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}staff_lead_category_wise",
+        queryParameters: params,
+      );
+      LeadCategoryStaffWiseModel model = LeadCategoryStaffWiseModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -299,29 +332,33 @@ class HttpService {
 
   static Future allViewLeads(body) async {
     try {
-      var result = await _dio.post("${baseUrl}view_total_lead_report",
-          data: jsonEncode(body));
+      var result = await _dio.post(
+        "${baseUrl}view_total_lead_report",
+        data: jsonEncode(body),
+      );
       ViewLeadsModel model = ViewLeadsModel.fromJson(result.data);
       return model;
     } on Exception {
       return null;
     }
   }
+
   static Future viewLeads(
-      token,
-      fromdate,
-      todate,
-      category,
-      status,
-      staff,
-      isCalled,
-      priority,
-      sort,
-      page,
-      pageSize,
-      isFirst,
-      leadType,
-      branchId) async {
+    token,
+    fromdate,
+    todate,
+    category,
+    status,
+    staff,
+    isCalled,
+    priority,
+    sort,
+    page,
+    pageSize,
+    isFirst,
+    leadType,
+    branchId,
+  ) async {
     var params = {
       "token": token,
       "fromDate": fromdate,
@@ -336,12 +373,14 @@ class HttpService {
       "pageSize": pageSize,
       "isFirst": isFirst,
       "leadType": leadType,
-      "branchId": branchId
+      "branchId": branchId,
     };
 
     try {
-      var result =
-          await _dio.get("${baseUrl}view_lead_report", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}view_lead_report",
+        queryParameters: params,
+      );
       ViewLeadsModel model = ViewLeadsModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -349,8 +388,19 @@ class HttpService {
     }
   }
 
-  static Future viewLeadsSts(token, fromdate, todate, type, id, status, sort,
-      page, pageSize, isFirst, branchId) async {
+  static Future viewLeadsSts(
+    token,
+    fromdate,
+    todate,
+    type,
+    id,
+    status,
+    sort,
+    page,
+    pageSize,
+    isFirst,
+    branchId,
+  ) async {
     var params = {
       "token": token,
       "fromDate": fromdate,
@@ -366,8 +416,9 @@ class HttpService {
     };
     try {
       var result = await _dio.get(
-          "${baseUrl}view_category_staff_wise_lead_report",
-          queryParameters: params);
+        "${baseUrl}view_category_staff_wise_lead_report",
+        queryParameters: params,
+      );
       ViewLeadsModel model = ViewLeadsModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -375,18 +426,18 @@ class HttpService {
     }
   }
 
-  static Future addLeadCommonData(token,{branchId}) async {
-    var params = {
-      "token": token,
-      "branchId":branchId
-    };
+  static Future addLeadCommonData(token, {branchId}) async {
+    var params = {"token": token, "branchId": branchId};
 
     try {
-      var result = await _dio.get("${baseUrl}lead_management_master_data",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}lead_management_master_data",
+        queryParameters: params,
+      );
 
-      AddLeadCommonDataModel model =
-          AddLeadCommonDataModel.fromJson(result.data);
+      AddLeadCommonDataModel model = AddLeadCommonDataModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -394,24 +445,25 @@ class HttpService {
   }
 
   static Future addLeads(
-      token,
-      branchId,
-      clientName,
-      leadType,
-      leadSubType,
-      contactNo,
-      staffId,
-      cost,
-      priorityId,
-      address,
-      remark,
-      callResultId,
-      nextFollowupDate,
-      descriptions,
-      code) async {
+    token,
+    branchId,
+    clientName,
+    leadType,
+    leadSubType,
+    contactNo,
+    staffId,
+    cost,
+    priorityId,
+    address,
+    remark,
+    callResultId,
+    nextFollowupDate,
+    descriptions,
+    code,
+  ) async {
     var formData = FormData.fromMap({
       'token': token,
-      'branchId':branchId,
+      'branchId': branchId,
       'next_followup_date': nextFollowupDate,
       'call_result_id': callResultId,
       'lead_category_id': leadType,
@@ -424,7 +476,7 @@ class HttpService {
       'remarks': remark,
       'priority': priorityId,
       'country_code': code,
-      "additionalFields": jsonEncode(descriptions)
+      "additionalFields": jsonEncode(descriptions),
     });
 
     try {
@@ -437,12 +489,12 @@ class HttpService {
   }
 
   static Future viewLeadsCategory(token) async {
-    var params = {
-      "token": token,
-    };
+    var params = {"token": token};
     try {
-      var result =
-          await _dio.get("${baseUrl}lead_category", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}lead_category",
+        queryParameters: params,
+      );
       ViewLeadCategoryModel model = ViewLeadCategoryModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -451,13 +503,12 @@ class HttpService {
   }
 
   static Future addLeadCategory(token, categoryName) async {
-    var params = {
-      "token": token,
-      "leadCategory": categoryName,
-    };
+    var params = {"token": token, "leadCategory": categoryName};
     try {
-      var result = await _dio.get("${baseUrl}add_lead_category",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}add_lead_category",
+        queryParameters: params,
+      );
       AddLeadCategoryModel model = AddLeadCategoryModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -469,11 +520,13 @@ class HttpService {
     var params = {
       "token": token,
       "leadCategory": categoryName,
-      'leadCategoryId': categoryId
+      'leadCategoryId': categoryId,
     };
     try {
-      var result = await _dio.get("${baseUrl}edit_lead_category",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}edit_lead_category",
+        queryParameters: params,
+      );
       EditLeadCategoryModel model = EditLeadCategoryModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -482,15 +535,15 @@ class HttpService {
   }
 
   static Future deleteLeadCategory(token, categoryId) async {
-    var params = {
-      "token": token,
-      "leadCategoryId": categoryId,
-    };
+    var params = {"token": token, "leadCategoryId": categoryId};
     try {
-      var result = await _dio.get("${baseUrl}delete_lead_category",
-          queryParameters: params);
-      LeadCategoryDeleteModel model =
-          LeadCategoryDeleteModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}delete_lead_category",
+        queryParameters: params,
+      );
+      LeadCategoryDeleteModel model = LeadCategoryDeleteModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -500,10 +553,13 @@ class HttpService {
   static Future viewLeadsSubCategory(token, categoryId) async {
     var params = {"token": token, "leadCategoryId": categoryId};
     try {
-      var result = await _dio.get("${baseUrl}lead_sub_category",
-          queryParameters: params);
-      ViewLeadSubCategoryModel model =
-          ViewLeadSubCategoryModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}lead_sub_category",
+        queryParameters: params,
+      );
+      ViewLeadSubCategoryModel model = ViewLeadSubCategoryModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -514,13 +570,16 @@ class HttpService {
     var params = {
       "token": token,
       "leadSubCategory": categoryName,
-      "leadCategoryId": categoryId
+      "leadCategoryId": categoryId,
     };
     try {
-      var result = await _dio.get("${baseUrl}add_lead_sub_category",
-          queryParameters: params);
-      AddLeadSubCategoryModel model =
-          AddLeadSubCategoryModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}add_lead_sub_category",
+        queryParameters: params,
+      );
+      AddLeadSubCategoryModel model = AddLeadSubCategoryModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -528,17 +587,23 @@ class HttpService {
   }
 
   static Future editLeadSubCategory(
-      token, subCategoryName, subCategoryId) async {
+    token,
+    subCategoryName,
+    subCategoryId,
+  ) async {
     var params = {
       "token": token,
       "leadSubCategory": subCategoryName,
-      'leadSubCategoryId': subCategoryId
+      'leadSubCategoryId': subCategoryId,
     };
     try {
-      var result = await _dio.get("${baseUrl}edit_lead_sub_category",
-          queryParameters: params);
-      EditLeadSubCategoryModel model =
-          EditLeadSubCategoryModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}edit_lead_sub_category",
+        queryParameters: params,
+      );
+      EditLeadSubCategoryModel model = EditLeadSubCategoryModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -546,15 +611,15 @@ class HttpService {
   }
 
   static Future deleteLeadSubCategory(token, subCategoryId) async {
-    var params = {
-      "token": token,
-      "leadSubCategoryId": subCategoryId,
-    };
+    var params = {"token": token, "leadSubCategoryId": subCategoryId};
     try {
-      var result = await _dio.get("${baseUrl}delete_lead_sub_category",
-          queryParameters: params);
-      LeadSubCategoryDeleteModel model =
-          LeadSubCategoryDeleteModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}delete_lead_sub_category",
+        queryParameters: params,
+      );
+      LeadSubCategoryDeleteModel model = LeadSubCategoryDeleteModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -562,12 +627,12 @@ class HttpService {
   }
 
   static Future leadSubType(categoryId) async {
-    var params = {
-      "leadCategoryId": categoryId,
-    };
+    var params = {"leadCategoryId": categoryId};
     try {
-      var result = await _dio.get("${baseUrl}get_sub_categories",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}get_sub_categories",
+        queryParameters: params,
+      );
       LeadSubTypeModel model = LeadSubTypeModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -576,13 +641,12 @@ class HttpService {
   }
 
   static Future leadDetails(token, callMasterId) async {
-    var params = {
-      "token": token,
-      "call_master_id": callMasterId,
-    };
+    var params = {"token": token, "call_master_id": callMasterId};
     try {
-      var result =
-          await _dio.get("${baseUrl}lead_details", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}lead_details",
+        queryParameters: params,
+      );
       LeadDeatailsModel model = LeadDeatailsModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -591,24 +655,28 @@ class HttpService {
   }
 
   static Future addLeadsFollowup(
-      token,
-      callResultId,
-      nextFollowupDate,
-      cost,
-      address,
-      leadTypeId,
-      leadSubType,
-      remarks,
-      callMasterId,
-      calledDate,
-      callHistoryId,
-      priorityId,
-      checked,
-      timeBefore,addClient) async {
+    token,
+    callResultId,
+    callStatusId,
+    nextFollowupDate,
+    cost,
+    address,
+    leadTypeId,
+    leadSubType,
+    remarks,
+    callMasterId,
+    calledDate,
+    callHistoryId,
+    priorityId,
+    checked,
+    timeBefore,
+    addClient,
+  ) async {
     var formData = FormData.fromMap({
       "token": token,
       "next_followup_date": nextFollowupDate,
       "call_result_id": callResultId,
+      "call_status_id": callStatusId,
       "lead_category_id": leadTypeId,
       "lead_sub_category_id": leadSubType,
       "cost": cost,
@@ -620,11 +688,13 @@ class HttpService {
       "priority": priorityId,
       "reminder": checked,
       "time_before": timeBefore,
-      "is_lead_to_customer":addClient
+      "is_lead_to_customer": addClient,
     });
     try {
-      var result =
-          await _dio.post("${baseUrl}add_lead_followup", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}add_lead_followup",
+        data: formData,
+      );
       AddLeadFollowupModel model = AddLeadFollowupModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -633,16 +703,17 @@ class HttpService {
   }
 
   static Future editLeadsFollowup(
-      token,
-      callFollowupId,
-      callResultId,
-      nextFollowupDate,
-      cost,
-      leadTypeId,
-      leadSubTypeId,
-      remarks,
-      calledDate,
-      callMasterId) async {
+    token,
+    callFollowupId,
+    callResultId,
+    nextFollowupDate,
+    cost,
+    leadTypeId,
+    leadSubTypeId,
+    remarks,
+    calledDate,
+    callMasterId,
+  ) async {
     var formData = FormData.fromMap({
       "token": token,
       "next_followup_date": nextFollowupDate,
@@ -653,12 +724,14 @@ class HttpService {
       "remarks": remarks,
       "call_details_id": callFollowupId,
       "called_date": calledDate,
-      'call_master_id': callMasterId
+      'call_master_id': callMasterId,
     });
 
     try {
-      var result =
-          await _dio.post("${baseUrl}edit_lead_followup", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}edit_lead_followup",
+        data: formData,
+      );
       EditLeadFollowupModel model = EditLeadFollowupModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -674,8 +747,10 @@ class HttpService {
     });
 
     try {
-      var result =
-          await _dio.post("${baseUrl}delete_lead_followup", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}delete_lead_followup",
+        data: formData,
+      );
       DeleteLeadFollowModel model = DeleteLeadFollowModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -684,20 +759,21 @@ class HttpService {
   }
 
   static Future editLeads(
-      token,
-      callMasterId,
-      branchId,
-      clientName,
-      leadType,
-      leadSubTypeId,
-      contactNo,
-      staffId,
-      cost,
-      priorityId,
-      address,
-      remark,
-      descriptions,
-      code) async {
+    token,
+    callMasterId,
+    branchId,
+    clientName,
+    leadType,
+    leadSubTypeId,
+    contactNo,
+    staffId,
+    cost,
+    priorityId,
+    address,
+    remark,
+    descriptions,
+    code,
+  ) async {
     var formData = FormData.fromMap({
       'token': token,
       'branchId': branchId,
@@ -712,7 +788,7 @@ class HttpService {
       'priority': priorityId,
       'call_master_id': callMasterId,
       'country_code': code,
-      "additionalFields": jsonEncode(descriptions)
+      "additionalFields": jsonEncode(descriptions),
     });
     try {
       //print('cgf');
@@ -750,8 +826,10 @@ class HttpService {
     });
 
     try {
-      var result = await _dio.post("${baseUrl}get_lead_followup_details",
-          data: formData);
+      var result = await _dio.post(
+        "${baseUrl}get_lead_followup_details",
+        data: formData,
+      );
       FollowupDetailsModel model = FollowupDetailsModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -768,8 +846,10 @@ class HttpService {
     });
 
     try {
-      var result =
-          await _dio.post("${baseUrl}lead_progressbar_data", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}lead_progressbar_data",
+        data: formData,
+      );
       LeadProgressbarModel model = LeadProgressbarModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -778,7 +858,12 @@ class HttpService {
   }
 
   static Future leadProgressbarStaff(
-      token, fromDate, toDate, callStatus, staffId) async {
+    token,
+    fromDate,
+    toDate,
+    callStatus,
+    staffId,
+  ) async {
     var formData = FormData.fromMap({
       "token": token,
       "fromDate": fromDate,
@@ -788,8 +873,10 @@ class HttpService {
     });
 
     try {
-      var result = await _dio.post("${baseUrl}staff_lead_progressbar_data",
-          data: formData);
+      var result = await _dio.post(
+        "${baseUrl}staff_lead_progressbar_data",
+        data: formData,
+      );
       LeadProgressbarModel model = LeadProgressbarModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -804,8 +891,10 @@ class HttpService {
     });
 
     try {
-      var result =
-          await _dio.post("${baseUrl}delete_lead_master", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}delete_lead_master",
+        data: formData,
+      );
       DeleteLeadModel model = DeleteLeadModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -815,8 +904,10 @@ class HttpService {
 
   static Future bulkDeleteLead(body) async {
     try {
-      var result =
-          await _dio.post("${baseUrl}lead_bulk_delete", data: jsonEncode(body));
+      var result = await _dio.post(
+        "${baseUrl}lead_bulk_delete",
+        data: jsonEncode(body),
+      );
       if (kDebugMode) {
         print(body);
       }
@@ -833,8 +924,10 @@ class HttpService {
 
   static Future bulkTransferLead(body) async {
     try {
-      var result = await _dio.post("${baseUrl}bulk_transfer_leads",
-          data: jsonEncode(body));
+      var result = await _dio.post(
+        "${baseUrl}bulk_transfer_leads",
+        data: jsonEncode(body),
+      );
       if (kDebugMode) {
         print(body);
       }
@@ -851,16 +944,19 @@ class HttpService {
 
   static Future addBulkContactGroup(body) async {
     try {
-      var result = await _dio.post("${baseUrl}lead_bulk_message",
-          data: jsonEncode(body));
+      var result = await _dio.post(
+        "${baseUrl}lead_bulk_message",
+        data: jsonEncode(body),
+      );
       if (kDebugMode) {
         print(body);
       }
       if (kDebugMode) {
         print(result);
       }
-      AddBulkContactGroupModel model =
-          AddBulkContactGroupModel.fromJson(result.data);
+      AddBulkContactGroupModel model = AddBulkContactGroupModel.fromJson(
+        result.data,
+      );
 
       return model;
     } on Exception {
@@ -905,13 +1001,12 @@ class HttpService {
   }
 
   static Future searchLead(token, search) async {
-    var params = {
-      "token": token,
-      "searchKey": search,
-    };
+    var params = {"token": token, "searchKey": search};
     try {
-      var result = await _dio.get("${baseUrl}search_lead_clients",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}search_lead_clients",
+        queryParameters: params,
+      );
       //  print(params);
       //print(result);
 
@@ -923,16 +1018,16 @@ class HttpService {
     }
   }
 
-/* Lead Management  Ends Here..*/
-/* User Management Starts Here..*/
+  /* Lead Management  Ends Here..*/
+  /* User Management Starts Here..*/
   static Future menuList(token) async {
-    var params = {
-      "token": token,
-    };
+    var params = {"token": token};
     //print(params);
     try {
-      var result = await _dio.get("${baseUrl}get_package_menus",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}get_package_menus",
+        queryParameters: params,
+      );
 
       MenuModel model = MenuModel.fromJson(result.data);
       // print(result);
@@ -950,11 +1045,14 @@ class HttpService {
     });
 
     try {
-      var result =
-          await _dio.post("${baseUrl}designation_details", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}designation_details",
+        data: formData,
+      );
       //print(result);
-      EditDesignationDetailsModel model =
-          EditDesignationDetailsModel.fromJson(result.data);
+      EditDesignationDetailsModel model = EditDesignationDetailsModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -964,8 +1062,10 @@ class HttpService {
   static Future postSubMenu(body) async {
     //print(body);
     try {
-      var result =
-          await _dio.post("${baseUrl}post_designation", data: jsonEncode(body));
+      var result = await _dio.post(
+        "${baseUrl}post_designation",
+        data: jsonEncode(body),
+      );
       if (kDebugMode) {
         print(body);
       }
@@ -982,8 +1082,10 @@ class HttpService {
 
   static Future postEditSubMenu(body) async {
     try {
-      var result =
-          await _dio.post("${baseUrl}edit_designation", data: jsonEncode(body));
+      var result = await _dio.post(
+        "${baseUrl}edit_designation",
+        data: jsonEncode(body),
+      );
 
       PostEditSubmenuModel model = PostEditSubmenuModel.fromJson(result.data);
 
@@ -995,11 +1097,14 @@ class HttpService {
 
   static Future postEditStaffSubMenu(body) async {
     try {
-      var result = await _dio.post("${baseUrl}edit_staff_modules",
-          data: jsonEncode(body));
+      var result = await _dio.post(
+        "${baseUrl}edit_staff_modules",
+        data: jsonEncode(body),
+      );
 
-      PostEditStaffSubmenuModel model =
-          PostEditStaffSubmenuModel.fromJson(result.data);
+      PostEditStaffSubmenuModel model = PostEditStaffSubmenuModel.fromJson(
+        result.data,
+      );
 
       return model;
     } on Exception {
@@ -1009,8 +1114,10 @@ class HttpService {
 
   static Future postEditStaffPermission(body) async {
     try {
-      var result = await _dio.post("${baseUrl}edit_staff_permissions",
-          data: jsonEncode(body));
+      var result = await _dio.post(
+        "${baseUrl}edit_staff_permissions",
+        data: jsonEncode(body),
+      );
 
       PostEditStaffPermissionModel model =
           PostEditStaffPermissionModel.fromJson(result.data);
@@ -1022,13 +1129,13 @@ class HttpService {
   }
 
   static Future designationList(token) async {
-    var params = {
-      "token": token,
-    };
+    var params = {"token": token};
 
     try {
-      var result = await _dio.get("${baseUrl}get_designation_list",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}get_designation_list",
+        queryParameters: params,
+      );
 
       DesignationListModel model = DesignationListModel.fromJson(result.data);
       return model;
@@ -1038,9 +1145,7 @@ class HttpService {
   }
 
   static Future viewStaffs(token) async {
-    var formData = FormData.fromMap({
-      "token": token,
-    });
+    var formData = FormData.fromMap({"token": token});
 
     try {
       var result = await _dio.post("${baseUrl}staff_list", data: formData);
@@ -1052,14 +1157,13 @@ class HttpService {
   }
 
   static Future addUserCommonData(token) async {
-    var formData = FormData.fromMap({
-      "token": token,
-    });
+    var formData = FormData.fromMap({"token": token});
 
     try {
       var result = await _dio.post("${baseUrl}userDetailsData", data: formData);
-      AddUserCommonDataModel model =
-          AddUserCommonDataModel.fromJson(result.data);
+      AddUserCommonDataModel model = AddUserCommonDataModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -1068,8 +1172,10 @@ class HttpService {
 
   static Future postUserData(body) async {
     try {
-      var result =
-          await _dio.post("${baseUrl}add_staff", data: jsonEncode(body));
+      var result = await _dio.post(
+        "${baseUrl}add_staff",
+        data: jsonEncode(body),
+      );
       AddUserModel model = AddUserModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1079,10 +1185,13 @@ class HttpService {
 
   static Future editUserBasicData(body) async {
     try {
-      var result =
-          await _dio.post("${baseUrl}update_staff", data: jsonEncode(body));
-      EditUserBasicDetailsModel model =
-          EditUserBasicDetailsModel.fromJson(result.data);
+      var result = await _dio.post(
+        "${baseUrl}update_staff",
+        data: jsonEncode(body),
+      );
+      EditUserBasicDetailsModel model = EditUserBasicDetailsModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -1102,8 +1211,10 @@ class HttpService {
 
   static Future updateUploadImages(formData) async {
     try {
-      var result =
-          await _dio.post("${baseUrl}update_staff_image", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}update_staff_image",
+        data: formData,
+      );
 
       AddUserImageModel model = AddUserImageModel.fromJson(result.data);
       return model;
@@ -1113,10 +1224,7 @@ class HttpService {
   }
 
   static Future deleteStaff(token, staffId) async {
-    var formData = FormData.fromMap({
-      "token": token,
-      "staffUserId": staffId,
-    });
+    var formData = FormData.fromMap({"token": token, "staffUserId": staffId});
 
     try {
       var result = await _dio.post("${baseUrl}delete_staff", data: formData);
@@ -1136,8 +1244,10 @@ class HttpService {
     });
 
     try {
-      var result =
-          await _dio.post("${baseUrl}change_staff_password", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}change_staff_password",
+        data: formData,
+      );
       ChangePasswordModel model = ChangePasswordModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1148,8 +1258,10 @@ class HttpService {
   static Future staffDetails(token, staffId) async {
     var params = {"token": token, "staff_id": staffId};
     try {
-      var result =
-          await _dio.get("${baseUrl}staff_details", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}staff_details",
+        queryParameters: params,
+      );
       if (kDebugMode) {
         print(result);
       }
@@ -1160,15 +1272,15 @@ class HttpService {
     }
   }
 
-/* User Management Ends Here..*/
-/* Settings Starts Hers */
+  /* User Management Ends Here..*/
+  /* Settings Starts Hers */
   static Future whatsappSettings(token) async {
-    var params = {
-      "token": token,
-    };
+    var params = {"token": token};
     try {
-      var result = await _dio.get("${baseUrl}get_whatsapp_settings",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}get_whatsapp_settings",
+        queryParameters: params,
+      );
 
       WhatsappSettingsModel model = WhatsappSettingsModel.fromJson(result.data);
 
@@ -1179,19 +1291,26 @@ class HttpService {
   }
 
   static Future addWhatsappSettings(
-      accessToken, instanceId, token, phoneNumber) async {
+    accessToken,
+    instanceId,
+    token,
+    phoneNumber,
+  ) async {
     var params = {
       "accessToken": accessToken,
       "instanceId": instanceId,
       "token": token,
-      "phoneNumber": phoneNumber
+      "phoneNumber": phoneNumber,
     };
     try {
-      var result = await _dio.get("${baseUrl}update_unofficial_whatsapp",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}update_unofficial_whatsapp",
+        queryParameters: params,
+      );
 
-      AddWhatsappSettingsModel model =
-          AddWhatsappSettingsModel.fromJson(result.data);
+      AddWhatsappSettingsModel model = AddWhatsappSettingsModel.fromJson(
+        result.data,
+      );
 
       return model;
     } on Exception {
@@ -1200,19 +1319,26 @@ class HttpService {
   }
 
   static Future addWhatsappSettingsOffical(
-      phoneNumberId, accountId, token, permanentToken) async {
+    phoneNumberId,
+    accountId,
+    token,
+    permanentToken,
+  ) async {
     var params = {
       "accountId": accountId,
       "permanentToken": permanentToken,
       "token": token,
-      "phoneNumberId": phoneNumberId
+      "phoneNumberId": phoneNumberId,
     };
     try {
-      var result = await _dio.get("${baseUrl}update_official_whatsapp",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}update_official_whatsapp",
+        queryParameters: params,
+      );
 
-      AddWhatsappSettingsOffModel model =
-          AddWhatsappSettingsOffModel.fromJson(result.data);
+      AddWhatsappSettingsOffModel model = AddWhatsappSettingsOffModel.fromJson(
+        result.data,
+      );
 
       return model;
     } on Exception {
@@ -1220,16 +1346,16 @@ class HttpService {
     }
   }
 
-/* Settings Ends Here */
+  /* Settings Ends Here */
 
-/* Main User Starts Here.. */
+  /* Main User Starts Here.. */
   static Future mainDashboard(token) async {
-    var formData = FormData.fromMap({
-      "token": token,
-    });
+    var formData = FormData.fromMap({"token": token});
     try {
-      var result =
-          await _dio.post("${baseUrl}get_active_package", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}get_active_package",
+        data: formData,
+      );
       DashboardModel model = DashboardModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1237,30 +1363,51 @@ class HttpService {
     }
   }
 
-  static Future changeUserPassword(token, password) async {
+  static Future<CallResultResonModel?> callResultReasonList(
+    String token,
+    String callResultId,
+  ) async {
     var formData = FormData.fromMap({
       "token": token,
-      "password": password,
+      "callResultId": callResultId,
     });
+
+    try {
+      var result = await _dio.post(
+        "${baseUrl}get_lead_result_reasons",
+        data: formData,
+      );
+
+      CallResultResonModel model = CallResultResonModel.fromJson(result.data);
+      return model;
+    } on Exception catch (e) {
+      log("error: $e");
+      return null;
+    }
+  }
+
+  static Future changeUserPassword(token, password) async {
+    var formData = FormData.fromMap({"token": token, "password": password});
     try {
       var result = await _dio.post("${baseUrl}reset_password", data: formData);
-      UserChangePasswordModel model =
-          UserChangePasswordModel.fromJson(result.data);
+      UserChangePasswordModel model = UserChangePasswordModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
     }
   }
 
-/* Main Users Ends Here..*/
-/* Contact Group Starts Here..*/
+  /* Main Users Ends Here..*/
+  /* Contact Group Starts Here..*/
   static Future contactGroup(token) async {
-    var formData = FormData.fromMap({
-      "token": token,
-    });
+    var formData = FormData.fromMap({"token": token});
     try {
-      var result =
-          await _dio.post("${baseUrl}get_contact_group", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}get_contact_group",
+        data: formData,
+      );
 
       ContactGroupModel model = ContactGroupModel.fromJson(result.data);
       return model;
@@ -1270,15 +1417,15 @@ class HttpService {
   }
 
   static Future contactGroupDetails(token, id) async {
-    var formData = FormData.fromMap({
-      "token": token,
-      "group_id": id,
-    });
+    var formData = FormData.fromMap({"token": token, "group_id": id});
     try {
-      var result =
-          await _dio.post("${baseUrl}get_group_messages", data: formData);
-      ContactGroupDeatailsModel model =
-          ContactGroupDeatailsModel.fromJson(result.data);
+      var result = await _dio.post(
+        "${baseUrl}get_group_messages",
+        data: formData,
+      );
+      ContactGroupDeatailsModel model = ContactGroupDeatailsModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -1287,8 +1434,10 @@ class HttpService {
 
   static Future sendWhatsappBulkMessage(formData) async {
     try {
-      var result =
-          await _dio.post("${baseUrl}send_bulk_message", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}send_bulk_message",
+        data: formData,
+      );
 
       SendMessageModel model = SendMessageModel.fromJson(result.data);
       return model;
@@ -1304,8 +1453,10 @@ class HttpService {
       "contact_numbers": numbers,
     });
     try {
-      var result =
-          await _dio.post("${baseUrl}add_new_contact_group", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}add_new_contact_group",
+        data: formData,
+      );
 
       AddContactGroupModel model = AddContactGroupModel.fromJson(result.data);
       return model;
@@ -1315,13 +1466,12 @@ class HttpService {
   }
 
   static Future groupInfo(token, groupId) async {
-    var formData = FormData.fromMap({
-      "token": token,
-      "group_id": groupId,
-    });
+    var formData = FormData.fromMap({"token": token, "group_id": groupId});
     try {
-      var result =
-          await _dio.post("${baseUrl}get_group_details", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}get_group_details",
+        data: formData,
+      );
       GroupInfoModel model = GroupInfoModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1336,8 +1486,10 @@ class HttpService {
       "contact_group_id": groupId,
     });
     try {
-      var result =
-          await _dio.post("${baseUrl}update_group_name", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}update_group_name",
+        data: formData,
+      );
       EditContactGroupModel model = EditContactGroupModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1351,10 +1503,13 @@ class HttpService {
       "contact_group_id": groupId,
     });
     try {
-      var result =
-          await _dio.post("${baseUrl}delete_contact_group", data: formData);
-      DeleteContactGroupModel model =
-          DeleteContactGroupModel.fromJson(result.data);
+      var result = await _dio.post(
+        "${baseUrl}delete_contact_group",
+        data: formData,
+      );
+      DeleteContactGroupModel model = DeleteContactGroupModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -1368,8 +1523,10 @@ class HttpService {
       "contact_numbers": numbers,
     });
     try {
-      var result =
-          await _dio.post("${baseUrl}add_contact_numbers", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}add_contact_numbers",
+        data: formData,
+      );
       AddContactNumberModel model = AddContactNumberModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1384,10 +1541,13 @@ class HttpService {
       "contact_number": number,
     });
     try {
-      var result =
-          await _dio.post("${baseUrl}edit_contact_number", data: formData);
-      EditContactNumberModel model =
-          EditContactNumberModel.fromJson(result.data);
+      var result = await _dio.post(
+        "${baseUrl}edit_contact_number",
+        data: formData,
+      );
+      EditContactNumberModel model = EditContactNumberModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -1395,31 +1555,31 @@ class HttpService {
   }
 
   static Future deleteContactNumber(token, id) async {
-    var formData = FormData.fromMap({
-      "token": token,
-      "contct_number_id": id,
-    });
+    var formData = FormData.fromMap({"token": token, "contct_number_id": id});
     try {
-      var result =
-          await _dio.post("${baseUrl}delete_contact_number", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}delete_contact_number",
+        data: formData,
+      );
 
-      DeleteContactNumberModel model =
-          DeleteContactNumberModel.fromJson(result.data);
+      DeleteContactNumberModel model = DeleteContactNumberModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
     }
   }
 
-/* Contact Group Ends Here...*/
+  /* Contact Group Ends Here...*/
 
   static Future verifyPhone(phoneNumber) async {
-    var params = {
-      "phoneNumber": phoneNumber,
-    };
+    var params = {"phoneNumber": phoneNumber};
     try {
-      var result =
-          await _dio.get("${baseUrl}verify_phone", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}verify_phone",
+        queryParameters: params,
+      );
       VerifyPhoneModel model = VerifyPhoneModel.fromJson(result.data);
 
       return model;
@@ -1429,13 +1589,12 @@ class HttpService {
   }
 
   static Future resetPassword(phoneNumber, password) async {
-    var params = {
-      "phoneNumber": phoneNumber,
-      "password": password,
-    };
+    var params = {"phoneNumber": phoneNumber, "password": password};
     try {
-      var result =
-          await _dio.get("${baseUrl}forgot_password", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}forgot_password",
+        queryParameters: params,
+      );
       ResetPasswordModel model = ResetPasswordModel.fromJson(result.data);
 
       return model;
@@ -1445,12 +1604,12 @@ class HttpService {
   }
 
   static Future removeUser(token) async {
-    var params = {
-      "token": token,
-    };
+    var params = {"token": token};
     try {
-      var result =
-          await _dio.get("${baseUrl}delete_user", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}delete_user",
+        queryParameters: params,
+      );
       RemoveUserModel model = RemoveUserModel.fromJson(result.data);
 
       return model;
@@ -1475,7 +1634,12 @@ class HttpService {
   }
 
   static Future uploadRecord(
-      token, callMaterId, path, uploadFile, fileName) async {
+    token,
+    callMaterId,
+    path,
+    uploadFile,
+    fileName,
+  ) async {
     var formData = FormData.fromMap({
       "token": token,
       "call_master_id": callMaterId,
@@ -1508,7 +1672,11 @@ class HttpService {
   }
 
   static Future deleteLeadFolderAndFiles(
-      token, callMasterId, path, rawId) async {
+    token,
+    callMasterId,
+    path,
+    rawId,
+  ) async {
     var formData = FormData.fromMap({
       "token": token,
       'call_master_id': callMasterId,
@@ -1517,8 +1685,9 @@ class HttpService {
     });
     try {
       var result = await _dio.post("${baseUrl}deleteUploads", data: formData);
-      DeleteFolderAndFileModel model =
-          DeleteFolderAndFileModel.fromJson(result.data);
+      DeleteFolderAndFileModel model = DeleteFolderAndFileModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -1526,18 +1695,26 @@ class HttpService {
   }
 
   static Future renameFolder(
-      token, callMaterId, path, prevName, newName, rawId) async {
+    token,
+    callMaterId,
+    path,
+    prevName,
+    newName,
+    rawId,
+  ) async {
     var formData = FormData.fromMap({
       "token": token,
       "call_master_id": callMaterId,
       "path": path,
       "prev_name": prevName,
       "new_name": newName,
-      "row_id": rawId
+      "row_id": rawId,
     });
     try {
-      var result =
-          await _dio.post("${baseUrl}renameUploadedFile", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}renameUploadedFile",
+        data: formData,
+      );
       RenameFolderModel model = RenameFolderModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1549,8 +1726,10 @@ class HttpService {
     var params = {"page": page, "pageSize": pageSize};
 
     try {
-      var result =
-          await _dio.get("${baseUrl}view_leads_test", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}view_leads_test",
+        queryParameters: params,
+      );
       TestListApiModel model = TestListApiModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1562,8 +1741,10 @@ class HttpService {
     var params = {"token": token, "call_master_id": callMaterId};
 
     try {
-      var result = await _dio.get("${baseUrl}lead_details_data",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}lead_details_data",
+        queryParameters: params,
+      );
       LeadDeatailsModelAdd model = LeadDeatailsModelAdd.fromJson(result.data);
       return model;
     } on Exception {
@@ -1572,14 +1753,15 @@ class HttpService {
   }
 
   static Future fileManagerPermission(token) async {
-    var params = {
-      "token": token,
-    };
+    var params = {"token": token};
     try {
-      var result = await _dio.get("${baseUrl}file_manager_data",
-          queryParameters: params);
-      FileManagerPermissionModel model =
-          FileManagerPermissionModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}file_manager_data",
+        queryParameters: params,
+      );
+      FileManagerPermissionModel model = FileManagerPermissionModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -1595,8 +1777,10 @@ class HttpService {
     });
 
     try {
-      var result =
-          await _dio.post("${baseUrl}update_followup_reminder", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}update_followup_reminder",
+        data: formData,
+      );
       UpdateReminderSetting model = UpdateReminderSetting.fromJson(result.data);
       return model;
     } on Exception {
@@ -1605,15 +1789,15 @@ class HttpService {
   }
 
   static Future deleteDesignation(token, designationId) async {
-    var params = {
-      "token": token,
-      "designation_id": designationId,
-    };
+    var params = {"token": token, "designation_id": designationId};
     try {
-      var result = await _dio.get("${baseUrl}delete_designation",
-          queryParameters: params);
-      DeleteDesignationModel model =
-          DeleteDesignationModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}delete_designation",
+        queryParameters: params,
+      );
+      DeleteDesignationModel model = DeleteDesignationModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -1621,12 +1805,12 @@ class HttpService {
   }
 
   static Future fileManagerPermissionMain(token) async {
-    var params = {
-      "token": token,
-    };
+    var params = {"token": token};
     try {
-      var result = await _dio.get("${baseUrl}file_manager_permission",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}file_manager_permission",
+        queryParameters: params,
+      );
       MainFileManagerPermissionModel model =
           MainFileManagerPermissionModel.fromJson(result.data);
       return model;
@@ -1636,10 +1820,7 @@ class HttpService {
   }
 
   static Future mainListFolderAndFiles(token, path) async {
-    var formData = FormData.fromMap({
-      "token": token,
-      "folderName": path,
-    });
+    var formData = FormData.fromMap({"token": token, "folderName": path});
     try {
       var result = await _dio.post("${baseUrl}getUploadsData", data: formData);
       FileManagerModel model = FileManagerModel.fromJson(result.data);
@@ -1671,7 +1852,7 @@ class HttpService {
       "folderName": folderName,
       "prev_name": prevName,
       "new_name": newName,
-      "row_id": rawId
+      "row_id": rawId,
     });
     try {
       var result = await _dio.post("${baseUrl}renameFile", data: formData);
@@ -1690,8 +1871,10 @@ class HttpService {
       "row_id": rawId,
     });
     try {
-      var result =
-          await _dio.post("${baseUrl}deleteUploadFile", data: formData);
+      var result = await _dio.post(
+        "${baseUrl}deleteUploadFile",
+        data: formData,
+      );
       DeleteFileModel model = DeleteFileModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1700,13 +1883,12 @@ class HttpService {
   }
 
   static Future unsetReminder(token, callDetailsId) async {
-    var params = {
-      "token": token,
-      "call_details_id": callDetailsId,
-    };
+    var params = {"token": token, "call_details_id": callDetailsId};
     try {
-      var result =
-          await _dio.get("${baseUrl}unset_reminder", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}unset_reminder",
+        queryParameters: params,
+      );
       UnsetReminderModel model = UnsetReminderModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1715,12 +1897,12 @@ class HttpService {
   }
 
   static Future fbDetails(token) async {
-    var params = {
-      "token": token,
-    };
+    var params = {"token": token};
     try {
-      var result =
-          await _dio.get("${baseUrl}fbSettingDetails", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}fbSettingDetails",
+        queryParameters: params,
+      );
       FacebookSettingsModel model = FacebookSettingsModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1730,10 +1912,13 @@ class HttpService {
 
   static Future updateAssignStaffFbLead(body) async {
     try {
-      var result = await _dio.post("${baseUrl}update_fb_lead_assigned_staff",
-          data: jsonEncode(body));
-      UpdateFbLeadAssignStaff model =
-          UpdateFbLeadAssignStaff.fromJson(result.data);
+      var result = await _dio.post(
+        "${baseUrl}update_fb_lead_assigned_staff",
+        data: jsonEncode(body),
+      );
+      UpdateFbLeadAssignStaff model = UpdateFbLeadAssignStaff.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -1741,13 +1926,12 @@ class HttpService {
   }
 
   static Future deleteFbLeads(token, fbLeadId) async {
-    var params = {
-      "token": token,
-      "fb_settings_id": fbLeadId,
-    };
+    var params = {"token": token, "fb_settings_id": fbLeadId};
     try {
-      var result = await _dio.get("${baseUrl}delete_fb_settings",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}delete_fb_settings",
+        queryParameters: params,
+      );
       DeleteFbLeadsModel model = DeleteFbLeadsModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1757,8 +1941,10 @@ class HttpService {
 
   static Future sendLeadNotification(body) async {
     try {
-      var result = await _dio.post("${baseUrl}update_push_notification_staff",
-          data: jsonEncode(body));
+      var result = await _dio.post(
+        "${baseUrl}update_push_notification_staff",
+        data: jsonEncode(body),
+      );
       SendNotificationModel model = SendNotificationModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1768,8 +1954,10 @@ class HttpService {
 
   static Future callLogUpload(body) async {
     try {
-      var result = await _dio.post("${baseUrl}add_phone_call_log",
-          data: jsonEncode(body));
+      var result = await _dio.post(
+        "${baseUrl}add_phone_call_log",
+        data: jsonEncode(body),
+      );
       if (kDebugMode) {
         print(body);
       }
@@ -1791,8 +1979,10 @@ class HttpService {
       "staffId": staffId,
     };
     try {
-      var result = await _dio.get("${baseUrl}get_phone_call_log",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}get_phone_call_log",
+        queryParameters: params,
+      );
       CallLogHistoryModel model = CallLogHistoryModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1802,16 +1992,19 @@ class HttpService {
 
   static Future deleteCallHistoryLogs(body) async {
     try {
-      var result = await _dio.post("${baseUrl}delete_phone_call_log",
-          data: jsonEncode(body));
+      var result = await _dio.post(
+        "${baseUrl}delete_phone_call_log",
+        data: jsonEncode(body),
+      );
       if (kDebugMode) {
         print(body);
       }
       if (kDebugMode) {
         print(result);
       }
-      DeleteCallHistoryModel model =
-          DeleteCallHistoryModel.fromJson(result.data);
+      DeleteCallHistoryModel model = DeleteCallHistoryModel.fromJson(
+        result.data,
+      );
 
       return model;
     } on Exception {
@@ -1822,8 +2015,10 @@ class HttpService {
   static Future mainClients(token, searchKey) async {
     var params = {"token": token, "search_key": searchKey};
     try {
-      var result =
-          await _dio.get("${baseUrl}mainClientList", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}mainClientList",
+        queryParameters: params,
+      );
       MainClientListModel model = MainClientListModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1834,10 +2029,13 @@ class HttpService {
   static Future mainClientDetails(token, clientId) async {
     var params = {"token": token, "clientId": clientId};
     try {
-      var result = await _dio.get("${baseUrl}mainClientDetails",
-          queryParameters: params);
-      MainClientDetailsModel model =
-          MainClientDetailsModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}mainClientDetails",
+        queryParameters: params,
+      );
+      MainClientDetailsModel model = MainClientDetailsModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -1847,8 +2045,10 @@ class HttpService {
   static Future deleteMainClients(token, clientId) async {
     var params = {"token": token, "client_id": clientId};
     try {
-      var result = await _dio.get("${baseUrl}deleteMainClients",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}deleteMainClients",
+        queryParameters: params,
+      );
       DeleteMainClientModel model = DeleteMainClientModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1860,13 +2060,16 @@ class HttpService {
     var params = {
       "token": token,
       "lead_id": leadId,
-      "add_custom_fields": addCustomField
+      "add_custom_fields": addCustomField,
     };
     try {
-      var result =
-          await _dio.get("${baseUrl}convert_lead", queryParameters: params);
-      LeadConvertToClientModel model =
-          LeadConvertToClientModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}convert_lead",
+        queryParameters: params,
+      );
+      LeadConvertToClientModel model = LeadConvertToClientModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -1884,13 +2087,12 @@ class HttpService {
   }
 
   static Future invoiceCommonDetails(token, clientId) async {
-    var params = {
-      "token": token,
-      "client_id": clientId,
-    };
+    var params = {"token": token, "client_id": clientId};
     try {
-      var result = await _dio.get("${baseUrl}getInvoiceDetails",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}getInvoiceDetails",
+        queryParameters: params,
+      );
       InvoiceAddCommonDetailsModel model =
           InvoiceAddCommonDetailsModel.fromJson(result.data);
       return model;
@@ -1901,8 +2103,7 @@ class HttpService {
 
   static Future addInvoice(body) async {
     try {
-      var result =
-          await _dio.post("${baseUrl}postInvoice", data: body);
+      var result = await _dio.post("${baseUrl}postInvoice", data: body);
       if (kDebugMode) {
         print(body);
       }
@@ -1925,7 +2126,7 @@ class HttpService {
       'token': token,
       'from_date': fromDate,
       'to_date': toDate,
-      'client_id': clientId
+      'client_id': clientId,
     });
     try {
       var result = await _dio.post("${baseUrl}getInvoiceLists", data: formData);
@@ -1939,8 +2140,10 @@ class HttpService {
   static Future deleteInvoice(token, invoiceId) async {
     var params = {"token": token, "invoice_id": invoiceId};
     try {
-      var result =
-          await _dio.get("${baseUrl}deleteInvoice", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}deleteInvoice",
+        queryParameters: params,
+      );
       DeleteInvoiceModel model = DeleteInvoiceModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1948,15 +2151,13 @@ class HttpService {
     }
   }
 
-  static Future customerList(
-    token,
-  ) async {
-    var params = {
-      "token": token,
-    };
+  static Future customerList(token) async {
+    var params = {"token": token};
     try {
-      var result =
-          await _dio.get("${baseUrl}getCustomerLists", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}getCustomerLists",
+        queryParameters: params,
+      );
       CustomerListModel model = CustomerListModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -1969,7 +2170,7 @@ class HttpService {
       'token': token,
       'from_date': fromDate,
       'to_date': toDate,
-      'client_id': clientId
+      'client_id': clientId,
     });
     try {
       var result = await _dio.post("${baseUrl}getReceiptLists", data: formData);
@@ -1981,10 +2182,7 @@ class HttpService {
   }
 
   static Future deleteReceipt(token, receiptId) async {
-    var formData = FormData.fromMap({
-      'token': token,
-      'receipt_id': receiptId,
-    });
+    var formData = FormData.fromMap({'token': token, 'receipt_id': receiptId});
     try {
       var result = await _dio.post("${baseUrl}deleteReceipt", data: formData);
       ReceiptDeleteModel model = ReceiptDeleteModel.fromJson(result.data);
@@ -2001,8 +2199,10 @@ class HttpService {
       "invoice_id": invoiceId,
     };
     try {
-      var result = await _dio.get("${baseUrl}getReceiptDetails",
-          queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}getReceiptDetails",
+        queryParameters: params,
+      );
       ReceiptAddCommonDetailsModel model =
           ReceiptAddCommonDetailsModel.fromJson(result.data);
       return model;
@@ -2015,10 +2215,13 @@ class HttpService {
     var params = {"token": token, "clientId": clientId};
     print(params);
     try {
-      var result =
-          await _dio.get("${baseUrl}getClientById", queryParameters: params);
-      EditClientDetailsModel model =
-          EditClientDetailsModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}getClientById",
+        queryParameters: params,
+      );
+      EditClientDetailsModel model = EditClientDetailsModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -2037,8 +2240,9 @@ class HttpService {
 
   static Future fetchPostOffice(postalCode) async {
     try {
-      var result =
-          await _dio.get("https://api.postalpincode.in/pincode/" + postalCode);
+      var result = await _dio.get(
+        "https://api.postalpincode.in/pincode/" + postalCode,
+      );
       PostalCodeModel model = PostalCodeModel.fromJson(result.data[0]);
       return model;
     } on Exception {
@@ -2076,13 +2280,12 @@ class HttpService {
   }
 
   static Future editReceiptDetails(token, receiptId) async {
-    var params = {
-      "token": token,
-      "receipt_id": receiptId,
-    };
+    var params = {"token": token, "receipt_id": receiptId};
     try {
-      var result =
-          await _dio.get("${baseUrl}getReceiptById", queryParameters: params);
+      var result = await _dio.get(
+        "${baseUrl}getReceiptById",
+        queryParameters: params,
+      );
       EditReceiptModelDetailsModel model =
           EditReceiptModelDetailsModel.fromJson(result.data);
       return model;
@@ -2102,8 +2305,9 @@ class HttpService {
     var formData = FormData.fromMap({
       'token': token,
       'receipt_id': receiptId,
-      'receipt_date': DateFormat("dd-MM-yyyy")
-          .format(DateTime.parse(receiptDate.toString())),
+      'receipt_date': DateFormat(
+        "dd-MM-yyyy",
+      ).format(DateTime.parse(receiptDate.toString())),
       'paid_amount': paidAmount,
       'collected_staff': collectedBy,
       'payment_method': paymentMethod,
@@ -2118,16 +2322,16 @@ class HttpService {
   }
 
   static Future leadMileStone(token, subCategoryId) async {
-    var params = {
-      "token": token,
-      "leadMasterId": subCategoryId,
-    };
+    var params = {"token": token, "leadMasterId": subCategoryId};
 
     try {
-      var result =
-          await _dio.get("${baseUrl}get_milestones", queryParameters: params);
-      LeadMileStoneListModel model =
-          LeadMileStoneListModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}get_milestones",
+        queryParameters: params,
+      );
+      LeadMileStoneListModel model = LeadMileStoneListModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -2136,24 +2340,28 @@ class HttpService {
 
   static Future addMileStone(body) async {
     try {
-      var result = await _dio.post("${baseUrl}add_lead_milestones",
-          data: jsonEncode(body));
+      var result = await _dio.post(
+        "${baseUrl}add_lead_milestones",
+        data: jsonEncode(body),
+      );
       AddMileStoneModel model = AddMileStoneModel.fromJson(result.data);
       return model;
     } on Exception {
       return null;
     }
   }
+
   static Future leadNotificationList(token) async {
-    var params = {
-      "token": token,
-    };
+    var params = {"token": token};
 
     try {
-      var result = await _dio.get("${baseUrl}get_all_lead_milestones",
-          queryParameters: params);
-      LeadNotificationListModel model =
-          LeadNotificationListModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}get_all_lead_milestones",
+        queryParameters: params,
+      );
+      LeadNotificationListModel model = LeadNotificationListModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -2161,45 +2369,47 @@ class HttpService {
   }
 
   static Future readLeadNotification(token, notificationId) async {
-    var params = {
-      "token": token,
-      "notification_id": notificationId,
-    };
+    var params = {"token": token, "notification_id": notificationId};
     try {
-      var result = await _dio.get("${baseUrl}update_notification_read_status",
-          queryParameters: params);
-      ReadLeadNotificationModel model =
-          ReadLeadNotificationModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}update_notification_read_status",
+        queryParameters: params,
+      );
+      ReadLeadNotificationModel model = ReadLeadNotificationModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
     }
   }
+
   static Future deleteMileStoneLeads(token, leadMileStoneId) async {
-    var params = {
-      "token": token,
-      "lead_milestone_id": leadMileStoneId,
-    };
+    var params = {"token": token, "lead_milestone_id": leadMileStoneId};
     try {
-      var result = await _dio.get("${baseUrl}delete_lead_milestones",
-          queryParameters: params);
-      DeleteLeadMileStoneModel model =
-      DeleteLeadMileStoneModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}delete_lead_milestones",
+        queryParameters: params,
+      );
+      DeleteLeadMileStoneModel model = DeleteLeadMileStoneModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
     }
   }
-  static Future checkLeadPhoneNumber(token, contactNumber,code) async {
-    var params = {
-      "token": token,
-      "contactNumber": code+contactNumber,
-    };
+
+  static Future checkLeadPhoneNumber(token, contactNumber, code) async {
+    var params = {"token": token, "contactNumber": code + contactNumber};
     try {
-      var result = await _dio.get("${baseUrl}check_lead_contact_exist",
-          queryParameters: params);
-      CheckLeadPhoneNumberModel model =
-      CheckLeadPhoneNumberModel.fromJson(result.data);
+      var result = await _dio.get(
+        "${baseUrl}check_lead_contact_exist",
+        queryParameters: params,
+      );
+      CheckLeadPhoneNumberModel model = CheckLeadPhoneNumberModel.fromJson(
+        result.data,
+      );
       return model;
     } on Exception {
       return null;
@@ -2207,12 +2417,9 @@ class HttpService {
   }
 
   static Future getBranchList(token) async {
-    var formData = FormData.fromMap({
-      "token": token,
-    });
+    var formData = FormData.fromMap({"token": token});
     try {
-      var result =
-      await _dio.post("${baseUrl}getBranch", data: formData);
+      var result = await _dio.post("${baseUrl}getBranch", data: formData);
       BranchListModel model = BranchListModel.fromJson(result.data);
       return model;
     } on Exception {

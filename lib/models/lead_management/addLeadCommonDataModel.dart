@@ -31,24 +31,33 @@ class Data {
   List<TransferStaffs>? transferStaffs;
   List<Priority>? priority;
   List<String>? callResponse;
+  List<CallStatus>? callStatus; // New field
+  List<LeadSource>? leadSource; // New field
   List<AdditionalFields>? additionalFields;
   String? countryCode;
   bool? customerAddPermission;
   bool? customerAddInvoicePermission;
+  List<TargetGroup>? targetGroups; // Added field
+  List<ColloctedStaff>? colloctedStaff; // Added field
 
-  Data(
-      {this.leadCategory,
-        this.callResult,
-        this.callResultNew,
-        this.branch,
-        this.staff,
-        this.transferStaffs,
-        this.priority,
-        this.callResponse,
-        this.additionalFields,
-        this.countryCode,
-        this.customerAddPermission,
-        this.customerAddInvoicePermission});
+  Data({
+    this.leadCategory,
+    this.callResult,
+    this.callResultNew,
+    this.branch,
+    this.staff,
+    this.transferStaffs,
+    this.priority,
+    this.callResponse,
+    this.callStatus,
+    this.leadSource,
+    this.additionalFields,
+    this.countryCode,
+    this.customerAddPermission,
+    this.customerAddInvoicePermission,
+    this.targetGroups, // Added to constructor
+    this.colloctedStaff, // Added to constructor
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     if (json['lead_category'] != null) {
@@ -93,30 +102,63 @@ class Data {
         priority!.add(Priority.fromJson(v));
       });
     }
-    callResponse = json['call_response'].cast<String>();
+    callResponse = json['call_response'] != null 
+        ? json['call_response'].cast<String>() 
+        : null;
+        
+    if (json['call_status'] != null) {
+      callStatus = <CallStatus>[];
+      json['call_status'].forEach((v) {
+        callStatus!.add(CallStatus.fromJson(v));
+      });
+    }
+
+    // Parse lead_source array
+    if (json['lead_source'] != null) {
+      leadSource = <LeadSource>[];
+      json['lead_source'].forEach((v) {
+        leadSource!.add(LeadSource.fromJson(v));
+      });
+    }
+    
     if (json['additionalFields'] != null) {
       additionalFields = <AdditionalFields>[];
       json['additionalFields'].forEach((v) {
         additionalFields!.add(AdditionalFields.fromJson(v));
       });
     }
+    
     countryCode = json['country_code'];
     customerAddPermission = json['customerAddPermission'];
     customerAddInvoicePermission = json['customerAddInvoicePermission'];
+    
+    // Added: Parse target_groups array
+    if (json['target_groups'] != null) {
+      targetGroups = <TargetGroup>[];
+      json['target_groups'].forEach((v) {
+        targetGroups!.add(TargetGroup.fromJson(v));
+      });
+    }
+    
+    // Added: Parse collocted_staff array
+    if (json['collocted_staff'] != null) {
+      colloctedStaff = <ColloctedStaff>[];
+      json['collocted_staff'].forEach((v) {
+        colloctedStaff!.add(ColloctedStaff.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     if (leadCategory != null) {
-      data['lead_category'] =
-          leadCategory!.map((v) => v.toJson()).toList();
+      data['lead_category'] = leadCategory!.map((v) => v.toJson()).toList();
     }
     if (callResult != null) {
       data['call_result'] = callResult!.map((v) => v.toJson()).toList();
     }
     if (callResultNew != null) {
-      data['call_result_new'] =
-          this.callResultNew!.map((v) => v.toJson()).toList();
+      data['call_result_new'] = callResultNew!.map((v) => v.toJson()).toList();
     }
     if (branch != null) {
       data['branch'] = branch!.map((v) => v.toJson()).toList();
@@ -125,20 +167,35 @@ class Data {
       data['staff'] = staff!.map((v) => v.toJson()).toList();
     }
     if (transferStaffs != null) {
-      data['transfer_staffs'] =
-          transferStaffs!.map((v) => v.toJson()).toList();
+      data['transfer_staffs'] = transferStaffs!.map((v) => v.toJson()).toList();
     }
     if (priority != null) {
       data['priority'] = priority!.map((v) => v.toJson()).toList();
     }
     data['call_response'] = callResponse;
+    if (callStatus != null) {
+      data['call_status'] = callStatus!.map((v) => v.toJson()).toList();
+    }
+    if (leadSource != null) {
+      data['lead_source'] = leadSource!.map((v) => v.toJson()).toList();
+    }
     if (additionalFields != null) {
-      data['additionalFields'] =
-          additionalFields!.map((v) => v.toJson()).toList();
+      data['additionalFields'] = additionalFields!.map((v) => v.toJson()).toList();
     }
     data['country_code'] = countryCode;
     data['customerAddPermission'] = customerAddPermission;
     data['customerAddInvoicePermission'] = customerAddInvoicePermission;
+    
+    // Added: Serialize target_groups
+    if (targetGroups != null) {
+      data['target_groups'] = targetGroups!.map((v) => v.toJson()).toList();
+    }
+    
+    // Added: Serialize collocted_staff
+    if (colloctedStaff != null) {
+      data['collocted_staff'] = colloctedStaff!.map((v) => v.toJson()).toList();
+    }
+    
     return data;
   }
 }
@@ -196,6 +253,45 @@ class CallResultNew {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data['call_result_id_new'] = callResultIdNew;
     data['call_result_new'] = callResultNew;
+    return data;
+  }
+}
+
+class CallStatus {
+  String? callResponseId;
+  String? callResponse;
+
+  CallStatus({this.callResponseId, this.callResponse});
+
+  CallStatus.fromJson(Map<String, dynamic> json) {
+    callResponseId = json['call_response_id'];
+    callResponse = json['call_response'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['call_response_id'] = callResponseId;
+    data['call_response'] = callResponse;
+    return data;
+  }
+}
+
+// New: LeadSource class
+class LeadSource {
+  String? leadSourceId;
+  String? leadSource;
+
+  LeadSource({this.leadSourceId, this.leadSource});
+
+  LeadSource.fromJson(Map<String, dynamic> json) {
+    leadSourceId = json['lead_source_id'];
+    leadSource = json['lead_source'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['lead_source_id'] = leadSourceId;
+    data['lead_source'] = leadSource;
     return data;
   }
 }
@@ -291,6 +387,46 @@ class AdditionalFields {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['field_name'] = fieldName;
+    return data;
+  }
+}
+
+// Added: TargetGroup class
+class TargetGroup {
+  String? id;
+  String? groupName;
+
+  TargetGroup({this.id, this.groupName});
+
+  TargetGroup.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    groupName = json['group_name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['group_name'] = groupName;
+    return data;
+  }
+}
+
+// Added: ColloctedStaff class
+class ColloctedStaff {
+  String? accountId;
+  String? accountName;
+
+  ColloctedStaff({this.accountId, this.accountName});
+
+  ColloctedStaff.fromJson(Map<String, dynamic> json) {
+    accountId = json['account_id'];
+    accountName = json['account_name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['account_id'] = accountId;
+    data['account_name'] = accountName;
     return data;
   }
 }

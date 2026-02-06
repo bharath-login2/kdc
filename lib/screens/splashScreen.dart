@@ -181,6 +181,7 @@ class _SplashScreenState extends State<SplashScreen> {
       LoginCheckModel loginCheck =
           await HttpService.loginCheck(token, firebaseToken);
       if (loginCheck.data == true) {
+        print(token);
         if (mounted) {
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => Dashboard(token)));

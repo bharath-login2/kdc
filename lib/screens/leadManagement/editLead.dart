@@ -51,7 +51,7 @@ class _EditLeadState extends State<EditLead> {
   LeadSubTypeModel? leadSubTypeList;
   bool? result = true;
   bool? result1 = true;
-  String leadType = 'Lead Category';
+  String leadType = 'Customer Interested Product';
   String leadTypeId = '';
   String leadSubType = 'Lead Sub Category';
   String leadSubTypeId = '';
@@ -286,7 +286,7 @@ class _EditLeadState extends State<EditLead> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               scrollable: true,
-                              title: const Text('Lead Category'),
+                              title: const Text('Customer Interested Product'),
                               content: ListView.builder(
                                 shrinkWrap: true,
                                 itemCount: commonDetails!
@@ -343,7 +343,7 @@ class _EditLeadState extends State<EditLead> {
                     maxLines: 1,
                     readOnly: true,
                     decoration: const InputDecoration(
-                        labelText: 'Lead Category',
+                        labelText: 'Customer Interested Product',
                         fillColor: Colors.white,
                         filled: true,
                         prefixIcon: Icon(

@@ -51,7 +51,7 @@ class _EditFollowupState extends State<EditFollowup> {
   LeadSubTypeModel? leadSubTypeList;
   String callResult = 'New';
   String callResultId = '1';
-  String leadType = 'Lead Category';
+  String leadType = 'Customer Interested Product';
   String leadTypeId = '';
   String leadSubType = 'Lead Sub Category';
   String leadSubTypeId = '';
@@ -295,7 +295,7 @@ class _EditFollowupState extends State<EditFollowup> {
                             decoration: const InputDecoration(
                                 contentPadding: EdgeInsets.only(
                                     left: 10, top: 2, bottom: 2),
-                                labelText: 'Call Result',
+                                labelText: 'Lead Status',
                                 fillColor: Colors.white,
                                 filled: true,
                                 prefixIcon: Icon(
@@ -363,23 +363,23 @@ class _EditFollowupState extends State<EditFollowup> {
                                   ),
                                 )
                               : const SizedBox(),
-                          TextFormField(
-                            controller: cost,
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.only(
-                                    left: 10, top: 2, bottom: 2),
-                                labelText: 'Cost',
-                                fillColor: Colors.white,
-                                filled: true,
-                                prefixIcon: Icon(Icons.currency_rupee,
-                                    color: Colors.grey),
-                                border: OutlineInputBorder(),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
-                                labelStyle: TextStyle(color: Colors.grey)),
-                          ),
+                          // TextFormField(
+                          //   controller: cost,
+                          //   keyboardType: TextInputType.number,
+                          //   decoration: const InputDecoration(
+                          //       contentPadding: EdgeInsets.only(
+                          //           left: 10, top: 2, bottom: 2),
+                          //       labelText: 'Cost',
+                          //       fillColor: Colors.white,
+                          //       filled: true,
+                          //       prefixIcon: Icon(Icons.currency_rupee,
+                          //           color: Colors.grey),
+                          //       border: OutlineInputBorder(),
+                          //       focusedBorder: OutlineInputBorder(
+                          //         borderSide: BorderSide(color: Colors.grey),
+                          //       ),
+                          //       labelStyle: TextStyle(color: Colors.grey)),
+                          // ),
                           // InputTextField(
                           //   hintText: 'Cost',
                           //   hintTextColor: Colors.white,
@@ -400,7 +400,7 @@ class _EditFollowupState extends State<EditFollowup> {
                                   builder: (BuildContext context) {
                                     return AlertDialog(
                                       scrollable: true,
-                                      title: const Text('Lead Category'),
+                                      title: const Text('Customer Interested Product'),
                                       content: ListView.builder(
                                         shrinkWrap: true,
                                         itemCount: commonDetails!
@@ -463,7 +463,7 @@ class _EditFollowupState extends State<EditFollowup> {
                             decoration: const InputDecoration(
                                 contentPadding: EdgeInsets.only(
                                     left: 10, top: 2, bottom: 2),
-                                labelText: 'Lead Category',
+                                labelText: 'Customer Interested Product',
                                 fillColor: Colors.white,
                                 filled: true,
                                 prefixIcon: Icon(

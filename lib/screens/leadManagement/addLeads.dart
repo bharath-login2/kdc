@@ -53,7 +53,7 @@ class _AddLeadsState extends State<AddLeads> {
   LeadSubTypeModel? leadSubTypeList;
   bool? result = true;
   bool? result1 = true;
-  String leadType = 'Lead Category';
+  String leadType = 'Customer Interested Product';
   String leadTypeId = '';
   String leadSubType = 'Lead Sub Category';
   String leadSubTypeId = '';
@@ -595,7 +595,7 @@ class _AddLeadsState extends State<AddLeads> {
                                 return AlertDialog(
                                   scrollable: true,
                                   title: const Text(
-                                      'Lead Category'),
+                                      'Customer Interested Product'),
                                   content: ListView.builder(
                                     shrinkWrap: true,
                                     itemCount: commonDetails!
@@ -661,7 +661,7 @@ class _AddLeadsState extends State<AddLeads> {
                         decoration: const InputDecoration(
                             contentPadding: EdgeInsets.only(
                                 left: 10, top: 2, bottom: 2),
-                            labelText: 'Lead Category',
+                            labelText: 'Customer Interested Product',
                             fillColor: Colors.white,
                             filled: true,
                             prefixIcon: Icon(
@@ -975,7 +975,7 @@ class _AddLeadsState extends State<AddLeads> {
                         decoration: const InputDecoration(
                             contentPadding: EdgeInsets.only(
                                 left: 10, top: 2, bottom: 2),
-                            labelText: 'Call Result',
+                            labelText: 'Lead Status',
                             fillColor: Colors.white,
                             filled: true,
                             prefixIcon: Icon(

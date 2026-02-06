@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:kdc_chitty_mainnew/models/lead_management/callResultReasonModel.dart';
 import 'package:lottie/lottie.dart';
 import '../../core/common.dart';
 import '../../models/lead_management/addLeadCommonDataModel.dart';
@@ -39,28 +40,34 @@ class AddFollowup extends StatefulWidget {
   String? priorityId;
   String? leadType1;
 
-  AddFollowup(this.token, this.editLead, this.deleteLead, this.cloudCall,
-      this.callMasterId,
-      {super.key,
-      this.fromDate,
-      this.toDate,
-      this.status,
-      this.category,
-      this.staff,
-      this.pageName,
-      this.isCalled,
-      this.callingDate,
-      this.callHistoryId,
-      this.scrollToIndex,
-      this.leadTypeId,
-      this.leadType,
-      this.leadSubTypeId,
-      this.leadSubType,
-      this.cost,
-      this.address,
-      this.searchKey,
-      this.priority,
-      this.priorityId,this.leadType1});
+  AddFollowup(
+    this.token,
+    this.editLead,
+    this.deleteLead,
+    this.cloudCall,
+    this.callMasterId, {
+    super.key,
+    this.fromDate,
+    this.toDate,
+    this.status,
+    this.category,
+    this.staff,
+    this.pageName,
+    this.isCalled,
+    this.callingDate,
+    this.callHistoryId,
+    this.scrollToIndex,
+    this.leadTypeId,
+    this.leadType,
+    this.leadSubTypeId,
+    this.leadSubType,
+    this.cost,
+    this.address,
+    this.searchKey,
+    this.priority,
+    this.priorityId,
+    this.leadType1,
+  });
 
   @override
   State<AddFollowup> createState() => _AddFollowupState();
@@ -69,32 +76,41 @@ class AddFollowup extends StatefulWidget {
 class _AddFollowupState extends State<AddFollowup> {
   AddLeadCommonDataModel? commonDetails;
   LeadSubTypeModel? leadSubTypeList;
-  String callResult = 'Followup';
+  CallResultResonModel? callResultReason;
+  String callResult = 'Active';
+  String callStatus = 'Select';
   String callResultId = '2';
+  String callStatusId = '';
   String? nextFollowupDate = '';
   String leadType = 'Lead Category';
   String leadTypeId = '';
   String leadSubType = 'Lead Sub Category';
   String leadSubTypeId = '';
+  String callResultReasonName = 'Reason';
+  List<ColloctedStaff> filteredStaff = [];
+  List<TargetGroup> filteredTargets = [];
+  String callResultReasonId = '';
   TextEditingController cost = TextEditingController();
   TextEditingController remarks = TextEditingController();
   TextEditingController calledDate1 = TextEditingController();
   TextEditingController nextFollowupDate1 = TextEditingController();
   TextEditingController address = TextEditingController();
   TextEditingController callResultVal = TextEditingController();
+  TextEditingController callStatusVal = TextEditingController();
   TextEditingController leadTypeVal = TextEditingController();
   TextEditingController leadSubTypeVal = TextEditingController();
   TextEditingController priorityVal = TextEditingController();
   TextEditingController timeBefore = TextEditingController(text: '10');
+  TextEditingController callReasonVal = TextEditingController();
   bool? result = true;
   bool? result1 = true;
   String? callHistoryId;
   String priority = 'Normal';
   String priorityId = '2';
   bool checked = false;
-  bool addClient=false;
-  bool isExpand=false;
-  bool isChecked=false;
+  bool addClient = false;
+  bool isExpand = false;
+  bool isChecked = false;
 
   @override
   void initState() {
@@ -116,7 +132,16 @@ class _AddFollowupState extends State<AddFollowup> {
       });
     }
     commonDetails = await HttpService.addLeadCommonData(widget.token);
-    if (commonDetails != null) {
+    if (commonDetails != null && commonDetails!.data != null) {
+      if (commonDetails!.data!.colloctedStaff != null &&
+          commonDetails!.data!.colloctedStaff!.isNotEmpty) {
+        filteredStaff.addAll(commonDetails!.data!.colloctedStaff!);
+      }
+      if (commonDetails!.data!.targetGroups != null &&
+          commonDetails!.data!.targetGroups!.isNotEmpty) {
+        filteredTargets.addAll(commonDetails!.data!.targetGroups!);
+      }
+      callResultReasonList();
       if (widget.leadTypeId != '') {
         leadSubTypeList = await HttpService.leadSubType(widget.leadTypeId);
         if (widget.leadType != null) {
@@ -144,6 +169,16 @@ class _AddFollowupState extends State<AddFollowup> {
     }
   }
 
+  callResultReasonList() async {
+    callResultReason = await HttpService.callResultReasonList(
+      widget.token!,
+      callResultId,
+    );
+    if (commonDetails != null) {
+      setState(() {});
+    }
+  }
+
   String getYmdFromDmy(String dmy) {
     if (dmy.isEmpty) return dmy;
     final split = dmy.split("-");
@@ -153,6 +188,8 @@ class _AddFollowupState extends State<AddFollowup> {
   @override
   Widget build(BuildContext context) {
     callResultVal.text = callResult;
+    callStatusVal.text = callStatus;
+    callReasonVal.text = callResultReasonName;
     leadTypeVal.text = leadType;
     leadSubTypeVal.text = leadSubType;
     priorityVal.text = priority;
@@ -162,8 +199,9 @@ class _AddFollowupState extends State<AddFollowup> {
       callHistoryId = '';
     }
     if (widget.callingDate != null) {
-      calledDate1.text = DateFormat('dd-MM-yyyy HH:mm')
-          .format(DateTime.parse(widget.callingDate.toString()));
+      calledDate1.text = DateFormat(
+        'dd-MM-yyyy HH:mm',
+      ).format(DateTime.parse(widget.callingDate.toString()));
     } else {
       calledDate1.text = DateFormat('dd-MM-yyyy HH:mm').format(DateTime.now());
     }
@@ -174,41 +212,49 @@ class _AddFollowupState extends State<AddFollowup> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => LeadDetails(
-                          widget.token!,
-                          widget.editLead,
-                          widget.deleteLead,
-                          widget.cloudCall,
-                          widget.callMasterId,
-                          pageName: widget.pageName,
-                          fromDate: widget.fromDate,
-                          toDate: widget.toDate,
-                          status: widget.status,
-                          category: widget.category,
-                          staff: widget.staff,
-                          isCalled: widget.isCalled,
-                          searchKey: widget.searchKey,
-                          scrollToIndex: widget.scrollToIndex,
-                      leadType: widget.leadType1,
-                        )),
+                  builder: (context) => LeadDetails(
+                    widget.token!,
+                    widget.editLead,
+                    widget.deleteLead,
+                    widget.cloudCall,
+                    widget.callMasterId,
+                    pageName: widget.pageName,
+                    fromDate: widget.fromDate,
+                    toDate: widget.toDate,
+                    status: widget.status,
+                    category: widget.category,
+                    staff: widget.staff,
+                    isCalled: widget.isCalled,
+                    searchKey: widget.searchKey,
+                    scrollToIndex: widget.scrollToIndex,
+                    leadType: widget.leadType1,
+                  ),
+                ),
               );
               return true;
             },
             child: Scaffold(
               backgroundColor: Colors.white,
               appBar: PreferredSize(
-                preferredSize:
-                    Size.fromHeight(MediaQuery.of(context).size.height * 0.08),
+                preferredSize: Size.fromHeight(
+                  MediaQuery.of(context).size.height * 0.08,
+                ),
                 child: Container(
-                  padding:
-                      EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).padding.top,
+                  ),
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                        colors: [Color(0xFF2a86c9), Color(0xFF406dbe)]),
+                      colors: [Color(0xFF2a86c9), Color(0xFF406dbe)],
+                    ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(
-                        left: 10.0, top: 10.0, bottom: 10.0, right: 10),
+                      left: 10.0,
+                      top: 10.0,
+                      bottom: 10.0,
+                      right: 10,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -221,31 +267,33 @@ class _AddFollowupState extends State<AddFollowup> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => LeadDetails(
-                                            widget.token!,
-                                            widget.editLead,
-                                            widget.deleteLead,
-                                            widget.cloudCall,
-                                            widget.callMasterId,
-                                            pageName: widget.pageName,
-                                            fromDate: widget.fromDate,
-                                            toDate: widget.toDate,
-                                            status: widget.status,
-                                            category: widget.category,
-                                            staff: widget.staff,
-                                            isCalled: widget.isCalled,
-                                            searchKey: widget.searchKey,
-                                            scrollToIndex: widget.scrollToIndex,
-                                        leadType: widget.leadType1,
-                                          )),
+                                    builder: (context) => LeadDetails(
+                                      widget.token!,
+                                      widget.editLead,
+                                      widget.deleteLead,
+                                      widget.cloudCall,
+                                      widget.callMasterId,
+                                      pageName: widget.pageName,
+                                      fromDate: widget.fromDate,
+                                      toDate: widget.toDate,
+                                      status: widget.status,
+                                      category: widget.category,
+                                      staff: widget.staff,
+                                      isCalled: widget.isCalled,
+                                      searchKey: widget.searchKey,
+                                      scrollToIndex: widget.scrollToIndex,
+                                      leadType: widget.leadType1,
+                                    ),
+                                  ),
                                 );
                               },
                               child: Container(
                                 height: 25,
                                 width: 25,
                                 decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.white),
-                                    shape: BoxShape.circle),
+                                  border: Border.all(color: Colors.white),
+                                  shape: BoxShape.circle,
+                                ),
                                 child: const Icon(
                                   Icons.arrow_back_ios_outlined,
                                   color: Colors.white,
@@ -253,13 +301,13 @@ class _AddFollowupState extends State<AddFollowup> {
                                 ),
                               ),
                             ),
-                            const SizedBox(
-                              width: 25,
-                            ),
+                            const SizedBox(width: 25),
                             const Text(
                               'Add Followup',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              ),
                             ),
                           ],
                         ),
@@ -271,8 +319,11 @@ class _AddFollowupState extends State<AddFollowup> {
               body: commonDetails != null
                   ? SingleChildScrollView(
                       child: Padding(
-                        padding:
-                            const EdgeInsets.only(left: 15, right: 15, top: 20),
+                        padding: const EdgeInsets.only(
+                          left: 15,
+                          right: 15,
+                          top: 20,
+                        ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
@@ -281,21 +332,24 @@ class _AddFollowupState extends State<AddFollowup> {
                               readOnly: true,
                               onTap: () async {
                                 await showDatePicker(
-                                        context: context,
-                                        initialDate: DateTime.now(),
-                                        firstDate: DateTime.now(),
-                                        lastDate: DateTime(2100))
-                                    .then((selectedDate) {
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime.now(),
+                                  lastDate: DateTime(2100),
+                                ).then((selectedDate) {
                                   if (selectedDate != null) {
                                     showTimePicker(
-                                            context: context,
-                                            initialTime: TimeOfDay.now())
-                                        .then((selectedTime) {
+                                      context: context,
+                                      initialTime: TimeOfDay.now(),
+                                    ).then((selectedTime) {
                                       String newDate = selectedDate.toString();
                                       newDate = newDate.substring(
-                                          0, newDate.indexOf(" "));
-                                      String convertedNewDate =
-                                          getYmdFromDmy(newDate);
+                                        0,
+                                        newDate.indexOf(" "),
+                                      );
+                                      String convertedNewDate = getYmdFromDmy(
+                                        newDate,
+                                      );
                                       if (selectedTime != null) {
                                         calledDate1.text =
                                             "$convertedNewDate ${selectedTime.format(context)}";
@@ -305,108 +359,313 @@ class _AddFollowupState extends State<AddFollowup> {
                                 });
                               },
                               decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.only(
-                                      left: 10, top: 2, bottom: 2),
-                                  labelText: 'Called Date',
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  prefixIcon: Icon(Icons.calendar_month_sharp,
-                                      color: Colors.grey),
-                                  border: OutlineInputBorder(),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                  ),
-                                  labelStyle: TextStyle(color: Colors.grey)),
+                                contentPadding: EdgeInsets.only(
+                                  left: 10,
+                                  top: 2,
+                                  bottom: 2,
+                                ),
+                                labelText: 'Called Date',
+                                fillColor: Colors.white,
+                                filled: true,
+                                prefixIcon: Icon(
+                                  Icons.calendar_month_sharp,
+                                  color: Colors.grey,
+                                ),
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                                labelStyle: TextStyle(color: Colors.grey),
+                              ),
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
+                            const SizedBox(height: 15),
                             TextFormField(
                               onTap: () {
                                 showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        scrollable: true,
-                                        title: const Text('Status'),
-                                        content: ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: commonDetails!
-                                              .data!.callResultNew!.length,
-                                          itemBuilder: (context, ind) {
-                                            return InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  callResult = commonDetails!
-                                                      .data!
-                                                      .callResultNew![ind]
-                                                      .callResultNew
-                                                      .toString();
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      scrollable: true,
+                                      title: const Text('Status'),
+                                      content: ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: commonDetails!
+                                            .data!
+                                            .callResultNew!
+                                            .length,
+                                        itemBuilder: (context, ind) {
+                                          return InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                callResult = commonDetails!
+                                                    .data!
+                                                    .callResultNew![ind]
+                                                    .callResultNew
+                                                    .toString();
 
-                                                  callResultId = commonDetails!
-                                                      .data!
-                                                      .callResultNew![ind]
-                                                      .callResultIdNew
-                                                      .toString();
-                                                  if (callResultId != '2') {
-                                                    nextFollowupDate = '';
-                                                    checked=false;
-                                                  }
-                                                  Navigator.pop(context, true);
-                                                });
-                                              },
-                                              child: SizedBox(
-                                                height: 50,
-                                                child: Text(
-                                                  commonDetails!
-                                                      .data!
-                                                      .callResultNew![ind]
-                                                      .callResultNew
-                                                      .toString(),
-                                                  style: const TextStyle(
-                                                      fontSize: 18),
+                                                callResultId = commonDetails!
+                                                    .data!
+                                                    .callResultNew![ind]
+                                                    .callResultIdNew
+                                                    .toString();
+                                                if (callResultId != '2') {
+                                                  nextFollowupDate = '';
+                                                  checked = false;
+                                                }
+                                                Navigator.pop(context, true);
+                                              });
+                                            },
+                                            child: SizedBox(
+                                              height: 50,
+                                              child: Text(
+                                                commonDetails!
+                                                    .data!
+                                                    .callResultNew![ind]
+                                                    .callResultNew
+                                                    .toString(),
+                                                style: const TextStyle(
+                                                  fontSize: 18,
                                                 ),
                                               ),
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    });
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                );
                               },
                               maxLines: 1,
                               readOnly: true,
                               controller: callResultVal,
                               decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.only(
-                                      left: 10, top: 2, bottom: 2),
-                                  labelText: 'Call Result',
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  prefixIcon: Icon(
-                                      Icons.arrow_drop_down_circle_outlined,
-                                      color: Colors.grey),
-                                  border: OutlineInputBorder(),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                  ),
-                                  labelStyle: TextStyle(color: Colors.grey)),
+                                contentPadding: EdgeInsets.only(
+                                  left: 10,
+                                  top: 2,
+                                  bottom: 2,
+                                ),
+                                labelText: 'Lead Status',
+                                fillColor: Colors.white,
+                                filled: true,
+                                prefixIcon: Icon(
+                                  Icons.arrow_drop_down_circle_outlined,
+                                  color: Colors.grey,
+                                ),
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                                labelStyle: TextStyle(color: Colors.grey),
+                              ),
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            if(callResultId=='4'&& commonDetails!.data!.customerAddPermission==true)
-                              CheckboxListTile(
-                                  title: const Text('Add  Client'),
-                                  value: addClient, // initial value of the checkbox
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      addClient=value!;
-                                    });
+                            const SizedBox(height: 15),
 
+                            // callResultId == "3"
+                            //     ?
+                                 Padding(
+                                    padding: const EdgeInsets.only(bottom: 15),
+                                    child: TextFormField(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              scrollable: true,
+                                              title: const Text('Reason'),
+                                              content: SizedBox(
+                                                height:
+                                                    MediaQuery.of(
+                                                      context,
+                                                    ).size.height *
+                                                    .32,
+                                                width:
+                                                    MediaQuery.of(
+                                                      context,
+                                                    ).size.height *
+                                                    .8,
+                                                child:
+                                                    callResultReason!
+                                                        .data!
+                                                        .isEmpty
+                                                    ? const Center(
+                                                        child: Text(
+                                                          "Reason list is Empty...",
+                                                          style: TextStyle(
+                                                            color: Colors.red,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : ListView.builder(
+                                                        shrinkWrap: true,
+                                                        itemCount:
+                                                            callResultReason!
+                                                                .data!
+                                                                .length,
+                                                        itemBuilder: (context, ind) {
+                                                          return InkWell(
+                                                            onTap: () {
+                                                              setState(() {
+                                                                callResultReasonName =
+                                                                    callResultReason!
+                                                                        .data![ind]
+                                                                        .reason
+                                                                        .toString();
+                                                                callResultReasonId =
+                                                                    callResultReason!
+                                                                        .data![ind]
+                                                                        .id
+                                                                        .toString();
+                                                                Navigator.pop(
+                                                                  context,
+                                                                  true,
+                                                                );
+                                                              });
+                                                            },
+                                                            child: SizedBox(
+                                                              height: 50,
+                                                              child: Text(
+                                                                callResultReason!
+                                                                    .data![ind]
+                                                                    .reason
+                                                                    .toString(),
+                                                                style:
+                                                                    const TextStyle(
+                                                                      fontSize:
+                                                                          18,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      maxLines: 1,
+                                      readOnly: true,
+                                      controller: callReasonVal,
+                                      decoration: const InputDecoration(
+                                        contentPadding: EdgeInsets.only(
+                                          left: 10,
+                                          top: 2,
+                                          bottom: 2,
+                                        ), 
+                                        labelText: 'Reason',
+                                        fillColor: Colors.white,
+                                        filled: true,
+                                        prefixIcon: Icon(
+                                          Icons.reply_all_sharp,
+                                          color: Colors.grey,
+                                        ),
+                                        border: OutlineInputBorder(),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        labelStyle: TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                               // : const SizedBox(),
+                            TextFormField(
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      scrollable: true,
+                                      title: const Text('Status'),
+                                      content: ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: commonDetails!
+                                            .data!
+                                            .callStatus!
+                                            .length,
+                                        itemBuilder: (context, ind) {
+                                          return InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                callStatus = commonDetails!
+                                                    .data!
+                                                    .callStatus![ind]
+                                                    .callResponse
+                                                    .toString();
+
+                                                callStatusId = commonDetails!
+                                                    .data!
+                                                    .callStatus![ind]
+                                                    .callResponseId
+                                                    .toString();
+                                                // if (callResultId != '2') {
+                                                //   nextFollowupDate = '';
+                                                //   checked=false;
+                                                // }
+                                                Navigator.pop(context, true);
+                                              });
+                                            },
+                                            child: SizedBox(
+                                              height: 50,
+                                              child: Text(
+                                                commonDetails!
+                                                    .data!
+                                                    .callStatus![ind]
+                                                    .callResponse
+                                                    .toString(),
+                                                style: const TextStyle(
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    );
                                   },
-                                  controlAffinity:
-                                  ListTileControlAffinity
-                                      .leading
+                                );
+                              },
+                              maxLines: 1,
+                              readOnly: true,
+                              controller: callStatusVal,
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.only(
+                                  left: 10,
+                                  top: 2,
+                                  bottom: 2,
+                                ),
+                                labelText: 'Call Status',
+                                fillColor: Colors.white,
+                                filled: true,
+                                prefixIcon: Icon(
+                                  Icons.arrow_drop_down_circle_outlined,
+                                  color: Colors.grey,
+                                ),
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                                labelStyle: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                            const SizedBox(height: 15),
+                            if (callResultId == '4' &&
+                                commonDetails!.data!.customerAddPermission ==
+                                    true)
+                              CheckboxListTile(
+                                title: const Text('Add  Client'),
+                                value:
+                                    addClient, // initial value of the checkbox
+                                onChanged: (bool? value) {
+                                  setState(() {
+                                    addClient = value!;
+                                  });
+                                },
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
                               ),
                             if (callResultId == '2')
                               TextFormField(
@@ -414,22 +673,25 @@ class _AddFollowupState extends State<AddFollowup> {
                                 readOnly: true,
                                 onTap: () async {
                                   await showDatePicker(
-                                          context: context,
-                                          initialDate: DateTime.now(),
-                                          firstDate: DateTime.now(),
-                                          lastDate: DateTime(2100))
-                                      .then((selectedDate) {
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime.now(),
+                                    lastDate: DateTime(2100),
+                                  ).then((selectedDate) {
                                     if (selectedDate != null) {
                                       showTimePicker(
-                                              context: context,
-                                              initialTime: TimeOfDay.now())
-                                          .then((selectedTime) {
-                                        String newDate =
-                                            selectedDate.toString();
+                                        context: context,
+                                        initialTime: TimeOfDay.now(),
+                                      ).then((selectedTime) {
+                                        String newDate = selectedDate
+                                            .toString();
                                         newDate = newDate.substring(
-                                            0, newDate.indexOf(" "));
-                                        String convertedNewDate =
-                                            getYmdFromDmy(newDate);
+                                          0,
+                                          newDate.indexOf(" "),
+                                        );
+                                        String convertedNewDate = getYmdFromDmy(
+                                          newDate,
+                                        );
                                         if (selectedTime != null) {
                                           nextFollowupDate1.text =
                                               "$convertedNewDate ${selectedTime.format(context)}";
@@ -439,24 +701,26 @@ class _AddFollowupState extends State<AddFollowup> {
                                   });
                                 },
                                 decoration: const InputDecoration(
-                                    contentPadding: EdgeInsets.only(
-                                        left: 10, top: 2, bottom: 2),
-                                    labelText: 'Next Followup Date',
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    prefixIcon: Icon(Icons.calendar_month_sharp,
-                                        color: Colors.grey),
-                                    border: OutlineInputBorder(),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.grey),
-                                    ),
-                                    labelStyle: TextStyle(color: Colors.grey)),
+                                  contentPadding: EdgeInsets.only(
+                                    left: 10,
+                                    top: 2,
+                                    bottom: 2,
+                                  ),
+                                  labelText: 'Next Followup Date',
+                                  fillColor: Colors.white,
+                                  filled: true,
+                                  prefixIcon: Icon(
+                                    Icons.calendar_month_sharp,
+                                    color: Colors.grey,
+                                  ),
+                                  border: OutlineInputBorder(),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey),
+                                  ),
+                                  labelStyle: TextStyle(color: Colors.grey),
+                                ),
                               ),
-                            if (callResultId == '2')
-                              const SizedBox(
-                                height: 10,
-                              ),
+                            if (callResultId == '2') const SizedBox(height: 10),
                             if (callResultId == '2')
                               Row(
                                 children: [
@@ -466,7 +730,9 @@ class _AddFollowupState extends State<AddFollowup> {
                                       title: const Text(
                                         "Remind Me Before",
                                         style: TextStyle(
-                                            fontSize: 13, color: Colors.black),
+                                          fontSize: 13,
+                                          color: Colors.black,
+                                        ),
                                       ),
                                       value: checked,
                                       onChanged: (newValue) {
@@ -478,92 +744,110 @@ class _AddFollowupState extends State<AddFollowup> {
                                           .leading, //  <-- leading Checkbox
                                     ),
                                   ),
-                                  if (checked == true)SizedBox(
-                                    width: 90,
-                                    child: Container(
-                                      width:80,
-                                      foregroundDecoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5.0),
-                                        border: Border.all(
-                                          color: Colors.blueGrey,
-                                          width: 2.0,
-                                        ),
-                                      ),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            flex: 1,
-                                            child: TextFormField(
-                                              textAlign: TextAlign.center,
-                                              decoration: InputDecoration(
-                                                contentPadding: const EdgeInsets.all(8.0),
-                                                border: OutlineInputBorder(
-                                                  borderRadius: BorderRadius.circular(5.0),
-                                                ),
-                                              ),
-                                              controller: timeBefore,
-                                              keyboardType: const TextInputType.numberWithOptions(
-                                                decimal: false,
-                                                signed: true,
-                                              ),
-
-                                            ),
+                                  if (checked == true)
+                                    SizedBox(
+                                      width: 90,
+                                      child: Container(
+                                        width: 80,
+                                        foregroundDecoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            5.0,
                                           ),
-                                          SizedBox(
-                                            height: 38.0,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: <Widget>[
-                                                Container(
-                                                  decoration: const BoxDecoration(
-                                                    border: Border(
-                                                      bottom: BorderSide(
-                                                        width: 0.5,
+                                          border: Border.all(
+                                            color: Colors.blueGrey,
+                                            width: 2.0,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              flex: 1,
+                                              child: TextFormField(
+                                                textAlign: TextAlign.center,
+                                                decoration: InputDecoration(
+                                                  contentPadding:
+                                                      const EdgeInsets.all(8.0),
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          5.0,
+                                                        ),
+                                                  ),
+                                                ),
+                                                controller: timeBefore,
+                                                keyboardType:
+                                                    const TextInputType.numberWithOptions(
+                                                      decimal: false,
+                                                      signed: true,
+                                                    ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 38.0,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Container(
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                          border: Border(
+                                                            bottom: BorderSide(
+                                                              width: 0.5,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                    child: InkWell(
+                                                      child: const Icon(
+                                                        Icons.arrow_drop_up,
+                                                        size: 18.0,
                                                       ),
+                                                      onTap: () {
+                                                        int currentValue =
+                                                            int.parse(
+                                                              timeBefore.text,
+                                                            );
+                                                        setState(() {
+                                                          currentValue++;
+                                                          timeBefore.text =
+                                                              (currentValue)
+                                                                  .toString(); // incrementing value
+                                                        });
+                                                      },
                                                     ),
                                                   ),
-                                                  child: InkWell(
+                                                  InkWell(
                                                     child: const Icon(
-                                                      Icons.arrow_drop_up,
+                                                      Icons.arrow_drop_down,
                                                       size: 18.0,
                                                     ),
                                                     onTap: () {
-                                                      int currentValue = int.parse(timeBefore.text);
+                                                      int currentValue =
+                                                          int.parse(
+                                                            timeBefore.text,
+                                                          );
                                                       setState(() {
-                                                        currentValue++;
-                                                        timeBefore.text = (currentValue)
-                                                            .toString(); // incrementing value
+                                                        currentValue--;
+                                                        timeBefore.text =
+                                                            (currentValue > 0
+                                                                    ? currentValue
+                                                                    : 0)
+                                                                .toString(); // decrementing value
                                                       });
                                                     },
                                                   ),
-                                                ),
-                                                InkWell(
-                                                  child: const Icon(
-                                                    Icons.arrow_drop_down,
-                                                    size: 18.0,
-                                                  ),
-                                                  onTap: () {
-                                                    int currentValue = int.parse(timeBefore.text);
-                                                    setState(() {
-
-                                                      currentValue--;
-                                                      timeBefore.text =
-                                                          (currentValue > 0 ? currentValue : 0)
-                                                              .toString(); // decrementing value
-                                                    });
-                                                  },
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
                                 ],
                               ),
-                            if (checked == true)const SizedBox(height: 10,),
+                            if (checked == true) const SizedBox(height: 10),
                             // if (checked == true)
                             //   Padding(
                             //     padding: const EdgeInsets.only(top: 10,bottom: 15),
@@ -587,106 +871,112 @@ class _AddFollowupState extends State<AddFollowup> {
                             //     ),
                             //   ),
 
-                            TextFormField(
-                              controller: cost,
-                              keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.only(
-                                      left: 10, top: 2, bottom: 2),
-                                  labelText: 'Cost',
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  prefixIcon: Icon(Icons.currency_rupee,
-                                      color: Colors.grey),
-                                  border: OutlineInputBorder(),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                  ),
-                                  labelStyle: TextStyle(color: Colors.grey)),
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
+                            // TextFormField(
+                            //   controller: cost,
+                            //   keyboardType: TextInputType.number,
+                            //   decoration: const InputDecoration(
+                            //       contentPadding: EdgeInsets.only(
+                            //           left: 10, top: 2, bottom: 2),
+                            //       labelText: 'Cost',
+                            //       fillColor: Colors.white,
+                            //       filled: true,
+                            //       prefixIcon: Icon(Icons.currency_rupee,
+                            //           color: Colors.grey),
+                            //       border: OutlineInputBorder(),
+                            //       focusedBorder: OutlineInputBorder(
+                            //         borderSide: BorderSide(color: Colors.grey),
+                            //       ),
+                            //       labelStyle: TextStyle(color: Colors.grey)),
+                            // ),
+                            // const SizedBox(
+                            //   height: 15,
+                            // ),
                             TextFormField(
                               controller: leadTypeVal,
                               onTap: () {
                                 showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        scrollable: true,
-                                        title: const Text('Lead Category'),
-                                        content: ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: commonDetails!
-                                              .data!.leadCategory!.length,
-                                          itemBuilder: (context, ind) {
-                                            return InkWell(
-                                              onTap: () async {
-                                                leadSubTypeList =
-                                                    await HttpService
-                                                        .leadSubType(
-                                                            commonDetails!
-                                                                .data!
-                                                                .leadCategory![
-                                                                    ind]
-                                                                .leadCategoryId
-                                                                .toString());
-                                                setState(() {
-                                                  leadSubType =
-                                                      'Lead Sub Category';
-                                                  leadSubTypeId = '';
-                                                  leadType = commonDetails!
-                                                      .data!
-                                                      .leadCategory![ind]
-                                                      .leadCategory
-                                                      .toString();
-                                                  leadTypeId = commonDetails!
-                                                      .data!
-                                                      .leadCategory![ind]
-                                                      .leadCategoryId
-                                                      .toString();
-                                                  Navigator.pop(context, true);
-                                                });
-                                              },
-                                              child: SizedBox(
-                                                height: 50,
-                                                child: Text(
-                                                  commonDetails!
-                                                      .data!
-                                                      .leadCategory![ind]
-                                                      .leadCategory
-                                                      .toString(),
-                                                  style: const TextStyle(
-                                                      fontSize: 18),
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      scrollable: true,
+                                      title: const Text('Lead Category'),
+                                      content: ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: commonDetails!
+                                            .data!
+                                            .leadCategory!
+                                            .length,
+                                        itemBuilder: (context, ind) {
+                                          return InkWell(
+                                            onTap: () async {
+                                              leadSubTypeList =
+                                                  await HttpService.leadSubType(
+                                                    commonDetails!
+                                                        .data!
+                                                        .leadCategory![ind]
+                                                        .leadCategoryId
+                                                        .toString(),
+                                                  );
+                                              setState(() {
+                                                leadSubType =
+                                                    'Lead Sub Category';
+                                                leadSubTypeId = '';
+                                                leadType = commonDetails!
+                                                    .data!
+                                                    .leadCategory![ind]
+                                                    .leadCategory
+                                                    .toString();
+                                                leadTypeId = commonDetails!
+                                                    .data!
+                                                    .leadCategory![ind]
+                                                    .leadCategoryId
+                                                    .toString();
+                                                Navigator.pop(context, true);
+                                              });
+                                            },
+                                            child: SizedBox(
+                                              height: 50,
+                                              child: Text(
+                                                commonDetails!
+                                                    .data!
+                                                    .leadCategory![ind]
+                                                    .leadCategory
+                                                    .toString(),
+                                                style: const TextStyle(
+                                                  fontSize: 18,
                                                 ),
                                               ),
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    });
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                );
                               },
                               maxLines: 1,
                               readOnly: true,
                               decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.only(
-                                      left: 10, top: 2, bottom: 2),
-                                  labelText: 'Lead Category',
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  prefixIcon: Icon(
-                                      Icons.arrow_drop_down_circle_outlined,
-                                      color: Colors.grey),
-                                  border: OutlineInputBorder(),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                  ),
-                                  labelStyle: TextStyle(color: Colors.grey)),
+                                contentPadding: EdgeInsets.only(
+                                  left: 10,
+                                  top: 2,
+                                  bottom: 2,
+                                ),
+                                labelText: 'Customer Interested Product',
+                                fillColor: Colors.white,
+                                filled: true,
+                                prefixIcon: Icon(
+                                  Icons.arrow_drop_down_circle_outlined,
+                                  color: Colors.grey,
+                                ),
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                                labelStyle: TextStyle(color: Colors.grey),
+                              ),
                             ),
-                            const SizedBox(
-                              height: 20,
-                            ),
+                            const SizedBox(height: 20),
                             leadSubTypeList != null &&
                                     leadSubTypeList!.data!.isNotEmpty
                                 ? Padding(
@@ -695,74 +985,82 @@ class _AddFollowupState extends State<AddFollowup> {
                                       controller: leadSubTypeVal,
                                       onTap: () {
                                         showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                scrollable: true,
-                                                title: const Text(
-                                                    'Lead Sub Category'),
-                                                content: ListView.builder(
-                                                  shrinkWrap: true,
-                                                  itemCount: leadSubTypeList!
-                                                      .data!.length,
-                                                  itemBuilder:
-                                                      (context, subIndex) {
-                                                    return InkWell(
-                                                      onTap: () async {
-                                                        setState(() {
-                                                          leadSubType =
-                                                              leadSubTypeList!
-                                                                  .data![
-                                                                      subIndex]
-                                                                  .leadSubCategory
-                                                                  .toString();
-                                                          leadSubTypeId =
-                                                              leadSubTypeList!
-                                                                  .data![
-                                                                      subIndex]
-                                                                  .leadSubCategoryId
-                                                                  .toString();
-                                                          Navigator.pop(
-                                                              context, true);
-                                                        });
-                                                      },
-                                                      child: SizedBox(
-                                                        height: 50,
-                                                        child: Text(
-                                                          leadSubTypeList!
-                                                              .data![subIndex]
-                                                              .leadSubCategory
-                                                              .toString(),
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 18),
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              scrollable: true,
+                                              title: const Text(
+                                                'Lead Sub Category',
+                                              ),
+                                              content: ListView.builder(
+                                                shrinkWrap: true,
+                                                itemCount: leadSubTypeList!
+                                                    .data!
+                                                    .length,
+                                                itemBuilder: (context, subIndex) {
+                                                  return InkWell(
+                                                    onTap: () async {
+                                                      setState(() {
+                                                        leadSubType =
+                                                            leadSubTypeList!
+                                                                .data![subIndex]
+                                                                .leadSubCategory
+                                                                .toString();
+                                                        leadSubTypeId =
+                                                            leadSubTypeList!
+                                                                .data![subIndex]
+                                                                .leadSubCategoryId
+                                                                .toString();
+                                                        Navigator.pop(
+                                                          context,
+                                                          true,
+                                                        );
+                                                      });
+                                                    },
+                                                    child: SizedBox(
+                                                      height: 50,
+                                                      child: Text(
+                                                        leadSubTypeList!
+                                                            .data![subIndex]
+                                                            .leadSubCategory
+                                                            .toString(),
+                                                        style: const TextStyle(
+                                                          fontSize: 18,
                                                         ),
                                                       ),
-                                                    );
-                                                  },
-                                                ),
-                                              );
-                                            });
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            );
+                                          },
+                                        );
                                       },
                                       maxLines: 1,
                                       readOnly: true,
                                       decoration: const InputDecoration(
-                                          contentPadding: EdgeInsets.only(
-                                              left: 10, top: 2, bottom: 2),
-                                          labelText: 'Lead Sub Category',
-                                          fillColor: Colors.white,
-                                          filled: true,
-                                          prefixIcon: Icon(
-                                              Icons
-                                                  .arrow_drop_down_circle_outlined,
-                                              color: Colors.grey),
-                                          border: OutlineInputBorder(),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.grey),
+                                        contentPadding: EdgeInsets.only(
+                                          left: 10,
+                                          top: 2,
+                                          bottom: 2,
+                                        ),
+                                        labelText: 'Lead Sub Category',
+                                        fillColor: Colors.white,
+                                        filled: true,
+                                        prefixIcon: Icon(
+                                          Icons.arrow_drop_down_circle_outlined,
+                                          color: Colors.grey,
+                                        ),
+                                        border: OutlineInputBorder(),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                            color: Colors.grey,
                                           ),
-                                          labelStyle:
-                                              TextStyle(color: Colors.grey)),
+                                        ),
+                                        labelStyle: TextStyle(
+                                          color: Colors.grey,
+                                        ),
+                                      ),
                                     ),
                                   )
                                 : const SizedBox(),
@@ -771,85 +1069,95 @@ class _AddFollowupState extends State<AddFollowup> {
                               controller: priorityVal,
                               onTap: () {
                                 showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        scrollable: true,
-                                        title: const Text('Priority'),
-                                        content: ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: commonDetails!
-                                              .data!.priority!.length,
-                                          itemBuilder: (context, ind) {
-                                            return InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  priority = commonDetails!
-                                                      .data!
-                                                      .priority![ind]
-                                                      .priority
-                                                      .toString();
-                                                  priorityId = commonDetails!
-                                                      .data!
-                                                      .priority![ind]
-                                                      .priorityId
-                                                      .toString();
-                                                  Navigator.pop(context, true);
-                                                });
-                                              },
-                                              child: SizedBox(
-                                                height: 50,
-                                                child: Text(
-                                                  commonDetails!.data!
-                                                      .priority![ind].priority
-                                                      .toString(),
-                                                  style: const TextStyle(
-                                                      fontSize: 18),
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      scrollable: true,
+                                      title: const Text('Priority'),
+                                      content: ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: commonDetails!
+                                            .data!
+                                            .priority!
+                                            .length,
+                                        itemBuilder: (context, ind) {
+                                          return InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                priority = commonDetails!
+                                                    .data!
+                                                    .priority![ind]
+                                                    .priority
+                                                    .toString();
+                                                priorityId = commonDetails!
+                                                    .data!
+                                                    .priority![ind]
+                                                    .priorityId
+                                                    .toString();
+                                                Navigator.pop(context, true);
+                                              });
+                                            },
+                                            child: SizedBox(
+                                              height: 50,
+                                              child: Text(
+                                                commonDetails!
+                                                    .data!
+                                                    .priority![ind]
+                                                    .priority
+                                                    .toString(),
+                                                style: const TextStyle(
+                                                  fontSize: 18,
                                                 ),
                                               ),
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    });
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                );
                               },
                               maxLines: 1,
                               readOnly: true,
                               decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.only(
-                                      left: 10, top: 2, bottom: 2),
-                                  labelText: 'Priority',
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  prefixIcon: Icon(
-                                      Icons.arrow_drop_down_circle_outlined,
-                                      color: Colors.grey),
-                                  border: OutlineInputBorder(),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                  ),
-                                  labelStyle: TextStyle(color: Colors.grey)),
+                                contentPadding: EdgeInsets.only(
+                                  left: 10,
+                                  top: 2,
+                                  bottom: 2,
+                                ),
+                                labelText: 'Priority',
+                                fillColor: Colors.white,
+                                filled: true,
+                                prefixIcon: Icon(
+                                  Icons.arrow_drop_down_circle_outlined,
+                                  color: Colors.grey,
+                                ),
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                                labelStyle: TextStyle(color: Colors.grey),
+                              ),
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
+                            const SizedBox(height: 15),
                             TextFormField(
                               controller: address,
                               decoration: const InputDecoration(
-                                  labelText: 'Address',
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  prefixIcon: Icon(Icons.location_on_outlined,
-                                      color: Colors.grey),
-                                  border: OutlineInputBorder(),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                  ),
-                                  labelStyle: TextStyle(color: Colors.grey)),
+                                labelText: 'Address',
+                                fillColor: Colors.white,
+                                filled: true,
+                                prefixIcon: Icon(
+                                  Icons.location_on_outlined,
+                                  color: Colors.grey,
+                                ),
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                                labelStyle: TextStyle(color: Colors.grey),
+                              ),
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
+                            const SizedBox(height: 15),
                             SizedBox(
                               height: 30,
                               child: ListView.builder(
@@ -859,34 +1167,43 @@ class _AddFollowupState extends State<AddFollowup> {
                                 itemBuilder: (context, i) {
                                   return Padding(
                                     padding: const EdgeInsets.only(
-                                        left: 5, right: 10),
+                                      left: 5,
+                                      right: 10,
+                                    ),
                                     child: InkWell(
                                       onTap: () {
                                         setState(() {
                                           remarks.text = commonDetails!
-                                              .data!.callResponse![i]
+                                              .data!
+                                              .callResponse![i]
                                               .toString();
                                         });
                                       },
                                       child: Container(
                                         height: 30,
                                         decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Colors.grey, width: 0),
-                                            color: Colors.white,
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(6))),
+                                          border: Border.all(
+                                            color: Colors.grey,
+                                            width: 0,
+                                          ),
+                                          color: Colors.white,
+                                          borderRadius: const BorderRadius.all(
+                                            Radius.circular(6),
+                                          ),
+                                        ),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
                                             Padding(
                                               padding: const EdgeInsets.only(
-                                                  left: 8, right: 8),
+                                                left: 8,
+                                                right: 8,
+                                              ),
                                               child: Text(
                                                 commonDetails!
-                                                    .data!.callResponse![i]
+                                                    .data!
+                                                    .callResponse![i]
                                                     .toString(),
                                                 style: const TextStyle(
                                                   color: Color(0xFF717171),
@@ -901,26 +1218,23 @@ class _AddFollowupState extends State<AddFollowup> {
                                 },
                               ),
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
+                            const SizedBox(height: 15),
                             TextFormField(
                               controller: remarks,
                               maxLines: 2,
                               decoration: const InputDecoration(
-                                  labelText: 'Remarks',
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  //prefixIcon: Icon(myIcon, color: prefixIconColor),
-                                  border: OutlineInputBorder(),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey),
-                                  ),
-                                  labelStyle: TextStyle(color: Colors.grey)),
+                                labelText: 'Remarks',
+                                fillColor: Colors.white,
+                                filled: true,
+                                //prefixIcon: Icon(myIcon, color: prefixIconColor),
+                                border: OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey),
+                                ),
+                                labelStyle: TextStyle(color: Colors.grey),
+                              ),
                             ),
-                            const SizedBox(
-                              height: 15,
-                            ),
+                            const SizedBox(height: 15),
                             // TextFormField(
                             //   controller: calledDate1,
                             //   readOnly: true,
@@ -1581,80 +1895,104 @@ class _AddFollowupState extends State<AddFollowup> {
                             // ),
                             InkWell(
                               onTap: () async {
-                                final connectivityResult =
-                                    await (Connectivity().checkConnectivity());
+                                final connectivityResult = await (Connectivity()
+                                    .checkConnectivity());
                                 if (connectivityResult ==
                                         ConnectivityResult.mobile ||
                                     connectivityResult ==
                                         ConnectivityResult.wifi) {
                                   if (callResultId == '') {
                                     Common.toastMessaage(
-                                        'Choose any Status', Colors.red);
+                                      'Choose any Status',
+                                      Colors.red,
+                                    );
                                   } else if (callResultId == '2' &&
                                       nextFollowupDate1.text.isEmpty) {
                                     Common.toastMessaage(
-                                        'Choose next followup date',
-                                        Colors.red);
+                                      'Choose next followup date',
+                                      Colors.red,
+                                    );
                                   } else {
                                     if (context.mounted) {
                                       Common.showProgressDialog(
-                                          context, "Loading..");
+                                        context,
+                                        "Loading..",
+                                      );
                                     }
                                     AddLeadFollowupModel object1 =
                                         await HttpService.addLeadsFollowup(
-                                            widget.token,
-                                            callResultId,
-                                            nextFollowupDate1.text,
-                                            cost.text,
-                                            address.text,
-                                            leadTypeId,
-                                            leadSubTypeId,
-                                            remarks.text,
-                                            widget.callMasterId,
-                                            calledDate1.text,
-                                            callHistoryId,
-                                            priorityId,checked,timeBefore.text,addClient);
+                                          widget.token,
+                                          callResultId,
+                                          callStatusId,
+                                          nextFollowupDate1.text,
+                                          cost.text,
+                                          address.text,
+                                          leadTypeId,
+                                          leadSubTypeId,
+                                          remarks.text,
+                                          widget.callMasterId,
+                                          calledDate1.text,
+                                          callHistoryId,
+                                          priorityId,
+                                          checked,
+                                          timeBefore.text,
+                                          addClient,
+                                        );
                                     if (object1.status == true) {
                                       Common.toastMessaage(
-                                          object1.message, Colors.green);
+                                        object1.message,
+                                        Colors.green,
+                                      );
                                       if (context.mounted) {
-                                        if(object1.data!='' && commonDetails!.data!.customerAddPermission==true && commonDetails!.data
-                                        !.customerAddInvoicePermission==true)
-                                          {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(builder: (context) => AddInvoice(widget.token!,object1.data!)),
-                                            );
-                                          }
-                                        else{
+                                        if (object1.data != '' &&
+                                            commonDetails!
+                                                    .data!
+                                                    .customerAddPermission ==
+                                                true &&
+                                            commonDetails!
+                                                    .data!
+                                                    .customerAddInvoicePermission ==
+                                                true) {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                                builder: (context) => LeadDetails(
-                                                  widget.token!,
-                                                  widget.editLead,
-                                                  widget.deleteLead,
-                                                  widget.cloudCall,
-                                                  widget.callMasterId,
-                                                  pageName: widget.pageName,
-                                                  status: widget.status,
-                                                  staff: widget.staff,
-                                                  isCalled: widget.isCalled,
-                                                  fromDate: widget.fromDate,
-                                                  toDate: widget.toDate,
-                                                  category: widget.category,
-                                                  scrollToIndex:
-                                                  widget.scrollToIndex,
-                                                  searchKey: widget.searchKey,
-                                                  leadType: widget.leadType1,
-                                                )),
+                                              builder: (context) => AddInvoice(
+                                                widget.token!,
+                                                object1.data!,
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => LeadDetails(
+                                                widget.token!,
+                                                widget.editLead,
+                                                widget.deleteLead,
+                                                widget.cloudCall,
+                                                widget.callMasterId,
+                                                pageName: widget.pageName,
+                                                status: widget.status,
+                                                staff: widget.staff,
+                                                isCalled: widget.isCalled,
+                                                fromDate: widget.fromDate,
+                                                toDate: widget.toDate,
+                                                category: widget.category,
+                                                scrollToIndex:
+                                                    widget.scrollToIndex,
+                                                searchKey: widget.searchKey,
+                                                leadType: widget.leadType1,
+                                              ),
+                                            ),
                                           );
                                         }
-
                                       }
                                     } else {
                                       Common.toastMessaage(
-                                          object1.message, Colors.red);
+                                        object1.message,
+                                        Colors.red,
+                                      );
                                       if (context.mounted) {
                                         Navigator.pop(context);
                                       }
@@ -1665,7 +2003,8 @@ class _AddFollowupState extends State<AddFollowup> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
-                                            'No Network Found..Try Again Later..'),
+                                          'No Network Found..Try Again Later..',
+                                        ),
                                         backgroundColor: Colors.redAccent,
                                         elevation: 10,
                                         behavior: SnackBarBehavior.floating,
@@ -1683,25 +2022,28 @@ class _AddFollowupState extends State<AddFollowup> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: const Center(
-                                  child: Text('Submit',
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500)),
+                                  child: Text(
+                                    'Submit',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                            const SizedBox(
-                              height: 20,
-                            ),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       ),
                     )
                   : Center(
-                child: Lottie.asset('assets/main/loading.json',
-                    fit: BoxFit.fill),
-              ),
+                      child: Lottie.asset(
+                        'assets/main/loading.json',
+                        fit: BoxFit.fill,
+                      ),
+                    ),
             ),
           )
         : Scaffold(
@@ -1726,9 +2068,7 @@ class _AddFollowupState extends State<AddFollowup> {
                     'No Network Found !',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(
-                    height: 15,
-                  ),
+                  const SizedBox(height: 15),
                   InkWell(
                     onTap: () {
                       getData();
@@ -1747,9 +2087,10 @@ class _AddFollowupState extends State<AddFollowup> {
                             child: Text(
                               'Try Again',
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold),
+                                color: Colors.black,
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
@@ -1758,6 +2099,7 @@ class _AddFollowupState extends State<AddFollowup> {
                   ),
                 ],
               ),
-            ));
+            ),
+          );
   }
 }

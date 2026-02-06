@@ -1055,7 +1055,7 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                       .start,
                                                               children: [
                                                                 const Text(
-                                                                    'Category',
+                                                                    'Customer Interested Product',
                                                                     style:
                                                                         TextStyle(
                                                                       fontSize:
@@ -1076,7 +1076,7 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                       width: MediaQuery.of(context)
                                                                               .size
                                                                               .width *
-                                                                          0.43,
+                                                                          0.9,
                                                                       decoration: BoxDecoration(
                                                                           border: Border.all(
                                                                               color: Colors
@@ -1099,7 +1099,7 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                             padding:
                                                                                 EdgeInsets.only(left: 20),
                                                                             child:
-                                                                                Text('category'),
+                                                                                Text('Customer Interested Product'),
                                                                           ),
                                                                           value:
                                                                               category,
@@ -1128,9 +1128,183 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                 ),
                                                               ],
                                                             ),
-                                                            const SizedBox(
-                                                              width: 12,
-                                                            ),
+                                                            // const SizedBox(
+                                                            //   width: 12,
+                                                            // ),
+                                                            // Column(
+                                                            //   mainAxisAlignment:
+                                                            //       MainAxisAlignment
+                                                            //           .start,
+                                                            //   crossAxisAlignment:
+                                                            //       CrossAxisAlignment
+                                                            //           .start,
+                                                            //   children: [
+                                                            //     const Text(
+                                                            //         'Lead Status',
+                                                            //         style:
+                                                            //             TextStyle(
+                                                            //           fontSize:
+                                                            //               15,
+                                                            //           fontWeight:
+                                                            //               FontWeight
+                                                            //                   .w500,
+                                                            //         )),
+                                                            //     const SizedBox(
+                                                            //       height: 5,
+                                                            //     ),
+                                                            //     FormField<
+                                                            //         String>(
+                                                            //       builder: (FormFieldState<
+                                                            //               String>
+                                                            //           state) {
+                                                            //         return Container(
+                                                            //           width: MediaQuery.of(context)
+                                                            //                   .size
+                                                            //                   .width *
+                                                            //               0.43,
+                                                            //           decoration: BoxDecoration(
+                                                            //               border: Border.all(
+                                                            //                   color: Colors
+                                                            //                       .grey.shade900,
+                                                            //                   width:
+                                                            //                       0),
+                                                            //               color: Colors
+                                                            //                   .white,
+                                                            //               borderRadius: const BorderRadius
+                                                            //                   .all(
+                                                            //                   Radius.circular(5))),
+                                                            //           child:
+                                                            //               DropdownButtonHideUnderline(
+                                                            //             child: DropdownButton<
+                                                            //                 String>(
+                                                            //               isExpanded:
+                                                            //                   true,
+                                                            //               hint:
+                                                            //                   const Padding(
+                                                            //                 padding:
+                                                            //                     EdgeInsets.only(left: 20),
+                                                            //                 child:
+                                                            //                     Text('Status'),
+                                                            //               ),
+                                                            //               value:
+                                                            //                   status,
+                                                            //               items: commonDetails!
+                                                            //                   .data!
+                                                            //                   .callResult!
+                                                            //                   .map((data) {
+                                                            //                 return DropdownMenuItem(
+                                                            //                   value: data.callResultId.toString(),
+                                                            //                   child: Padding(
+                                                            //                     padding: const EdgeInsets.only(left: 20),
+                                                            //                     child: Text(data.callResult.toString()),
+                                                            //                   ),
+                                                            //                 );
+                                                            //               }).toList(),
+                                                            //               onChanged:
+                                                            //                   (newValue) {
+                                                            //                 setState(() {
+                                                            //                   status = newValue;
+                                                            //                 });
+                                                            //               },
+                                                            //             ),
+                                                            //           ),
+                                                            //         );
+                                                            //       },
+                                                            //     ),
+                                                            //   ],
+                                                            // ),
+                                                          ],
+                                                        ),
+                                                         const SizedBox(
+                                                          height: 13,
+                                                        ),
+                                                         Row(
+                                                          children: [
+                                                            // Column(
+                                                            //   mainAxisAlignment:
+                                                            //       MainAxisAlignment
+                                                            //           .start,
+                                                            //   crossAxisAlignment:
+                                                            //       CrossAxisAlignment
+                                                            //           .start,
+                                                            //   children: [
+                                                            //     const Text(
+                                                            //         'Customer Product',
+                                                            //         style:
+                                                            //             TextStyle(
+                                                            //           fontSize:
+                                                            //               15,
+                                                            //           fontWeight:
+                                                            //               FontWeight
+                                                            //                   .w500,
+                                                            //         )),
+                                                            //     const SizedBox(
+                                                            //       height: 5,
+                                                            //     ),
+                                                            //     FormField<
+                                                            //         String>(
+                                                            //       builder: (FormFieldState<
+                                                            //               String>
+                                                            //           state) {
+                                                            //         return Container(
+                                                            //           width: MediaQuery.of(context)
+                                                            //                   .size
+                                                            //                   .width *
+                                                            //               0.43,
+                                                            //           decoration: BoxDecoration(
+                                                            //               border: Border.all(
+                                                            //                   color: Colors
+                                                            //                       .grey.shade900,
+                                                            //                   width:
+                                                            //                       0),
+                                                            //               color: Colors
+                                                            //                   .white,
+                                                            //               borderRadius: const BorderRadius
+                                                            //                   .all(
+                                                            //                   Radius.circular(5))),
+                                                            //           child:
+                                                            //               DropdownButtonHideUnderline(
+                                                            //             child: DropdownButton<
+                                                            //                 String>(
+                                                            //               isExpanded:
+                                                            //                   true,
+                                                            //               hint:
+                                                            //                   const Padding(
+                                                            //                 padding:
+                                                            //                     EdgeInsets.only(left: 20),
+                                                            //                 child:
+                                                            //                     Text('category'),
+                                                            //               ),
+                                                            //               value:
+                                                            //                   category,
+                                                            //               items: commonDetails!
+                                                            //                   .data!
+                                                            //                   .leadCategory!
+                                                            //                   .map((data) {
+                                                            //                 return DropdownMenuItem(
+                                                            //                   value: data.leadCategoryId.toString(),
+                                                            //                   child: Padding(
+                                                            //                     padding: const EdgeInsets.only(left: 20),
+                                                            //                     child: Text(data.leadCategory.toString()),
+                                                            //                   ),
+                                                            //                 );
+                                                            //               }).toList(),
+                                                            //               onChanged:
+                                                            //                   (newValue) {
+                                                            //                 setState(() {
+                                                            //                   category = newValue;
+                                                            //                 });
+                                                            //               },
+                                                            //             ),
+                                                            //           ),
+                                                            //         );
+                                                            //       },
+                                                            //     ),
+                                                            //   ],
+                                                            // ),
+                                                            // const SizedBox(
+                                                            //   width: 12,
+                                                            // ),
                                                             Column(
                                                               mainAxisAlignment:
                                                                   MainAxisAlignment
@@ -1140,7 +1314,7 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                       .start,
                                                               children: [
                                                                 const Text(
-                                                                    'Status',
+                                                                    'Lead Status',
                                                                     style:
                                                                         TextStyle(
                                                                       fontSize:
@@ -1161,7 +1335,7 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                       width: MediaQuery.of(context)
                                                                               .size
                                                                               .width *
-                                                                          0.43,
+                                                                            0.9,
                                                                       decoration: BoxDecoration(
                                                                           border: Border.all(
                                                                               color: Colors

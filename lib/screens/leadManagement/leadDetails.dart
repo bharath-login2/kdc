@@ -4317,7 +4317,7 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                                 ).size.width *
                                                                 0.4,
                                                             child: const Text(
-                                                              'Call Result',
+                                                              'Lead Status',
                                                               style: TextStyle(
                                                                 fontSize: 14,
                                                                 fontWeight:
