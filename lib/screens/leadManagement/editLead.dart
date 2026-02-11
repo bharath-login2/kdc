@@ -681,39 +681,39 @@ class _EditLeadState extends State<EditLead> {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                child: TextFormField(
-                  controller: cost,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                      contentPadding:
-                      EdgeInsets.only(left: 10, top: 2, bottom: 2),
-                      labelText: 'Cost',
-                      fillColor: Colors.white,
-                      filled: true,
-                      prefixIcon:
-                      Icon(Icons.currency_rupee, color: Colors.grey),
-                      border: OutlineInputBorder(),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey),
-                      ),
-                      labelStyle: TextStyle(color: Colors.grey)),
-                ),
+              // const SizedBox(
+              //   height: 20,
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.only(left: 20, right: 20),
+              //   child: TextFormField(
+              //     controller: cost,
+              //     keyboardType: TextInputType.number,
+              //     decoration: const InputDecoration(
+              //         contentPadding:
+              //         EdgeInsets.only(left: 10, top: 2, bottom: 2),
+              //         labelText: 'Cost',
+              //         fillColor: Colors.white,
+              //         filled: true,
+              //         prefixIcon:
+              //         Icon(Icons.currency_rupee, color: Colors.grey),
+              //         border: OutlineInputBorder(),
+              //         focusedBorder: OutlineInputBorder(
+              //           borderSide: BorderSide(color: Colors.grey),
+              //         ),
+              //         labelStyle: TextStyle(color: Colors.grey)),
+              //   ),
 
-                // InputTextField(
-                //   hintText: 'Cost',
-                //   hintTextColor: Colors.white,
-                //   backgroundColor: Colors.white,
-                //   controller: cost,
-                //   keyboardType: TextInputType.number,
-                //   width: 1,
-                //   iconData: Icons.currency_rupee,
-                // ),
-              ),
+              //   // InputTextField(
+              //   //   hintText: 'Cost',
+              //   //   hintTextColor: Colors.white,
+              //   //   backgroundColor: Colors.white,
+              //   //   controller: cost,
+              //   //   keyboardType: TextInputType.number,
+              //   //   width: 1,
+              //   //   iconData: Icons.currency_rupee,
+              //   // ),
+              // ),
               const SizedBox(
                 height: 20,
               ),

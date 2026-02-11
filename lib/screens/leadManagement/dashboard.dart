@@ -595,7 +595,7 @@ class _DashboardState extends State<Dashboard> {
                                                   width: 10,
                                                 ),
                                                 const Text(
-                                                    'Lead Category'),
+                                                    'Customer Interested Product'),
                                               ],
                                             )),
                                         PopupMenuItem<int>(

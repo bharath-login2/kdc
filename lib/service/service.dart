@@ -654,7 +654,55 @@ class HttpService {
     }
   }
 
-  static Future addLeadsFollowup(
+  // static Future addLeadsFollowup(
+  //   token,
+  //   callResultId,
+  //   callStatusId,
+  //   nextFollowupDate,
+  //   cost,
+  //   address,
+  //   leadTypeId,
+  //   leadSubType,
+  //   remarks,
+  //   callMasterId,
+  //   calledDate,
+  //   callHistoryId,
+  //   priorityId,
+  //   checked,
+  //   timeBefore,
+  //   addClient,
+  // ) async {
+  //   var formData = FormData.fromMap({
+  //     "token": token,
+  //     "next_followup_date": nextFollowupDate,
+  //     "call_result_id": callResultId,
+  //     "call_status_id": callStatusId,
+  //     "lead_category_id": leadTypeId,
+  //     "lead_sub_category_id": leadSubType,
+  //     "cost": cost,
+  //     "remarks": remarks,
+  //     "call_master_id": callMasterId,
+  //     "called_date": calledDate,
+  //     "cloud_call_id": callHistoryId,
+  //     "address": address,
+  //     "priority": priorityId,
+  //     "reminder": checked,
+  //     "time_before": timeBefore,
+  //     "is_lead_to_customer": addClient,
+  //   });
+  //   try {
+  //     var result = await _dio.post(
+  //       "${baseUrl}add_lead_followup",
+  //       data: formData,
+  //     );
+  //     AddLeadFollowupModel model = AddLeadFollowupModel.fromJson(result.data);
+  //     return model;
+  //   } on Exception {
+  //     return null;
+  //   }
+  // }
+
+  static Future<AddLeadFollowupModel?> addLeadsFollowup(
     token,
     callResultId,
     callStatusId,
@@ -671,6 +719,14 @@ class HttpService {
     checked,
     timeBefore,
     addClient,
+    job,
+    location,
+    customerNeed,
+    purpose,
+    challenges,
+    newObjection,
+    googleReviewStatus,
+    reasonForLostSales,
   ) async {
     var formData = FormData.fromMap({
       "token": token,
@@ -689,6 +745,15 @@ class HttpService {
       "reminder": checked,
       "time_before": timeBefore,
       "is_lead_to_customer": addClient,
+      // Add all the new fields here
+      "job": job,
+      "location": location,
+      "customer_need": customerNeed,
+      "purpose": purpose,
+      "challenges": challenges,
+      "new_objection": newObjection,
+      "google_review_status": googleReviewStatus,
+      "reason_for_lost_sales": reasonForLostSales,
     });
     try {
       var result = await _dio.post(
@@ -702,7 +767,7 @@ class HttpService {
     }
   }
 
-  static Future editLeadsFollowup(
+  static Future<EditLeadFollowupModel> editLeadsFollowup(
     token,
     callFollowupId,
     callResultId,
@@ -712,8 +777,18 @@ class HttpService {
     leadSubTypeId,
     remarks,
     calledDate,
-    callMasterId,
-  ) async {
+    callMasterId, {
+    String? address,
+    String? job,
+    String? location,
+    String? customerNeed,
+    String? purpose,
+    String? challenges,
+    String? newObjection,
+    String? googleReviewStatus,
+    String? reasonForLostSales,
+    String? priorityId,
+  }) async {
     var formData = FormData.fromMap({
       "token": token,
       "next_followup_date": nextFollowupDate,
@@ -725,6 +800,16 @@ class HttpService {
       "call_details_id": callFollowupId,
       "called_date": calledDate,
       'call_master_id': callMasterId,
+      "address": address ?? "",
+      "job": job ?? "",
+      "location": location ?? "",
+      "customer_need": customerNeed ?? "",
+      "purpose": purpose ?? "",
+      "challenges": challenges ?? "",
+      "new_objection": newObjection ?? "",
+      "google_review_status": googleReviewStatus ?? "",
+      "reason_for_lost_sales": reasonForLostSales ?? "",
+      "priority_id": priorityId ?? "2",
     });
 
     try {
@@ -735,7 +820,10 @@ class HttpService {
       EditLeadFollowupModel model = EditLeadFollowupModel.fromJson(result.data);
       return model;
     } on Exception {
-      return null;
+      return EditLeadFollowupModel(
+        status: false,
+        message: "Network error occurred",
+      );
     }
   }
 

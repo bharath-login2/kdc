@@ -421,7 +421,7 @@ class _AddLeadsState extends State<AddLeads> {
                             width: MediaQuery.of(context)
                                 .size
                                 .width *
-                                0.45,
+                                0.93,
                             child: TextFormField(
                               controller: assignStaffVal,
                               onTap: () {
@@ -541,40 +541,40 @@ class _AddLeadsState extends State<AddLeads> {
                                       color: Colors.grey)),
                             ),
                           ),
-                          const SizedBox(
-                            width: 15,
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context)
-                                .size
-                                .width *
-                                0.45,
-                            child: TextFormField(
-                              controller: cost,
-                              keyboardType:
-                              TextInputType.number,
-                              decoration: const InputDecoration(
-                                  contentPadding:
-                                  EdgeInsets.only(
-                                      left: 10,
-                                      top: 2,
-                                      bottom: 2),
-                                  labelText: 'Cost',
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  prefixIcon: Icon(
-                                      Icons.currency_rupee,
-                                      color: Colors.grey),
-                                  border: OutlineInputBorder(),
-                                  focusedBorder:
-                                  OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.grey),
-                                  ),
-                                  labelStyle: TextStyle(
-                                      color: Colors.grey)),
-                            ),
-                          )
+                          // const SizedBox(
+                          //   width: 15,
+                          // ),
+                          // SizedBox(
+                          //   width: MediaQuery.of(context)
+                          //       .size
+                          //       .width *
+                          //       0.45,
+                          //   child: TextFormField(
+                          //     controller: cost,
+                          //     keyboardType:
+                          //     TextInputType.number,
+                          //     decoration: const InputDecoration(
+                          //         contentPadding:
+                          //         EdgeInsets.only(
+                          //             left: 10,
+                          //             top: 2,
+                          //             bottom: 2),
+                          //         labelText: 'Cost',
+                          //         fillColor: Colors.white,
+                          //         filled: true,
+                          //         prefixIcon: Icon(
+                          //             Icons.currency_rupee,
+                          //             color: Colors.grey),
+                          //         border: OutlineInputBorder(),
+                          //         focusedBorder:
+                          //         OutlineInputBorder(
+                          //           borderSide: BorderSide(
+                          //               color: Colors.grey),
+                          //         ),
+                          //         labelStyle: TextStyle(
+                          //             color: Colors.grey)),
+                          //   ),
+                          // )
                         ],
                       ),
                     ),

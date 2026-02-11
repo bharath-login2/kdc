@@ -114,11 +114,11 @@ class _ViewLeadCategoryState extends State<ViewLeadCategory> {
                           ),
                         ),
                         const SizedBox(
-                          width: 25,
+                          width: 15,
                         ),
                         const Text(
-                          'Lead Category',
-                          style: TextStyle(color: Colors.white, fontSize: 18),
+                          'Customer Interested Product',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ],
                     ),

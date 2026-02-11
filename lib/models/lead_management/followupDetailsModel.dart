@@ -35,20 +35,39 @@ class Data {
   String? callResult;
   String? followupDate;
   String? remarks;
+    String? address;
+  String? job;
+  String? location;
+  String? customerNeed;
+  String? purpose;
+  String? challenges;
+  String? newObjection;
+  String? googleReviewStatus;
+  String? reasonForLostSales;
 
-  Data(
-      {this.callDetailsId,
-        this.callMasterId,
-        this.cost,
-        this.leadCategoryId,
-        this.leadCategory,
-        this.leadSubCategoryId,
-        this.leadSubCategory,
-        this.calledDate,
-        this.callResultId,
-        this.callResult,
-        this.followupDate,
-        this.remarks});
+  Data({
+    this.callDetailsId,
+    this.callMasterId,
+    this.cost,
+    this.leadCategoryId,
+    this.leadCategory,
+    this.leadSubCategoryId,
+    this.leadSubCategory,
+    this.calledDate,
+    this.callResultId,
+    this.callResult,
+    this.followupDate,
+    this.remarks,
+     this.address,
+    this.job,
+    this.location,
+    this.customerNeed,
+    this.purpose,
+    this.challenges,
+    this.newObjection,
+    this.googleReviewStatus,
+    this.reasonForLostSales,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     callDetailsId = json['call_details_id'];
@@ -63,6 +82,15 @@ class Data {
     callResult = json['call_result'];
     followupDate = json['followup_date'];
     remarks = json['remarks'];
+     address = json['address'];
+    job = json['job'];
+    location = json['location'];
+    customerNeed = json['customer_need'];
+    purpose = json['purpose'];
+    challenges = json['challenges'];
+    newObjection = json['new_objection'];
+    googleReviewStatus = json['google_review_status'];
+    reasonForLostSales = json['reason_for_lost_sales'];
   }
 
   Map<String, dynamic> toJson() {
@@ -79,6 +107,15 @@ class Data {
     data['call_result'] = this.callResult;
     data['followup_date'] = this.followupDate;
     data['remarks'] = this.remarks;
+      data['address'] = this.address;
+    data['job'] = this.job;
+    data['location'] = this.location;
+    data['customer_need'] = this.customerNeed;
+    data['purpose'] = this.purpose;
+    data['challenges'] = this.challenges;
+    data['new_objection'] = this.newObjection;
+    data['google_review_status'] = this.googleReviewStatus;
+    data['reason_for_lost_sales'] = this.reasonForLostSales;
     return data;
   }
 }
