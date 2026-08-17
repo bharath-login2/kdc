@@ -34,6 +34,7 @@ class Data {
   bool? deleteStaffDesignation;
   bool? updateStaffPassword;
   bool? updateStaffPermission;
+   bool? staffManagementPermission;
   List<StaffList>? staffList;
 
   Data(
@@ -48,6 +49,7 @@ class Data {
         this.deleteStaffDesignation,
         this.updateStaffPassword,
         this.updateStaffPermission,
+        this.staffManagementPermission,
         this.staffList});
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -62,6 +64,7 @@ class Data {
     deleteStaffDesignation = json['delete_staff_designation'];
     updateStaffPassword = json['update_staff_password'];
     updateStaffPermission = json['update_staff_permission'];
+    staffManagementPermission = json['staff_management_menu'];
     if (json['staff_list'] != null) {
       staffList = <StaffList>[];
       json['staff_list'].forEach((v) {
@@ -83,6 +86,7 @@ class Data {
     data['delete_staff_designation'] = deleteStaffDesignation;
     data['update_staff_password'] = updateStaffPassword;
     data['update_staff_permission'] = updateStaffPermission;
+    data['staff_management_menu'] = staffManagementPermission;
     if (staffList != null) {
       data['staff_list'] = staffList!.map((v) => v.toJson()).toList();
     }

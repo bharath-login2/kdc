@@ -49,38 +49,51 @@ class Data {
   bool? accessCallRecording;
   bool? fileManager;
   bool? phoneCallLog;
+  String? callTarget;
+  String? callAchieved;
+  String? targetPoints;
+  String? achievedPoints;
+  String? pendingCalls;
+  String? pendingPoints;
   String? totalStaffLeads;
   int? unreadNotification;
 
-  Data(
-      {this.newLeads,
-        this.followupLeads,
-        this.closedLeads,
-        this.totalCalled,
-        this.missedLeads,
-        this.transferLeads,
-        this.createLead,
-        this.viewLead,
-        this.updateLead,
-        this.deleteLead,
-        this.createLeadCategory,
-        this.viewLeadCategory,
-        this.updateLeadCategory,
-        this.deleteLeadCategory,
-        this.viewLeadReport,
-        this.viewWhatsappSettings,
-        this.updateWhatsappSettings,
-        this.createFacebookSettings,
-        this.updateFacebookSettings,
-        this.deleteFacebookSettings,
-        this.createLeadImports,
-        this.cloudCall,
-        this.accessCallHistory,
-        this.accessCallRecording,
-        this.fileManager,
-        this.phoneCallLog,
-        this.totalStaffLeads,
-        this.unreadNotification});
+  Data({
+    this.newLeads,
+    this.followupLeads,
+    this.closedLeads,
+    this.totalCalled,
+    this.missedLeads,
+    this.transferLeads,
+    this.createLead,
+    this.viewLead,
+    this.updateLead,
+    this.deleteLead,
+    this.createLeadCategory,
+    this.viewLeadCategory,
+    this.updateLeadCategory,
+    this.deleteLeadCategory,
+    this.viewLeadReport,
+    this.viewWhatsappSettings,
+    this.updateWhatsappSettings,
+    this.createFacebookSettings,
+    this.updateFacebookSettings,
+    this.deleteFacebookSettings,
+    this.createLeadImports,
+    this.cloudCall,
+    this.accessCallHistory,
+    this.accessCallRecording,
+    this.fileManager,
+    this.phoneCallLog,
+        this.callTarget,
+            this.callAchieved,
+                this.targetPoints,
+                    this.achievedPoints,
+                        this.pendingCalls,
+                            this.pendingPoints,
+    this.totalStaffLeads,
+    this.unreadNotification,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     newLeads = json['newLeads'];
@@ -109,6 +122,12 @@ class Data {
     accessCallRecording = json['access_call_recording'];
     fileManager = json['file_manager'];
     phoneCallLog = json['phone_call_log'];
+    callTarget = json['call_target'];
+    callAchieved = json['call_achieved'];
+    targetPoints = json['target_point'];
+    achievedPoints = json['achieved_points'];
+    pendingCalls = json['pending_calls'];
+    pendingPoints = json['pending_points'];
     totalStaffLeads = json['total_staff_leads'];
     unreadNotification = json['unread_notification'];
   }

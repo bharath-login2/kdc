@@ -48,33 +48,50 @@ class Data {
   bool? callHistoryPermission;
   bool? fileManagerPermission;
   List<LeadCategories>? leadCategories;
+  String? job;
+  String? location;
+  String? customerNeed;
+  String? purpose;
+  String? challenges;
+  String? newObjection;
+  String? googleReviewStatus;
+  String? reasonForLostSales;
 
-  Data(
-      {this.callMasterId,
-        this.leadCategoryId,
-        this.leadSubCategoryId,
-        this.clientName,
-        this.address,
-        this.cost,
-        this.assignedUserId,
-        this.callResultId,
-        this.calledDate,
-        this.createdDate,
-        this.nextFollowupDate,
-        this.remarks,
-        this.leadMethod,
-        this.leadCategory,
-        this.leadSubCategory,
-        this.callResult,
-        this.staffName,
-        this.priorityId,
-        this.priority,
-        this.countryCode,
-        this.contactNumber1,
-        this.branchId,
-        this.callHistoryPermission,
-        this.fileManagerPermission,
-        this.leadCategories});
+  Data({
+    this.callMasterId,
+    this.leadCategoryId,
+    this.leadSubCategoryId,
+    this.clientName,
+    this.address,
+    this.cost,
+    this.assignedUserId,
+    this.callResultId,
+    this.calledDate,
+    this.createdDate,
+    this.nextFollowupDate,
+    this.remarks,
+    this.leadMethod,
+    this.leadCategory,
+    this.leadSubCategory,
+    this.callResult,
+    this.staffName,
+    this.priorityId,
+    this.priority,
+    this.countryCode,
+    this.contactNumber1,
+    this.branchId,
+    this.callHistoryPermission,
+    this.fileManagerPermission,
+    this.leadCategories,
+    this.job,
+    this.location,
+    this.customerNeed,
+    this.purpose,
+    this.challenges,
+    this.newObjection,
+    this.googleReviewStatus,
+    this.reasonForLostSales,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     callMasterId = json['call_master_id'];
@@ -107,6 +124,14 @@ class Data {
         leadCategories!.add(LeadCategories.fromJson(v));
       });
     }
+    job = json['job'];
+    location = json['location'];
+    customerNeed = json['customer_need'];
+    purpose = json['purpose'];
+    challenges = json['challenges'];
+    newObjection = json['new_objection'];
+    googleReviewStatus = json['google_review_status'];
+    reasonForLostSales = json['reason_for_lost_sales'];
   }
 
   Map<String, dynamic> toJson() {
@@ -136,9 +161,16 @@ class Data {
     data['callHistoryPermission'] = callHistoryPermission;
     data['fileManagerPermission'] = fileManagerPermission;
     if (leadCategories != null) {
-      data['leadCategories'] =
-          leadCategories!.map((v) => v.toJson()).toList();
+      data['leadCategories'] = leadCategories!.map((v) => v.toJson()).toList();
     }
+    data['job'] = job;
+    data['location'] = location;
+    data['customer_need'] = customerNeed;
+    data['purpose'] = purpose;
+    data['challenges'] = challenges;
+    data['new_objection'] = newObjection;
+    data['google_review_status'] = googleReviewStatus;
+    data['reason_for_lost_sales'] = reasonForLostSales;
     return data;
   }
 }
@@ -148,20 +180,30 @@ class LeadCategories {
   String? leadCategoryId;
   String? leadCategory;
   String? leadSubCategory;
+   String? createdDate;
+  String? leadStatus;
+  String? staffName;
   bool? isSelected;
 
-  LeadCategories(
-      {this.callMasterId,
-        this.leadCategoryId,
-        this.leadCategory,
-        this.leadSubCategory,
-        this.isSelected});
+  LeadCategories({
+  this.callMasterId,
+      this.leadCategoryId,
+      this.leadCategory,
+      this.leadSubCategory,
+        this.createdDate,
+        this.leadStatus,
+        this.staffName,
+      this.isSelected
+  });
 
   LeadCategories.fromJson(Map<String, dynamic> json) {
-    callMasterId = json['call_master_id'];
+  callMasterId = json['call_master_id'];
     leadCategoryId = json['lead_category_id'];
     leadCategory = json['lead_category'];
     leadSubCategory = json['lead_sub_category'];
+      createdDate = json['created_date'];
+     leadStatus = json['lead_status'];
+       staffName = json['staff_name'];
     isSelected = json['is_selected'];
   }
 
@@ -171,6 +213,9 @@ class LeadCategories {
     data['lead_category_id'] = leadCategoryId;
     data['lead_category'] = leadCategory;
     data['lead_sub_category'] = leadSubCategory;
+        data['created_date'] = createdDate;
+    data['lead_status'] = leadStatus;
+    data['staff_name'] = staffName;
     data['is_selected'] = isSelected;
     return data;
   }

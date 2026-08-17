@@ -27,8 +27,21 @@ class Data {
   int? totalLeads;
   String? fromdate;
   String? todate;
+  bool? callPermission;
+  String? warningMessage;
+  String? callLeadId;
+  bool? leadDeletePermission;
 
-  Data({this.details, this.totalLeads, this.fromdate, this.todate});
+  Data({
+    this.details,
+    this.totalLeads,
+    this.fromdate,
+    this.todate,
+    this.callPermission,
+    this.warningMessage,
+    this.callLeadId,
+    this.leadDeletePermission,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     if (json['details'] != null) {
@@ -40,6 +53,10 @@ class Data {
     totalLeads = json['totalLeads'];
     fromdate = json['fromdate'];
     todate = json['todate'];
+    callPermission = json['callPermission'];
+    warningMessage = json['warningMessage'];
+    callLeadId = json['callLeadId'];
+    leadDeletePermission = json['leadDeletePermission'];
   }
 
   Map<String, dynamic> toJson() {
@@ -50,6 +67,10 @@ class Data {
     data['totalLeads'] = totalLeads;
     data['fromdate'] = fromdate;
     data['todate'] = todate;
+    data['callPermission'] = callPermission;
+    data['warningMessage'] = warningMessage;
+    data['callLeadId'] = callLeadId;
+    data['leadDeletePermission'] = leadDeletePermission;
     return data;
   }
 }
@@ -76,27 +97,28 @@ class Details {
   bool? isCalled;
   bool? isSelected;
 
-  Details(
-      {this.callDetailsId,
-        this.callMasterId,
-        this.calledDate,
-        this.createdDate,
-        this.lastCalledDate,
-        this.callResultId,
-        this.callStatusId,
-        this.isNewCall,
-        this.followupDate,
-        this.scheduledDate,
-        this.clientName,
-        this.contactNumber1,
-        this.callResult,
-        this.proPicThumb,
-        this.staffName,
-        this.leadCategory,
-        this.priority,
-        this.profilePic,
-        this.isCalled,
-        this.isSelected});
+  Details({
+    this.callDetailsId,
+    this.callMasterId,
+    this.calledDate,
+    this.createdDate,
+    this.lastCalledDate,
+    this.callResultId,
+    this.callStatusId,
+    this.isNewCall,
+    this.followupDate,
+    this.scheduledDate,
+    this.clientName,
+    this.contactNumber1,
+    this.callResult,
+    this.proPicThumb,
+    this.staffName,
+    this.leadCategory,
+    this.priority,
+    this.profilePic,
+    this.isCalled,
+    this.isSelected,
+  });
 
   Details.fromJson(Map<String, dynamic> json) {
     callDetailsId = json['call_details_id'];

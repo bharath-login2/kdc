@@ -1,5 +1,6 @@
 class AddLeadCommonDataModel {
   Data? data;
+  
   bool? status;
   String? message;
 
@@ -28,6 +29,7 @@ class Data {
   List<CallResultNew>? callResultNew;
   List<Branch>? branch;
   List<Staff>? staff;
+   List<AssignedStaff>? assignedStaff;
   List<TransferStaffs>? transferStaffs;
   List<Priority>? priority;
   List<String>? callResponse;
@@ -39,8 +41,7 @@ class Data {
   bool? customerAddInvoicePermission;
   List<TargetGroup>? targetGroups; // Added field
   List<ColloctedStaff>? colloctedStaff; // Added field
-
-  Data({
+ Data({
     this.leadCategory,
     this.callResult,
     this.callResultNew,
@@ -90,6 +91,12 @@ class Data {
         staff!.add(Staff.fromJson(v));
       });
     }
+     if (json['assign_staff_list'] != null) {  // ← Changed from 'assignedStaff' to 'assign_staff_list'
+    assignedStaff = <AssignedStaff>[];
+    json['assign_staff_list'].forEach((v) {
+      assignedStaff!.add(AssignedStaff.fromJson(v));
+    });
+  }
     if (json['transfer_staffs'] != null) {
       transferStaffs = <TransferStaffs>[];
       json['transfer_staffs'].forEach((v) {
@@ -166,6 +173,9 @@ class Data {
     if (staff != null) {
       data['staff'] = staff!.map((v) => v.toJson()).toList();
     }
+     if (assignedStaff != null) {
+      data['assigned_staff'] = assignedStaff!.map((v) => v.toJson()).toList();
+    }
     if (transferStaffs != null) {
       data['transfer_staffs'] = transferStaffs!.map((v) => v.toJson()).toList();
     }
@@ -185,13 +195,10 @@ class Data {
     data['country_code'] = countryCode;
     data['customerAddPermission'] = customerAddPermission;
     data['customerAddInvoicePermission'] = customerAddInvoicePermission;
-    
-    // Added: Serialize target_groups
     if (targetGroups != null) {
       data['target_groups'] = targetGroups!.map((v) => v.toJson()).toList();
     }
     
-    // Added: Serialize collocted_staff
     if (colloctedStaff != null) {
       data['collocted_staff'] = colloctedStaff!.map((v) => v.toJson()).toList();
     }
@@ -330,6 +337,24 @@ class Staff {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['staff_id'] = staffId;
     data['staff_name'] = staffName;
+    return data;
+  }
+}
+class AssignedStaff {
+  String? assignedStaffId;
+  String? assignedStaffName;
+
+  AssignedStaff({this.assignedStaffId, this.assignedStaffName});
+
+  AssignedStaff.fromJson(Map<String, dynamic> json) {
+    assignedStaffId = json['assigned_staff_id'];
+    assignedStaffName = json['assigned_staff_name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['assigned_staff_id'] = assignedStaffId;
+    data['assigned_staff_name'] = assignedStaffName;
     return data;
   }
 }

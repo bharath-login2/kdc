@@ -34,7 +34,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    handleAsync();
     getData();
   }
 
@@ -43,6 +42,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   getData() async {
+    firebaseToken = await FirebaseMessaging.instance.getToken();
     final connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
@@ -57,8 +57,9 @@ class _SplashScreenState extends State<SplashScreen> {
       _packageInfo = info;
     });
     final appVersion = _packageInfo.version;
-    int versionCompare =
-        appVersion.compareTo(updatedata!.data!.minVersion.toString());
+    int versionCompare = appVersion.compareTo(
+      updatedata!.data!.minVersion.toString(),
+    );
     if (versionCompare < 0) {
       _checkVersion();
     } else {
@@ -68,8 +69,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _checkVersion() async {
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => const ForceUpdate()),
-        (Route<dynamic> route) => false);
+      MaterialPageRoute(builder: (context) => const ForceUpdate()),
+      (Route<dynamic> route) => false,
+    );
   }
 
   _loadWidget() async {
@@ -81,43 +83,43 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return result == true
         ? Stack(
-          children: [
-            Container(
+            children: [
+              Container(
                 color: Colors.white,
                 width: MediaQuery.of(context).size.width * 1,
                 child: Center(
-                  child: Image.asset(
-                    'assets/main/logo.png',
-                    width: 200,
-                  ),
-                )),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Align(
-                alignment: Alignment.bottomCenter,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(
-                      color: Colors.red,
-                      backgroundColor: Colors.grey.withOpacity(0.5),
-                    ),
-                    const SizedBox(height: 10,),
-                    Text(
-                      _packageInfo.version=='Unknown'?'Connecting...':'Version ${_packageInfo.version}',
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 10,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                  ],
+                  child: Image.asset('assets/main/logo.png', width: 200),
                 ),
               ),
-            )
-          ],
-        )
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(
+                        color: Colors.red,
+                        backgroundColor: Colors.grey.withOpacity(0.5),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        _packageInfo.version == 'Unknown'
+                            ? 'Connecting...'
+                            : 'Version ${_packageInfo.version}',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 10,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          )
         : Scaffold(
             backgroundColor: Colors.white,
             body: SizedBox(
@@ -140,9 +142,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     'No Network Found !',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(
-                    height: 15,
-                  ),
+                  const SizedBox(height: 15),
                   InkWell(
                     onTap: () {
                       getData();
@@ -161,9 +161,10 @@ class _SplashScreenState extends State<SplashScreen> {
                             child: Text(
                               'Try Again',
                               style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold),
+                                color: Colors.black,
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
@@ -172,33 +173,39 @@ class _SplashScreenState extends State<SplashScreen> {
                   ),
                 ],
               ),
-            ));
+            ),
+          );
   }
 
   routeTOHomePage() async {
     String? token = await Common.getSharedPref("token");
     if (token != null) {
-      LoginCheckModel loginCheck =
-          await HttpService.loginCheck(token, firebaseToken);
+      LoginCheckModel loginCheck = await HttpService.loginCheck(
+        token,
+        firebaseToken,
+      );
       if (loginCheck.data == true) {
         print(token);
         if (mounted) {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => Dashboard(token)));
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (context) => Dashboard(token)));
         }
       } else {
         Common.toastMessaage('Token Expired', Colors.red);
         if (mounted) {
           Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const Login()),
-              (Route<dynamic> route) => false);
+            MaterialPageRoute(builder: (context) => const Login()),
+            (Route<dynamic> route) => false,
+          );
         }
       }
     } else {
       if (mounted) {
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const Login()),
-            (Route<dynamic> route) => false);
+          MaterialPageRoute(builder: (context) => const Login()),
+          (Route<dynamic> route) => false,
+        );
       }
     }
   }

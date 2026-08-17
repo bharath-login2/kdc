@@ -20,7 +20,6 @@ import 'package:path/path.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../core/common.dart';
 import '../../models/clients/leadConvertToClientModel.dart';
 import '../../models/lead_management/addLeadCommonDataModel.dart';
@@ -1486,35 +1485,85 @@ class _LeadDetailsState extends State<LeadDetails> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                  left: 5,
-                                                  right: 5,
-                                                  top: 2,
-                                                ),
-                                                child: Text(
-                                                  leadDetails!
-                                                              .data!
-                                                              .leadSubCategory !=
-                                                          ''
-                                                      ? '${leadDetails!.data!.leadCategory}-${leadDetails!.data!.leadSubCategory}'
-                                                      : '${leadDetails!.data!.leadCategory}',
-                                                  style: const TextStyle(
-                                                    fontSize: 13,
-                                                    color: Colors.red,
-                                                    fontWeight: FontWeight.w500,
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          5,
+                                                        ),
                                                   ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  softWrap: false,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                          left: 5,
+                                                          right: 5,
+                                                          top: 2,
+                                                        ),
+                                                    child: Text(
+                                                      leadDetails!
+                                                                  .data!
+                                                                  .leadSubCategory !=
+                                                              ''
+                                                          ? '${leadDetails!.data!.leadCategory}-${leadDetails!.data!.leadSubCategory}'
+                                                          : '${leadDetails!.data!.leadCategory}',
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                        color: Colors.red,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      softWrap: false,
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
+                                                SizedBox(width: 180),
+                                                leadDetails!
+                                                            .data!
+                                                            .leadCategories!
+                                                            .length >
+                                                        1
+                                                    ? Transform.translate(
+                                                        offset: Offset(
+                                                          -50,
+                                                          0,
+                                                        ), // Move 5 pixels left (negative is allowed here)
+                                                        child: Container(
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.red,
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  5,
+                                                                ),
+                                                          ),
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets.only(
+                                                                  left: 0,
+                                                                  right: 0,
+                                                                  top: 2,
+                                                                  bottom: 2,
+                                                                ),
+                                                            child: Text(
+                                                              "Duplicate Entry",
+                                                              style: const TextStyle(
+                                                                fontSize: 11,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : const SizedBox(),
+                                              ],
                                             ),
                                             const Divider(
                                               thickness: 0.5,
@@ -1588,6 +1637,7 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                     ),
                                                   ),
                                                 ),
+
                                                 leadDetails!
                                                             .data!
                                                             .leadCategories!
@@ -1634,38 +1684,116 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                                       .callMasterId
                                                                       .toString(),
                                                                 ),
-                                                                child: Row(
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
                                                                   children: [
-                                                                    leadDetails!.data!.leadCategories![i].isSelected ==
-                                                                            true
-                                                                        ? const Icon(
-                                                                            Icons.done,
-                                                                            size:
-                                                                                20,
-                                                                            color:
-                                                                                Colors.green,
-                                                                          )
-                                                                        : const SizedBox(
-                                                                            width:
-                                                                                15,
+                                                                    Row(
+                                                                      children: [
+                                                                        leadDetails!.data!.leadCategories![i].isSelected ==
+                                                                                true
+                                                                            ? const Icon(
+                                                                                Icons.done,
+                                                                                size: 20,
+                                                                                color: Colors.green,
+                                                                              )
+                                                                            : const SizedBox(
+                                                                                width: 15,
+                                                                              ),
+                                                                        const SizedBox(
+                                                                          width:
+                                                                              10,
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              MediaQuery.of(
+                                                                                context,
+                                                                              ).size.width *
+                                                                              0.5,
+                                                                          child: Text(
+                                                                            leadDetails!.data!.leadCategories![i].leadCategory.toString(),
+                                                                            maxLines:
+                                                                                3,
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
                                                                           ),
-                                                                    const SizedBox(
-                                                                      width: 10,
+                                                                        ),
+                                                                        Flexible(
+                                                                          child: Container(
+                                                                            padding: const EdgeInsets.symmetric(
+                                                                              horizontal: 6,
+                                                                              vertical: 2,
+                                                                            ),
+                                                                            decoration: BoxDecoration(
+                                                                              color:
+                                                                                  leadDetails!.data!.leadCategories![i].leadStatus ==
+                                                                                      "New"
+                                                                                  ? Colors.blue
+                                                                                  : leadDetails!.data!.leadCategories![i].leadStatus ==
+                                                                                        "Follow Up"
+                                                                                  ? Colors.yellow
+                                                                                  : leadDetails!.data!.leadCategories![i].leadStatus ==
+                                                                                        "Rejected"
+                                                                                  ? Colors.red
+                                                                                  : const Color.fromARGB(
+                                                                                      255,
+                                                                                      96,
+                                                                                      66,
+                                                                                      226,
+                                                                                    ),
+                                                                              borderRadius: BorderRadius.circular(
+                                                                                4,
+                                                                              ),
+                                                                            ),
+                                                                            child: Text(
+                                                                              leadDetails!.data!.leadCategories![i].leadStatus.toString(),
+                                                                              style: const TextStyle(
+                                                                                color: Colors.white,
+                                                                                fontSize: 7.5,
+                                                                                fontWeight: FontWeight.bold,
+                                                                              ),
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
                                                                     ),
-                                                                    SizedBox(
-                                                                      width:
-                                                                          MediaQuery.of(
-                                                                            context,
-                                                                          ).size.width *
-                                                                          0.5,
-                                                                      child: Text(
-                                                                        leadDetails!
-                                                                            .data!
-                                                                            .leadCategories![i]
-                                                                            .leadCategory
-                                                                            .toString(),
-                                                                        maxLines:
-                                                                            3,
+                                                                    const SizedBox(
+                                                                      height: 4,
+                                                                    ),
+                                                                    SingleChildScrollView(
+                                                                      scrollDirection:
+                                                                          Axis.horizontal,
+                                                                      child: Row(
+                                                                        children: [
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(
+                                                                              left: 25,
+                                                                            ),
+                                                                            child: Text(
+                                                                              'Staff: ${leadDetails!.data!.leadCategories![i].staffName.toString()}',
+                                                                              style: const TextStyle(
+                                                                                fontSize: 11,
+                                                                                color: Colors.grey,
+                                                                              ),
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                            ),
+                                                                          ),
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(
+                                                                              left: 10,
+                                                                            ),
+                                                                            child: Text(
+                                                                              'Created Date: ${leadDetails!.data!.leadCategories![i].createdDate.toString()}',
+                                                                              style: const TextStyle(
+                                                                                fontSize: 11,
+                                                                                color: Colors.grey,
+                                                                              ),
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                            ),
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                     ),
                                                                   ],
@@ -1849,25 +1977,144 @@ class _LeadDetailsState extends State<LeadDetails> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Text(
-                                              'Cost: ${leadDetails!.data!.cost}',
-                                              style: const TextStyle(
-                                                fontSize: 13,
-                                                color: Colors.black54,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                            Text(
-                                              'Source : ${leadDetails!.data!.leadMethod}',
-                                              style: const TextStyle(
-                                                fontSize: 13,
-                                                color: Colors.black54,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
+                                            // Text(
+                                            //   'Cost: ${leadDetails!.data!.cost}',
+                                            //   style: const TextStyle(
+                                            //     fontSize: 13,
+                                            //     color: Colors.black54,
+                                            //     fontWeight: FontWeight.w500,
+                                            //   ),
+                                            // ),
+                                            // Text(
+                                            //   'Source : ${leadDetails!.data!.leadMethod}',
+                                            //   style: const TextStyle(
+                                            //     fontSize: 13,
+                                            //     color: Colors.black54,
+                                            //     fontWeight: FontWeight.w500,
+                                            //   ),
+                                            // ),
                                           ],
                                         ),
                                       ),
+                                      // const SizedBox(height: 3),
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(
+                                      //     left: 10,
+                                      //     right: 10,
+                                      //   ),
+                                      //   child: Row(
+                                      //     mainAxisAlignment:
+                                      //         MainAxisAlignment.spaceBetween,
+                                      //     children: [
+                                      //       Text(
+                                      //         'Job: ${leadDetails!.data!.job ?? "-"}',
+                                      //         style: const TextStyle(
+                                      //           fontSize: 13,
+                                      //           color: Colors.black54,
+                                      //           fontWeight: FontWeight.w500,
+                                      //         ),
+                                      //       ),
+                                      //       Text(
+                                      //         'Location: ${leadDetails!.data!.location ?? "-"}',
+                                      //         style: const TextStyle(
+                                      //           fontSize: 13,
+                                      //           color: Colors.black54,
+                                      //           fontWeight: FontWeight.w500,
+                                      //         ),
+                                      //       ),
+                                      //     ],
+                                      //   ),
+                                      // ),
+                                      // const SizedBox(height: 3),
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(
+                                      //     left: 10,
+                                      //     right: 10,
+                                      //   ),
+                                      //   child: Text(
+                                      //     'Customer Need: ${leadDetails!.data!.customerNeed ?? "-"}',
+                                      //     style: const TextStyle(
+                                      //       fontSize: 13,
+                                      //       color: Colors.black54,
+                                      //       fontWeight: FontWeight.w500,
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      // const SizedBox(height: 3),
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(
+                                      //     left: 10,
+                                      //     right: 10,
+                                      //   ),
+                                      //   child: Text(
+                                      //     'Purpose: ${leadDetails!.data!.purpose ?? "-"}',
+                                      //     style: const TextStyle(
+                                      //       fontSize: 13,
+                                      //       color: Colors.black54,
+                                      //       fontWeight: FontWeight.w500,
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      // const SizedBox(height: 3),
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(
+                                      //     left: 10,
+                                      //     right: 10,
+                                      //   ),
+                                      //   child: Text(
+                                      //     'Challenges: ${leadDetails!.data!.challenges ?? "-"}',
+                                      //     style: const TextStyle(
+                                      //       fontSize: 13,
+                                      //       color: Colors.black54,
+                                      //       fontWeight: FontWeight.w500,
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      // const SizedBox(height: 3),
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(
+                                      //     left: 10,
+                                      //     right: 10,
+                                      //   ),
+                                      //   child: Text(
+                                      //     'New Objection: ${leadDetails!.data!.newObjection ?? "-"}',
+                                      //     style: const TextStyle(
+                                      //       fontSize: 13,
+                                      //       color: Colors.black54,
+                                      //       fontWeight: FontWeight.w500,
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      // const SizedBox(height: 3),
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(
+                                      //     left: 10,
+                                      //     right: 10,
+                                      //   ),
+                                      //   child: Text(
+                                      //     'Google Review Status: ${leadDetails!.data!.googleReviewStatus ?? "-"}',
+                                      //     style: const TextStyle(
+                                      //       fontSize: 13,
+                                      //       color: Colors.black54,
+                                      //       fontWeight: FontWeight.w500,
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      // const SizedBox(height: 3),
+                                      // Padding(
+                                      //   padding: const EdgeInsets.only(
+                                      //     left: 10,
+                                      //     right: 10,
+                                      //   ),
+                                      //   child: Text(
+                                      //     'Reason for Lost Sales: ${leadDetails!.data!.reasonForLostSales ?? "-"}',
+                                      //     style: const TextStyle(
+                                      //       fontSize: 13,
+                                      //       color: Colors.black54,
+                                      //       fontWeight: FontWeight.w500,
+                                      //     ),
+                                      //   ),
+                                      // ),
                                       const SizedBox(height: 10),
                                       Row(
                                         children: [
@@ -2554,63 +2801,63 @@ class _LeadDetailsState extends State<LeadDetails> {
                                               ),
                                             ),
                                           ),
-                                          InkWell(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      AddLeads(
-                                                        widget.token,
-                                                        page: 'leadDetails',
-                                                        leadMasterId:
-                                                            leadDetails!
-                                                                .data!
-                                                                .callMasterId,
-                                                        clientName: leadDetails!
-                                                            .data!
-                                                            .clientName,
-                                                        phoneNumber:
-                                                            leadDetails!
-                                                                .data!
-                                                                .contactNumber1,
-                                                        countryCode:
-                                                            leadDetails!
-                                                                .data!
-                                                                .countryCode,
-                                                        fromDate:
-                                                            widget.fromDate,
-                                                        toDate: widget.toDate,
-                                                        editLead:
-                                                            widget.editLead,
-                                                        deleteLead:
-                                                            widget.deleteLead,
-                                                        cloudCall:
-                                                            widget.cloudCall,
-                                                      ),
-                                                ),
-                                              );
-                                            },
-                                            child: Container(
-                                              width: 30,
-                                              height: 30,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                border: Border.all(
-                                                  color: Colors.grey,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: const Center(
-                                                child: Icon(
-                                                  Icons.add,
-                                                  color: Colors.black,
-                                                  size: 20,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
+                                          // InkWell(
+                                          //   onTap: () {
+                                          //     Navigator.push(
+                                          //       context,
+                                          //       MaterialPageRoute(
+                                          //         builder: (context) =>
+                                          //             AddLeads(
+                                          //               widget.token,
+                                          //               page: 'leadDetails',
+                                          //               leadMasterId:
+                                          //                   leadDetails!
+                                          //                       .data!
+                                          //                       .callMasterId,
+                                          //               clientName: leadDetails!
+                                          //                   .data!
+                                          //                   .clientName,
+                                          //               phoneNumber:
+                                          //                   leadDetails!
+                                          //                       .data!
+                                          //                       .contactNumber1,
+                                          //               countryCode:
+                                          //                   leadDetails!
+                                          //                       .data!
+                                          //                       .countryCode,
+                                          //               fromDate:
+                                          //                   widget.fromDate,
+                                          //               toDate: widget.toDate,
+                                          //               editLead:
+                                          //                   widget.editLead,
+                                          //               deleteLead:
+                                          //                   widget.deleteLead,
+                                          //               cloudCall:
+                                          //                   widget.cloudCall,
+                                          //             ),
+                                          //       ),
+                                          //     );
+                                          //   },
+                                          //   child: Container(
+                                          //     width: 30,
+                                          //     height: 30,
+                                          //     decoration: BoxDecoration(
+                                          //       color: Colors.white,
+                                          //       border: Border.all(
+                                          //         color: Colors.grey,
+                                          //       ),
+                                          //       borderRadius:
+                                          //           BorderRadius.circular(20),
+                                          //     ),
+                                          //     child: const Center(
+                                          //       child: Icon(
+                                          //         Icons.add,
+                                          //         color: Colors.black,
+                                          //         size: 20,
+                                          //       ),
+                                          //     ),
+                                          //   ),
+                                          // ),
                                         ],
                                       ),
                                     ],
@@ -3060,6 +3307,37 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                                   leadDetails!
                                                                       .data!
                                                                       .address,
+                                                              job: leadDetails!
+                                                                  .data!
+                                                                  .job,
+                                                              location:
+                                                                  leadDetails!
+                                                                      .data!
+                                                                      .location,
+                                                              customerNeed:
+                                                                  leadDetails!
+                                                                      .data!
+                                                                      .customerNeed,
+                                                              purpose:
+                                                                  leadDetails!
+                                                                      .data!
+                                                                      .purpose,
+                                                              challenges:
+                                                                  leadDetails!
+                                                                      .data!
+                                                                      .challenges,
+                                                              newObjection:
+                                                                  leadDetails!
+                                                                      .data!
+                                                                      .newObjection,
+                                                              googleReviewStatus:
+                                                                  leadDetails!
+                                                                      .data!
+                                                                      .googleReviewStatus,
+                                                              reasonForLostSales:
+                                                                  leadDetails!
+                                                                      .data!
+                                                                      .reasonForLostSales,
                                                               searchKey: widget
                                                                   .searchKey
                                                                   .toString(),
@@ -3685,6 +3963,137 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                                   ),
                                                                 ],
                                                               ),
+                                                              const SizedBox(
+                                                                height: 8,
+                                                              ),
+                                                              leadDetailsAdditional!
+                                                                      .data!
+                                                                      .followUpData![index]
+                                                                      .callResponse
+                                                                      .toString()
+                                                                      .isNotEmpty
+                                                                  ? Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Row(
+                                                                          children: [
+                                                                            const Text(
+                                                                              'Call Response :',
+                                                                              style: TextStyle(
+                                                                                fontSize: 12,
+                                                                                fontWeight: FontWeight.w400,
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              width: 10,
+                                                                            ),
+                                                                            Container(
+                                                                              decoration: BoxDecoration(
+                                                                                color: Color.fromARGB(
+                                                                                  255,
+                                                                                  185,
+                                                                                  118,
+                                                                                  202,
+                                                                                ),
+                                                                                borderRadius: BorderRadius.circular(
+                                                                                  5,
+                                                                                ),
+                                                                              ),
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsets.only(
+                                                                                  left: 5,
+                                                                                  right: 5,
+                                                                                  top: 2,
+                                                                                  bottom: 2,
+                                                                                ),
+                                                                                child: Text(
+                                                                                  leadDetailsAdditional!.data!.followUpData![index].callResponse.toString(),
+                                                                                  style: const TextStyle(
+                                                                                    fontSize: 10,
+                                                                                    color: Colors.white,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    )
+                                                                  : SizedBox(),
+                                                              const SizedBox(
+                                                                height: 8,
+                                                              ),
+                                                              leadDetailsAdditional!
+                                                                              .data!
+                                                                              .followUpData![index]
+                                                                              .callReason !=
+                                                                          null &&
+                                                                      leadDetailsAdditional!
+                                                                          .data!
+                                                                          .followUpData![index]
+                                                                          .callReason
+                                                                          .toString()
+                                                                          .isNotEmpty
+                                                                  ? Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .spaceBetween,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Row(
+                                                                          children: [
+                                                                            const Text(
+                                                                              'Reason :',
+                                                                              style: TextStyle(
+                                                                                fontSize: 12,
+                                                                                fontWeight: FontWeight.w400,
+                                                                              ),
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              width: 10,
+                                                                            ),
+                                                                            Container(
+                                                                              decoration: BoxDecoration(
+                                                                                color: Color.fromARGB(
+                                                                                  255,
+                                                                                  185,
+                                                                                  118,
+                                                                                  202,
+                                                                                ),
+                                                                                borderRadius: BorderRadius.circular(
+                                                                                  5,
+                                                                                ),
+                                                                              ),
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsets.only(
+                                                                                  left: 5,
+                                                                                  right: 5,
+                                                                                  top: 2,
+                                                                                  bottom: 2,
+                                                                                ),
+                                                                                child: Text(
+                                                                                  leadDetailsAdditional!.data!.followUpData![index].callReason.toString(),
+                                                                                  style: const TextStyle(
+                                                                                    fontSize: 10,
+                                                                                    color: Colors.white,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    )
+                                                                  : SizedBox(),
                                                               const SizedBox(
                                                                 height: 8,
                                                               ),
@@ -4354,6 +4763,112 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                         ],
                                                       ),
                                                     ),
+                                                    // Padding(
+                                                    //   padding:
+                                                    //       const EdgeInsets.only(
+                                                    //         left: 10,
+                                                    //         right: 10,
+                                                    //         top: 5,
+                                                    //       ),
+                                                    //   child: Row(
+                                                    //     children: [
+                                                    //       SizedBox(
+                                                    //         width:
+                                                    //             MediaQuery.of(
+                                                    //               context,
+                                                    //             ).size.width *
+                                                    //             0.4,
+                                                    //         child: const Text(
+                                                    //           'Cost',
+                                                    //           style: TextStyle(
+                                                    //             fontSize: 14,
+                                                    //             fontWeight:
+                                                    //                 FontWeight
+                                                    //                     .w500,
+                                                    //           ),
+                                                    //         ),
+                                                    //       ),
+                                                    //       const Text(':'),
+                                                    //       const SizedBox(
+                                                    //         width: 5,
+                                                    //       ),
+                                                    //       SizedBox(
+                                                    //         width:
+                                                    //             MediaQuery.of(
+                                                    //               context,
+                                                    //             ).size.width *
+                                                    //             0.45,
+                                                    //         child: Text(
+                                                    //           leadDetails!
+                                                    //               .data!
+                                                    //               .cost
+                                                    //               .toString(),
+                                                    //           style:
+                                                    //               const TextStyle(
+                                                    //                 fontSize:
+                                                    //                     14,
+                                                    //               ),
+                                                    //           overflow:
+                                                    //               TextOverflow
+                                                    //                   .ellipsis,
+                                                    //         ),
+                                                    //       ),
+                                                    //     ],
+                                                    //   ),
+                                                    // ),
+                                                    // Padding(
+                                                    //   padding:
+                                                    //       const EdgeInsets.only(
+                                                    //         left: 10,
+                                                    //         right: 10,
+                                                    //         top: 5,
+                                                    //       ),
+                                                    //   child: Row(
+                                                    //     children: [
+                                                    //       SizedBox(
+                                                    //         width:
+                                                    //             MediaQuery.of(
+                                                    //               context,
+                                                    //             ).size.width *
+                                                    //             0.4,
+                                                    //         child: const Text(
+                                                    //           'Source',
+                                                    //           style: TextStyle(
+                                                    //             fontSize: 14,
+                                                    //             fontWeight:
+                                                    //                 FontWeight
+                                                    //                     .w500,
+                                                    //           ),
+                                                    //         ),
+                                                    //       ),
+                                                    //       const Text(':'),
+                                                    //       const SizedBox(
+                                                    //         width: 5,
+                                                    //       ),
+                                                    //       SizedBox(
+                                                    //         width:
+                                                    //             MediaQuery.of(
+                                                    //               context,
+                                                    //             ).size.width *
+                                                    //             0.45,
+                                                    //         child: Text(
+                                                    //           leadDetails!
+                                                    //               .data!
+                                                    //               .leadMethod
+                                                    //               .toString(),
+                                                    //           style:
+                                                    //               const TextStyle(
+                                                    //                 fontSize:
+                                                    //                     14,
+                                                    //               ),
+                                                    //           overflow:
+                                                    //               TextOverflow
+                                                    //                   .ellipsis,
+                                                    //         ),
+                                                    //       ),
+                                                    //     ],
+                                                    //   ),
+                                                    // ),
                                                     Padding(
                                                       padding:
                                                           const EdgeInsets.only(
@@ -4370,7 +4885,7 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                                 ).size.width *
                                                                 0.4,
                                                             child: const Text(
-                                                              'Cost',
+                                                              'Job',
                                                               style: TextStyle(
                                                                 fontSize: 14,
                                                                 fontWeight:
@@ -4392,7 +4907,7 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                             child: Text(
                                                               leadDetails!
                                                                   .data!
-                                                                  .cost
+                                                                  .job
                                                                   .toString(),
                                                               style:
                                                                   const TextStyle(
@@ -4423,7 +4938,7 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                                 ).size.width *
                                                                 0.4,
                                                             child: const Text(
-                                                              'Source',
+                                                              'Location',
                                                               style: TextStyle(
                                                                 fontSize: 14,
                                                                 fontWeight:
@@ -4445,7 +4960,336 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                             child: Text(
                                                               leadDetails!
                                                                   .data!
-                                                                  .leadMethod
+                                                                  .location
+                                                                  .toString(),
+                                                              style:
+                                                                  const TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            left: 10,
+                                                            right: 10,
+                                                            top: 5,
+                                                          ),
+                                                      child: Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                  context,
+                                                                ).size.width *
+                                                                0.4,
+                                                            child: const Text(
+                                                              'Customer Need & Purpose',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const Text(':'),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          SizedBox(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                  context,
+                                                                ).size.width *
+                                                                0.45,
+                                                            child: Text(
+                                                              leadDetails!
+                                                                  .data!
+                                                                  .customerNeed
+                                                                  .toString(),
+                                                              style:
+                                                                  const TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            left: 10,
+                                                            right: 10,
+                                                            top: 5,
+                                                          ),
+                                                      child: Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                  context,
+                                                                ).size.width *
+                                                                0.4,
+                                                            child: const Text(
+                                                              'Purpose',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const Text(':'),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          SizedBox(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                  context,
+                                                                ).size.width *
+                                                                0.45,
+                                                            child: Text(
+                                                              leadDetails!
+                                                                  .data!
+                                                                  .purpose
+                                                                  .toString(),
+                                                              style:
+                                                                  const TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            left: 10,
+                                                            right: 10,
+                                                            top: 5,
+                                                          ),
+                                                      child: Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                  context,
+                                                                ).size.width *
+                                                                0.4,
+                                                            child: const Text(
+                                                              'Challenges',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const Text(':'),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          SizedBox(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                  context,
+                                                                ).size.width *
+                                                                0.45,
+                                                            child: Text(
+                                                              leadDetails!
+                                                                  .data!
+                                                                  .challenges
+                                                                  .toString(),
+                                                              style:
+                                                                  const TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            left: 10,
+                                                            right: 10,
+                                                            top: 5,
+                                                          ),
+                                                      child: Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                  context,
+                                                                ).size.width *
+                                                                0.4,
+                                                            child: const Text(
+                                                              'New Objection',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const Text(':'),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          SizedBox(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                  context,
+                                                                ).size.width *
+                                                                0.45,
+                                                            child: Text(
+                                                              leadDetails!
+                                                                  .data!
+                                                                  .newObjection
+                                                                  .toString(),
+                                                              style:
+                                                                  const TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            left: 10,
+                                                            right: 10,
+                                                            top: 5,
+                                                          ),
+                                                      child: Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                  context,
+                                                                ).size.width *
+                                                                0.4,
+                                                            child: const Text(
+                                                              'Google Review Status',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const Text(':'),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          SizedBox(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                  context,
+                                                                ).size.width *
+                                                                0.45,
+                                                            child:
+                                                                leadDetails!
+                                                                        .data!
+                                                                        .googleReviewStatus ==
+                                                                    "true"
+                                                                ? Text(
+                                                                    "Yes",
+                                                                    style: const TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                  )
+                                                                : Text(
+                                                                    "No",
+                                                                    style: const TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                  ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                            left: 10,
+                                                            right: 10,
+                                                            top: 5,
+                                                          ),
+                                                      child: Row(
+                                                        children: [
+                                                          SizedBox(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                  context,
+                                                                ).size.width *
+                                                                0.4,
+                                                            child: const Text(
+                                                              'Reason For Lost Sales',
+                                                              style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const Text(':'),
+                                                          const SizedBox(
+                                                            width: 5,
+                                                          ),
+                                                          SizedBox(
+                                                            width:
+                                                                MediaQuery.of(
+                                                                  context,
+                                                                ).size.width *
+                                                                0.45,
+                                                            child: Text(
+                                                              leadDetails!
+                                                                  .data!
+                                                                  .reasonForLostSales
                                                                   .toString(),
                                                               style:
                                                                   const TextStyle(
@@ -6960,6 +7804,7 @@ class _LeadDetailsState extends State<LeadDetails> {
                         heroTag: 'add',
                         backgroundColor: Colors.green,
                         onPressed: () {
+                          debugPrint('scrollToIndex = ${widget.scrollToIndex}');
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -6985,6 +7830,16 @@ class _LeadDetailsState extends State<LeadDetails> {
                                 priority: leadDetails!.data!.priority,
                                 cost: leadDetails!.data!.cost,
                                 address: leadDetails!.data!.address,
+                                job: leadDetails!.data!.job,
+                                location: leadDetails!.data!.location,
+                                customerNeed: leadDetails!.data!.customerNeed,
+                                purpose: leadDetails!.data!.purpose,
+                                challenges: leadDetails!.data!.challenges,
+                                newObjection: leadDetails!.data!.newObjection,
+                                googleReviewStatus:
+                                    leadDetails!.data!.googleReviewStatus,
+                                reasonForLostSales:
+                                    leadDetails!.data!.reasonForLostSales,
                                 searchKey: widget.searchKey,
                                 leadType1: widget.leadType,
                               ),

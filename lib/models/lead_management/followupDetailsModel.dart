@@ -44,6 +44,8 @@ class Data {
   String? newObjection;
   String? googleReviewStatus;
   String? reasonForLostSales;
+   String? callResponse;
+    String? callResponseId;
 
   Data({
     this.callDetailsId,
@@ -67,6 +69,8 @@ class Data {
     this.newObjection,
     this.googleReviewStatus,
     this.reasonForLostSales,
+    this.callResponse,
+    this.callResponseId,
   });
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -91,6 +95,8 @@ class Data {
     newObjection = json['new_objection'];
     googleReviewStatus = json['google_review_status'];
     reasonForLostSales = json['reason_for_lost_sales'];
+    callResponse = json['call_response'];
+    callResponseId = json['call_response_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -116,6 +122,8 @@ class Data {
     data['new_objection'] = this.newObjection;
     data['google_review_status'] = this.googleReviewStatus;
     data['reason_for_lost_sales'] = this.reasonForLostSales;
+    data['call_response'] = this.callResponse;
+    data['call_response_id'] = this.callResponseId;
     return data;
   }
 }

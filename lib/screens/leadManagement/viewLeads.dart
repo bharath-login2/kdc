@@ -39,19 +39,24 @@ class ViewLeads extends StatefulWidget {
   int? pageSize;
   String? leadType;
 
-  ViewLeads(this.token, this.editLead, this.deleteLead, this.cloudCall,
-      {super.key,
-      this.fromDate,
-      this.toDate,
-      this.status,
-      this.category,
-      this.staff,
-      this.pageName,
-      this.isCalled,
-      this.scrollToIndex,
-      this.page,
-      this.pageSize,
-      this.leadType});
+  ViewLeads(
+    this.token,
+    this.editLead,
+    this.deleteLead,
+    this.cloudCall, {
+    super.key,
+    this.fromDate,
+    this.toDate,
+    this.status,
+    this.category,
+    this.staff,
+    this.pageName,
+    this.isCalled,
+    this.scrollToIndex,
+    this.page,
+    this.pageSize,
+    this.leadType,
+  });
 
   @override
   State<ViewLeads> createState() => _ViewLeadsState();
@@ -62,8 +67,8 @@ class _ViewLeadsState extends State<ViewLeads> {
   AddLeadCommonDataModel? commonDetails;
   bool? result = true;
   bool? result1 = true;
-  var fromdate = DateTime.now();
-  var todate = DateTime.now();
+  DateTime? fromdate;
+  DateTime? todate;
   var outputFormat = DateFormat('dd-MM-yyyy');
   dynamic category;
   dynamic status;
@@ -102,6 +107,8 @@ class _ViewLeadsState extends State<ViewLeads> {
   CommonConfigureModel? configure;
   bool isSort = true;
   final ItemScrollController itemScrollController = ItemScrollController();
+  TextEditingController searchController = TextEditingController();
+  String searchQuery = '';
   final ItemPositionsListener itemPositionsListener =
       ItemPositionsListener.create();
   List<dynamic> items = [];
@@ -127,8 +134,24 @@ class _ViewLeadsState extends State<ViewLeads> {
       pageSize = widget.pageSize!;
     }
     //print(widget.fromDate.toString());
-    fromdate = DateTime.parse(widget.fromDate.toString());
-    todate = DateTime.parse(widget.toDate.toString());
+    // fromdate = DateTime.parse(widget.fromDate.toString());
+    // todate = DateTime.parse(widget.toDate.toString());
+    if (widget.status == '-5' || widget.status == '2') {
+      fromdate = null;
+      todate = null;
+    } else {
+      if (widget.fromDate != null && widget.fromDate!.isNotEmpty) {
+        fromdate = DateTime.tryParse(widget.fromDate.toString());
+      } else {
+        fromdate = DateTime.now(); // or some default date
+      }
+
+      if (widget.toDate != null && widget.toDate!.isNotEmpty) {
+        todate = DateTime.tryParse(widget.toDate.toString());
+      } else {
+        todate = DateTime.now(); // or some default date
+      }
+    }
     status = widget.status;
     category = widget.category;
     staff = widget.staff;
@@ -143,6 +166,16 @@ class _ViewLeadsState extends State<ViewLeads> {
       }
     });
   }
+
+  List<dynamic> getFilteredItems() {
+  if (searchQuery.isEmpty) {
+    return items;
+  }
+  return items.where((item) {
+    final clientName = item.clientName?.toString().toLowerCase() ?? '';
+    return clientName.contains(searchQuery.toLowerCase());
+  }).toList();
+}
 
   void getData(sort, isFirst) async {
     //print('scrollIndex1:${widget.scrollToIndex}');
@@ -173,40 +206,62 @@ class _ViewLeadsState extends State<ViewLeads> {
         statusCatId = await Common.getSharedPref("statusCatId");
         type = await Common.getSharedPref("type");
         viewLeads = await HttpService.viewLeadsSts(
-            widget.token,
-            fromdate,
-            todate,
-            type,
-            statusCatId,
-            statusWiseId,
-            sort,
-            page,
-            pageSize,
-            isFirst,branch);
+          widget.token,
+          fromdate,
+          todate,
+          type,
+          statusCatId,
+          statusWiseId,
+          sort,
+          page,
+          pageSize,
+          isFirst,
+          branch,
+        );
         if (viewLeads != null) {
-          fromdate = DateTime.parse(viewLeads!.data!.fromdate.toString());
-          todate = DateTime.parse(viewLeads!.data!.todate.toString());
+          if (viewLeads!.data!.fromdate != null &&
+              viewLeads!.data!.fromdate!.isNotEmpty) {
+            fromdate =
+                DateTime.tryParse(viewLeads!.data!.fromdate.toString()) ??
+                fromdate;
+          }
+          if (viewLeads!.data!.todate != null &&
+              viewLeads!.data!.todate!.isNotEmpty) {
+            todate =
+                DateTime.tryParse(viewLeads!.data!.todate.toString()) ?? todate;
+          }
           setState(() {});
         }
       } else {
         viewLeads = await HttpService.viewLeads(
-            widget.token,
-            fromdate,
-            todate,
-            category,
-            status,
-            staff,
-            isCalled,
-            priority,
-            sort,
-            page,
-            pageSize,
-            isFirst,
-            widget.leadType,branch);
+          widget.token,
+          fromdate,
+          todate,
+          category,
+          status,
+          staff,
+          isCalled,
+          priority,
+          sort,
+          page,
+          pageSize,
+          isFirst,
+          widget.leadType,
+          branch,
+        );
       }
       if (viewLeads != null) {
-        fromdate = DateTime.parse(viewLeads!.data!.fromdate.toString());
-        todate = DateTime.parse(viewLeads!.data!.todate.toString());
+        if (viewLeads!.data!.fromdate != null &&
+            viewLeads!.data!.fromdate!.isNotEmpty) {
+          fromdate =
+              DateTime.tryParse(viewLeads!.data!.fromdate.toString()) ??
+              fromdate;
+        }
+        if (viewLeads!.data!.todate != null &&
+            viewLeads!.data!.todate!.isNotEmpty) {
+          todate =
+              DateTime.tryParse(viewLeads!.data!.todate.toString()) ?? todate;
+        }
         setState(() {});
       }
 
@@ -244,17 +299,24 @@ class _ViewLeadsState extends State<ViewLeads> {
                 backgroundColor: Colors.grey.shade200,
                 appBar: PreferredSize(
                   preferredSize: Size.fromHeight(
-                      MediaQuery.of(context).size.height * 0.08),
+                    MediaQuery.of(context).size.height * 0.08,
+                  ),
                   child: Container(
                     padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).padding.top),
+                      top: MediaQuery.of(context).padding.top,
+                    ),
                     decoration: const BoxDecoration(
                       gradient: LinearGradient(
-                          colors: [Color(0xFF2a86c9), Color(0xFF406dbe)]),
+                        colors: [Color(0xFF2a86c9), Color(0xFF406dbe)],
+                      ),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.only(
-                          left: 10.0, top: 10.0, bottom: 10.0, right: 10),
+                        left: 10.0,
+                        top: 10.0,
+                        bottom: 10.0,
+                        right: 10,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -267,16 +329,18 @@ class _ViewLeadsState extends State<ViewLeads> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            Dashboard(widget.token)),
+                                      builder: (context) =>
+                                          Dashboard(widget.token),
+                                    ),
                                   );
                                 },
                                 child: Container(
                                   height: 25,
                                   width: 25,
                                   decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.white),
-                                      shape: BoxShape.circle),
+                                    border: Border.all(color: Colors.white),
+                                    shape: BoxShape.circle,
+                                  ),
                                   child: const Icon(
                                     Icons.arrow_back_ios_outlined,
                                     color: Colors.white,
@@ -284,419 +348,1652 @@ class _ViewLeadsState extends State<ViewLeads> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(
-                                width: 25,
-                              ),
+                              const SizedBox(width: 25),
                               Text(
                                 widget.pageName.toString(),
                                 style: const TextStyle(
-                                    color: Colors.white, fontSize: 18),
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
                               ),
                             ],
                           ),
                           Row(
                             children: [
-                              // InkWell(
-                              //   onTap: () {
-                              //
-                              //     // setState(() {
-                              //     //   isSort = !isSort;
-                              //     //
-                              //     //   // Toggle the sorting order
-                              //     //   if (isSort) {
-                              //     //     items.sort();
-                              //     //   } else {
-                              //     //     items.first.sort((a, b) => b['callMasterId'].compareTo(a['callMasterId']));
-                              //     //   }
-                              //     // });
-                              //     // setState(() {
-                              //     //   isSort == true
-                              //     //       ? getData('ASC', true)
-                              //     //       : getData('desc', true);
-                              //     //   isSort = !isSort;
-                              //     // });
-                              //   },
-                              //   child: const Icon(
-                              //     Icons.swap_calls,
-                              //     color: Colors.white,
-                              //   ),
-                              // ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 15,
+                                  right: 10,
+                                  top: 15,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        showGeneralDialog(
+                                          barrierLabel: "showGeneralDialog",
+                                          barrierDismissible: true,
+                                          barrierColor: Colors.black
+                                              .withOpacity(0.6),
+                                          transitionDuration: const Duration(
+                                            milliseconds: 400,
+                                          ),
+                                          context: context,
+                                          pageBuilder: (context, _, __) {
+                                            return StatefulBuilder(
+                                              builder: (context, setState) {
+                                                return Align(
+                                                  alignment:
+                                                      Alignment.bottomCenter,
+                                                  child: IntrinsicHeight(
+                                                    child: Container(
+                                                      width: double.maxFinite,
+                                                      clipBehavior:
+                                                          Clip.antiAlias,
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                            16,
+                                                          ),
+                                                      decoration: const BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                              topLeft:
+                                                                  Radius.circular(
+                                                                    16,
+                                                                  ),
+                                                              topRight:
+                                                                  Radius.circular(
+                                                                    16,
+                                                                  ),
+                                                            ),
+                                                      ),
+                                                      child: Material(
+                                                        child: Column(
+                                                          children: [
+                                                            const SizedBox(
+                                                              height: 20,
+                                                            ),
+                                                            const Text(
+                                                              'Filtration',
+                                                              style: TextStyle(
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 20,
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    const Text(
+                                                                      'From Date',
+                                                                      style: TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width:
+                                                                          MediaQuery.of(
+                                                                            context,
+                                                                          ).size.width *
+                                                                          0.43,
+                                                                      child: Center(
+                                                                        child: DateTimePicker(
+                                                                          decoration: InputDecoration(
+                                                                            filled:
+                                                                                true,
+                                                                            //<-- SEE HERE
+                                                                            fillColor:
+                                                                                Colors.white,
+                                                                            prefixIcon: const Icon(
+                                                                              Icons.arrow_right,
+                                                                              color: Colors.grey,
+                                                                            ),
+                                                                            counterText:
+                                                                                "",
+                                                                            hintText:
+                                                                                'From Date',
+                                                                            isDense:
+                                                                                true,
+                                                                            border: OutlineInputBorder(
+                                                                              borderSide: BorderSide(
+                                                                                color: Colors.purple.shade100,
+                                                                              ),
+                                                                              borderRadius: BorderRadius.circular(
+                                                                                5,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          initialValue:
+                                                                              fromdate?.toString() ??
+                                                                              "",
+                                                                          type:
+                                                                              DateTimePickerType.date,
+
+                                                                          //controller: fromDate,
+                                                                          firstDate: DateTime(
+                                                                            1995,
+                                                                          ),
+                                                                          lastDate: DateTime.now().add(
+                                                                            const Duration(
+                                                                              days: 365,
+                                                                            ),
+                                                                          ),
+                                                                          // This will add one year from current date
+                                                                          validator:
+                                                                              (
+                                                                                value,
+                                                                              ) {
+                                                                                return null;
+                                                                              },
+                                                                          onChanged:
+                                                                              (
+                                                                                value,
+                                                                              ) {
+                                                                                if (value.isNotEmpty) {
+                                                                                  var parsed = DateTime.tryParse(
+                                                                                    value,
+                                                                                  );
+                                                                                  if (parsed !=
+                                                                                      null) {
+                                                                                    setState(
+                                                                                      () {
+                                                                                        fromdate = parsed;
+                                                                                      },
+                                                                                    );
+                                                                                  }
+                                                                                }
+                                                                              },
+                                                                          // We can also use onSaved
+                                                                          onSaved:
+                                                                              (
+                                                                                value,
+                                                                              ) {
+                                                                                if (value !=
+                                                                                        null &&
+                                                                                    value.isNotEmpty) {
+                                                                                  var parsed = DateTime.tryParse(
+                                                                                    value,
+                                                                                  );
+                                                                                  if (parsed !=
+                                                                                      null) {
+                                                                                    fromdate = parsed;
+                                                                                  }
+                                                                                }
+                                                                              },
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 12,
+                                                                ),
+                                                                Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    const Text(
+                                                                      'To Date',
+                                                                      style: TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width:
+                                                                          MediaQuery.of(
+                                                                            context,
+                                                                          ).size.width *
+                                                                          0.43,
+                                                                      child: Center(
+                                                                        child: DateTimePicker(
+                                                                          decoration: InputDecoration(
+                                                                            filled:
+                                                                                true,
+                                                                            //<-- SEE HERE
+                                                                            fillColor:
+                                                                                Colors.white,
+                                                                            prefixIcon: const Icon(
+                                                                              Icons.arrow_right,
+                                                                              color: Colors.grey,
+                                                                            ),
+                                                                            counterText:
+                                                                                "",
+                                                                            hintText:
+                                                                                'From Date',
+                                                                            isDense:
+                                                                                true,
+                                                                            border: OutlineInputBorder(
+                                                                              borderSide: BorderSide(
+                                                                                color: Colors.purple.shade100,
+                                                                              ),
+                                                                              borderRadius: BorderRadius.circular(
+                                                                                5,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          initialValue:
+                                                                              todate?.toString() ??
+                                                                              "",
+                                                                          type:
+                                                                              DateTimePickerType.date,
+
+                                                                          //controller: fromDate,
+                                                                          firstDate: DateTime(
+                                                                            1995,
+                                                                          ),
+                                                                          lastDate: DateTime.now().add(
+                                                                            const Duration(
+                                                                              days: 365,
+                                                                            ),
+                                                                          ),
+                                                                          // This will add one year from current date
+                                                                          validator:
+                                                                              (
+                                                                                value,
+                                                                              ) {
+                                                                                return null;
+                                                                              },
+                                                                          onChanged:
+                                                                              (
+                                                                                value,
+                                                                              ) {
+                                                                                if (value.isNotEmpty) {
+                                                                                  var parsed = DateTime.tryParse(
+                                                                                    value,
+                                                                                  );
+                                                                                  if (parsed !=
+                                                                                      null) {
+                                                                                    setState(
+                                                                                      () {
+                                                                                        todate = parsed;
+                                                                                      },
+                                                                                    );
+                                                                                  }
+                                                                                }
+                                                                              },
+                                                                          // We can also use onSaved
+                                                                          onSaved:
+                                                                              (
+                                                                                value,
+                                                                              ) {
+                                                                                if (value !=
+                                                                                        null &&
+                                                                                    value.isNotEmpty) {
+                                                                                  var parsed = DateTime.tryParse(
+                                                                                    value,
+                                                                                  );
+                                                                                  if (parsed !=
+                                                                                      null) {
+                                                                                    todate = parsed;
+                                                                                  }
+                                                                                }
+                                                                              },
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 13,
+                                                            ),
+                                                            multiBranch ==
+                                                                        'true' &&
+                                                                    roleId ==
+                                                                        '2'
+                                                                ? Padding(
+                                                                    padding:
+                                                                        const EdgeInsets.only(
+                                                                          bottom:
+                                                                              13,
+                                                                        ),
+                                                                    child: Column(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .start,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        const Text(
+                                                                          'Branch',
+                                                                          style: TextStyle(
+                                                                            fontSize:
+                                                                                15,
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              5,
+                                                                        ),
+                                                                        SizedBox(
+                                                                          width:
+                                                                              MediaQuery.of(
+                                                                                context,
+                                                                              ).size.width *
+                                                                              0.9,
+                                                                          child:
+                                                                              FormField<
+                                                                                String
+                                                                              >(
+                                                                                builder:
+                                                                                    (
+                                                                                      FormFieldState<
+                                                                                        String
+                                                                                      >
+                                                                                      state,
+                                                                                    ) {
+                                                                                      return Container(
+                                                                                        width:
+                                                                                            MediaQuery.of(
+                                                                                              context,
+                                                                                            ).size.width *
+                                                                                            0.9,
+                                                                                        decoration: BoxDecoration(
+                                                                                          border: Border.all(
+                                                                                            color: Colors.grey.shade900,
+                                                                                            width: 0,
+                                                                                          ),
+                                                                                          color: Colors.white,
+                                                                                          borderRadius: const BorderRadius.all(
+                                                                                            Radius.circular(
+                                                                                              5,
+                                                                                            ),
+                                                                                          ),
+                                                                                        ),
+                                                                                        child: DropdownButtonHideUnderline(
+                                                                                          child:
+                                                                                              DropdownButton<
+                                                                                                String
+                                                                                              >(
+                                                                                                isExpanded: true,
+                                                                                                hint: const Padding(
+                                                                                                  padding: EdgeInsets.only(
+                                                                                                    left: 20,
+                                                                                                  ),
+                                                                                                  child: Text(
+                                                                                                    'Branch',
+                                                                                                  ),
+                                                                                                ),
+                                                                                                value: branch,
+                                                                                                items: commonDetails!.data!.branch!.map(
+                                                                                                  (
+                                                                                                    data,
+                                                                                                  ) {
+                                                                                                    return DropdownMenuItem(
+                                                                                                      value: data.branchId.toString(),
+                                                                                                      child: Padding(
+                                                                                                        padding: const EdgeInsets.only(
+                                                                                                          left: 20,
+                                                                                                        ),
+                                                                                                        child: Text(
+                                                                                                          data.branchName.toString(),
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    );
+                                                                                                  },
+                                                                                                ).toList(),
+                                                                                                onChanged:
+                                                                                                    (
+                                                                                                      newValue1,
+                                                                                                    ) {
+                                                                                                      setState(
+                                                                                                        () {
+                                                                                                          branch = newValue1;
+                                                                                                        },
+                                                                                                      );
+                                                                                                    },
+                                                                                              ),
+                                                                                        ),
+                                                                                      );
+                                                                                    },
+                                                                              ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  )
+                                                                : const SizedBox(),
+                                                            Row(
+                                                              children: [
+                                                                Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    const Text(
+                                                                      'Customer Interested Product',
+                                                                      style: TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    FormField<
+                                                                      String
+                                                                    >(
+                                                                      builder:
+                                                                          (
+                                                                            FormFieldState<
+                                                                              String
+                                                                            >
+                                                                            state,
+                                                                          ) {
+                                                                            return Container(
+                                                                              width:
+                                                                                  MediaQuery.of(
+                                                                                    context,
+                                                                                  ).size.width *
+                                                                                  0.9,
+                                                                              decoration: BoxDecoration(
+                                                                                border: Border.all(
+                                                                                  color: Colors.grey.shade900,
+                                                                                  width: 0,
+                                                                                ),
+                                                                                color: Colors.white,
+                                                                                borderRadius: const BorderRadius.all(
+                                                                                  Radius.circular(
+                                                                                    5,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              child: DropdownButtonHideUnderline(
+                                                                                child:
+                                                                                    DropdownButton<
+                                                                                      String
+                                                                                    >(
+                                                                                      isExpanded: true,
+                                                                                      hint: const Padding(
+                                                                                        padding: EdgeInsets.only(
+                                                                                          left: 20,
+                                                                                        ),
+                                                                                        child: Text(
+                                                                                          'Customer Interested Product',
+                                                                                        ),
+                                                                                      ),
+                                                                                      value: category,
+                                                                                      items: commonDetails!.data!.leadCategory!.map(
+                                                                                        (
+                                                                                          data,
+                                                                                        ) {
+                                                                                          return DropdownMenuItem(
+                                                                                            value: data.leadCategoryId.toString(),
+                                                                                            child: Padding(
+                                                                                              padding: const EdgeInsets.only(
+                                                                                                left: 20,
+                                                                                              ),
+                                                                                              child: Text(
+                                                                                                data.leadCategory.toString(),
+                                                                                              ),
+                                                                                            ),
+                                                                                          );
+                                                                                        },
+                                                                                      ).toList(),
+                                                                                      onChanged:
+                                                                                          (
+                                                                                            newValue,
+                                                                                          ) {
+                                                                                            setState(
+                                                                                              () {
+                                                                                                category = newValue;
+                                                                                              },
+                                                                                            );
+                                                                                          },
+                                                                                    ),
+                                                                              ),
+                                                                            );
+                                                                          },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                // const SizedBox(
+                                                                //   width: 12,
+                                                                // ),
+                                                                // Column(
+                                                                //   mainAxisAlignment:
+                                                                //       MainAxisAlignment
+                                                                //           .start,
+                                                                //   crossAxisAlignment:
+                                                                //       CrossAxisAlignment
+                                                                //           .start,
+                                                                //   children: [
+                                                                //     const Text(
+                                                                //         'Lead Status',
+                                                                //         style:
+                                                                //             TextStyle(
+                                                                //           fontSize:
+                                                                //               15,
+                                                                //           fontWeight:
+                                                                //               FontWeight
+                                                                //                   .w500,
+                                                                //         )),
+                                                                //     const SizedBox(
+                                                                //       height: 5,
+                                                                //     ),
+                                                                //     FormField<
+                                                                //         String>(
+                                                                //       builder: (FormFieldState<
+                                                                //               String>
+                                                                //           state) {
+                                                                //         return Container(
+                                                                //           width: MediaQuery.of(context)
+                                                                //                   .size
+                                                                //                   .width *
+                                                                //               0.43,
+                                                                //           decoration: BoxDecoration(
+                                                                //               border: Border.all(
+                                                                //                   color: Colors
+                                                                //                       .grey.shade900,
+                                                                //                   width:
+                                                                //                       0),
+                                                                //               color: Colors
+                                                                //                   .white,
+                                                                //               borderRadius: const BorderRadius
+                                                                //                   .all(
+                                                                //                   Radius.circular(5))),
+                                                                //           child:
+                                                                //               DropdownButtonHideUnderline(
+                                                                //             child: DropdownButton<
+                                                                //                 String>(
+                                                                //               isExpanded:
+                                                                //                   true,
+                                                                //               hint:
+                                                                //                   const Padding(
+                                                                //                 padding:
+                                                                //                     EdgeInsets.only(left: 20),
+                                                                //                 child:
+                                                                //                     Text('Status'),
+                                                                //               ),
+                                                                //               value:
+                                                                //                   status,
+                                                                //               items: commonDetails!
+                                                                //                   .data!
+                                                                //                   .callResult!
+                                                                //                   .map((data) {
+                                                                //                 return DropdownMenuItem(
+                                                                //                   value: data.callResultId.toString(),
+                                                                //                   child: Padding(
+                                                                //                     padding: const EdgeInsets.only(left: 20),
+                                                                //                     child: Text(data.callResult.toString()),
+                                                                //                   ),
+                                                                //                 );
+                                                                //               }).toList(),
+                                                                //               onChanged:
+                                                                //                   (newValue) {
+                                                                //                 setState(() {
+                                                                //                   status = newValue;
+                                                                //                 });
+                                                                //               },
+                                                                //             ),
+                                                                //           ),
+                                                                //         );
+                                                                //       },
+                                                                //     ),
+                                                                //   ],
+                                                                // ),
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 13,
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                // Column(
+                                                                //   mainAxisAlignment:
+                                                                //       MainAxisAlignment
+                                                                //           .start,
+                                                                //   crossAxisAlignment:
+                                                                //       CrossAxisAlignment
+                                                                //           .start,
+                                                                //   children: [
+                                                                //     const Text(
+                                                                //         'Customer Product',
+                                                                //         style:
+                                                                //             TextStyle(
+                                                                //           fontSize:
+                                                                //               15,
+                                                                //           fontWeight:
+                                                                //               FontWeight
+                                                                //                   .w500,
+                                                                //         )),
+                                                                //     const SizedBox(
+                                                                //       height: 5,
+                                                                //     ),
+                                                                //     FormField<
+                                                                //         String>(
+                                                                //       builder: (FormFieldState<
+                                                                //               String>
+                                                                //           state) {
+                                                                //         return Container(
+                                                                //           width: MediaQuery.of(context)
+                                                                //                   .size
+                                                                //                   .width *
+                                                                //               0.43,
+                                                                //           decoration: BoxDecoration(
+                                                                //               border: Border.all(
+                                                                //                   color: Colors
+                                                                //                       .grey.shade900,
+                                                                //                   width:
+                                                                //                       0),
+                                                                //               color: Colors
+                                                                //                   .white,
+                                                                //               borderRadius: const BorderRadius
+                                                                //                   .all(
+                                                                //                   Radius.circular(5))),
+                                                                //           child:
+                                                                //               DropdownButtonHideUnderline(
+                                                                //             child: DropdownButton<
+                                                                //                 String>(
+                                                                //               isExpanded:
+                                                                //                   true,
+                                                                //               hint:
+                                                                //                   const Padding(
+                                                                //                 padding:
+                                                                //                     EdgeInsets.only(left: 20),
+                                                                //                 child:
+                                                                //                     Text('category'),
+                                                                //               ),
+                                                                //               value:
+                                                                //                   category,
+                                                                //               items: commonDetails!
+                                                                //                   .data!
+                                                                //                   .leadCategory!
+                                                                //                   .map((data) {
+                                                                //                 return DropdownMenuItem(
+                                                                //                   value: data.leadCategoryId.toString(),
+                                                                //                   child: Padding(
+                                                                //                     padding: const EdgeInsets.only(left: 20),
+                                                                //                     child: Text(data.leadCategory.toString()),
+                                                                //                   ),
+                                                                //                 );
+                                                                //               }).toList(),
+                                                                //               onChanged:
+                                                                //                   (newValue) {
+                                                                //                 setState(() {
+                                                                //                   category = newValue;
+                                                                //                 });
+                                                                //               },
+                                                                //             ),
+                                                                //           ),
+                                                                //         );
+                                                                //       },
+                                                                //     ),
+                                                                //   ],
+                                                                // ),
+                                                                // const SizedBox(
+                                                                //   width: 12,
+                                                                // ),
+                                                                widget.status !=
+                                                                            "2" &&
+                                                                        widget.status !=
+                                                                            "4"
+                                                                    ? Column(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.start,
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          const Text(
+                                                                            'Lead Status',
+                                                                            style: TextStyle(
+                                                                              fontSize: 15,
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(
+                                                                            height:
+                                                                                5,
+                                                                          ),
+                                                                          FormField<
+                                                                            String
+                                                                          >(
+                                                                            builder:
+                                                                                (
+                                                                                  FormFieldState<
+                                                                                    String
+                                                                                  >
+                                                                                  state,
+                                                                                ) {
+                                                                                  return Container(
+                                                                                    width:
+                                                                                        MediaQuery.of(
+                                                                                          context,
+                                                                                        ).size.width *
+                                                                                        0.9,
+                                                                                    decoration: BoxDecoration(
+                                                                                      border: Border.all(
+                                                                                        color: Colors.grey.shade900,
+                                                                                        width: 0,
+                                                                                      ),
+                                                                                      color: Colors.white,
+                                                                                      borderRadius: const BorderRadius.all(
+                                                                                        Radius.circular(
+                                                                                          5,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                    child: DropdownButtonHideUnderline(
+                                                                                      child:
+                                                                                          DropdownButton<
+                                                                                            String
+                                                                                          >(
+                                                                                            isExpanded: true,
+                                                                                            hint: const Padding(
+                                                                                              padding: EdgeInsets.only(
+                                                                                                left: 20,
+                                                                                              ),
+                                                                                              child: Text(
+                                                                                                'Status',
+                                                                                              ),
+                                                                                            ),
+                                                                                            value: status,
+                                                                                            items: [
+                                                                                              if (widget.status !=
+                                                                                                  '-1')
+                                                                                                const DropdownMenuItem(
+                                                                                                  value: '-5',
+                                                                                                  child: Padding(
+                                                                                                    padding: EdgeInsets.only(
+                                                                                                      left: 20,
+                                                                                                    ),
+                                                                                                    child: Text(
+                                                                                                      'All',
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              const DropdownMenuItem(
+                                                                                                value: '-1',
+                                                                                                child: Padding(
+                                                                                                  padding: EdgeInsets.only(
+                                                                                                    left: 20,
+                                                                                                  ),
+                                                                                                  child: Text(
+                                                                                                    'Total Called',
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+
+                                                                                              ...commonDetails!.data!.callResult!.map(
+                                                                                                (
+                                                                                                  data,
+                                                                                                ) {
+                                                                                                  return DropdownMenuItem(
+                                                                                                    value: data.callResultId.toString(),
+                                                                                                    child: Padding(
+                                                                                                      padding: const EdgeInsets.only(
+                                                                                                        left: 20,
+                                                                                                      ),
+                                                                                                      child: Text(
+                                                                                                        data.callResult.toString(),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  );
+                                                                                                },
+                                                                                              ).toList(),
+                                                                                            ],
+                                                                                            onChanged:
+                                                                                                (
+                                                                                                  newValue,
+                                                                                                ) {
+                                                                                                  setState(
+                                                                                                    () {
+                                                                                                      status = newValue; // Directly set the selected value
+                                                                                                    },
+                                                                                                  );
+                                                                                                },
+                                                                                          ),
+                                                                                    ),
+                                                                                  );
+                                                                                },
+                                                                          ),
+                                                                        ],
+                                                                      )
+                                                                    : SizedBox(),
+                                                                // Column(
+                                                                //   mainAxisAlignment:
+                                                                //       MainAxisAlignment
+                                                                //           .start,
+                                                                //   crossAxisAlignment:
+                                                                //       CrossAxisAlignment
+                                                                //           .start,
+                                                                //   children: [
+                                                                //     const Text(
+                                                                //       'Lead Status',
+                                                                //       style: TextStyle(
+                                                                //         fontSize:
+                                                                //             15,
+                                                                //         fontWeight:
+                                                                //             FontWeight
+                                                                //                 .w500,
+                                                                //       ),
+                                                                //     ),
+                                                                //     const SizedBox(
+                                                                //       height: 5,
+                                                                //     ),
+                                                                //     FormField<
+                                                                //       String
+                                                                //     >(
+                                                                //       builder:
+                                                                //           (
+                                                                //             FormFieldState<
+                                                                //               String
+                                                                //             >
+                                                                //             state,
+                                                                //           ) {
+                                                                //             return Container(
+                                                                //               width:
+                                                                //                   MediaQuery.of(
+                                                                //                     context,
+                                                                //                   ).size.width *
+                                                                //                   0.9,
+                                                                //               decoration: BoxDecoration(
+                                                                //                 border: Border.all(
+                                                                //                   color: Colors.grey.shade900,
+                                                                //                   width: 0,
+                                                                //                 ),
+                                                                //                 color:
+                                                                //                     Colors.white,
+                                                                //                 borderRadius: const BorderRadius.all(
+                                                                //                   Radius.circular(
+                                                                //                     5,
+                                                                //                   ),
+                                                                //                 ),
+                                                                //               ),
+                                                                //               child: DropdownButtonHideUnderline(
+                                                                //                 child:
+                                                                //                     DropdownButton<
+                                                                //                       String
+                                                                //                     >(
+                                                                //                       isExpanded: true,
+                                                                //                       hint: const Padding(
+                                                                //                         padding: EdgeInsets.only(
+                                                                //                           left: 20,
+                                                                //                         ),
+                                                                //                         child: Text(
+                                                                //                           'Status',
+                                                                //                         ),
+                                                                //                       ),
+                                                                //                       value: status,
+                                                                //                       items: commonDetails!.data!.callResult!.map(
+                                                                //                         (
+                                                                //                           data,
+                                                                //                         ) {
+                                                                //                           return DropdownMenuItem(
+                                                                //                             value: data.callResultId.toString(),
+                                                                //                             child: Padding(
+                                                                //                               padding: const EdgeInsets.only(
+                                                                //                                 left: 20,
+                                                                //                               ),
+                                                                //                               child: Text(
+                                                                //                                 data.callResult.toString(),
+                                                                //                               ),
+                                                                //                             ),
+                                                                //                           );
+                                                                //                         },
+                                                                //                       ).toList(),
+                                                                //                       onChanged:
+                                                                //                           (
+                                                                //                             newValue,
+                                                                //                           ) {
+                                                                //                             setState(
+                                                                //                               () {
+                                                                //                                 status = newValue;
+                                                                //                               },
+                                                                //                             );
+                                                                //                           },
+                                                                //                     ),
+                                                                //               ),
+                                                                //             );
+                                                                //           },
+                                                                //     ),
+                                                                //   ],
+                                                                // ),
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 13,
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    const Text(
+                                                                      'Staff',
+                                                                      style: TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    FormField<
+                                                                      String
+                                                                    >(
+                                                                      builder:
+                                                                          (
+                                                                            FormFieldState<
+                                                                              String
+                                                                            >
+                                                                            state,
+                                                                          ) {
+                                                                            return Container(
+                                                                              width:
+                                                                                  MediaQuery.of(
+                                                                                    context,
+                                                                                  ).size.width *
+                                                                                  0.43,
+                                                                              decoration: BoxDecoration(
+                                                                                border: Border.all(
+                                                                                  color: Colors.grey.shade900,
+                                                                                  width: 0,
+                                                                                ),
+                                                                                color: Colors.white,
+                                                                                borderRadius: const BorderRadius.all(
+                                                                                  Radius.circular(
+                                                                                    5,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              child: DropdownButtonHideUnderline(
+                                                                                child:
+                                                                                    DropdownButton<
+                                                                                      String
+                                                                                    >(
+                                                                                      isExpanded: true,
+                                                                                      hint: const Padding(
+                                                                                        padding: EdgeInsets.only(
+                                                                                          left: 20,
+                                                                                        ),
+                                                                                        child: Text(
+                                                                                          'Staff',
+                                                                                        ),
+                                                                                      ),
+                                                                                      value: staff,
+                                                                                      items: commonDetails!.data!.staff!.map(
+                                                                                        (
+                                                                                          data,
+                                                                                        ) {
+                                                                                          return DropdownMenuItem(
+                                                                                            value: data.staffId.toString(),
+                                                                                            child: Padding(
+                                                                                              padding: const EdgeInsets.only(
+                                                                                                left: 20,
+                                                                                              ),
+                                                                                              child: Text(
+                                                                                                data.staffName.toString(),
+                                                                                              ),
+                                                                                            ),
+                                                                                          );
+                                                                                        },
+                                                                                      ).toList(),
+                                                                                      onChanged:
+                                                                                          (
+                                                                                            newValue1,
+                                                                                          ) {
+                                                                                            setState(
+                                                                                              () {
+                                                                                                staff = newValue1;
+                                                                                              },
+                                                                                            );
+                                                                                          },
+                                                                                    ),
+                                                                              ),
+                                                                            );
+                                                                          },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 12,
+                                                                ),
+                                                                Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    const Text(
+                                                                      'Priority',
+                                                                      style: TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: 5,
+                                                                    ),
+                                                                    FormField<
+                                                                      String
+                                                                    >(
+                                                                      builder:
+                                                                          (
+                                                                            FormFieldState<
+                                                                              String
+                                                                            >
+                                                                            state,
+                                                                          ) {
+                                                                            return Container(
+                                                                              width:
+                                                                                  MediaQuery.of(
+                                                                                    context,
+                                                                                  ).size.width *
+                                                                                  0.43,
+                                                                              decoration: BoxDecoration(
+                                                                                border: Border.all(
+                                                                                  color: Colors.grey.shade900,
+                                                                                  width: 0,
+                                                                                ),
+                                                                                color: Colors.white,
+                                                                                borderRadius: const BorderRadius.all(
+                                                                                  Radius.circular(
+                                                                                    5,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              child: DropdownButtonHideUnderline(
+                                                                                child:
+                                                                                    DropdownButton<
+                                                                                      String
+                                                                                    >(
+                                                                                      isExpanded: true,
+                                                                                      hint: const Padding(
+                                                                                        padding: EdgeInsets.only(
+                                                                                          left: 20,
+                                                                                        ),
+                                                                                        child: Text(
+                                                                                          'Priority',
+                                                                                        ),
+                                                                                      ),
+                                                                                      value: priority,
+                                                                                      items: commonDetails!.data!.priority!.map(
+                                                                                        (
+                                                                                          data,
+                                                                                        ) {
+                                                                                          return DropdownMenuItem(
+                                                                                            value: data.priorityId.toString(),
+                                                                                            child: Padding(
+                                                                                              padding: const EdgeInsets.only(
+                                                                                                left: 20,
+                                                                                              ),
+                                                                                              child: Text(
+                                                                                                data.priority.toString(),
+                                                                                              ),
+                                                                                            ),
+                                                                                          );
+                                                                                        },
+                                                                                      ).toList(),
+                                                                                      onChanged:
+                                                                                          (
+                                                                                            newValue1,
+                                                                                          ) {
+                                                                                            setState(
+                                                                                              () {
+                                                                                                priority = newValue1;
+                                                                                              },
+                                                                                            );
+                                                                                            if (kDebugMode) {
+                                                                                              print(
+                                                                                                priority,
+                                                                                              );
+                                                                                            }
+                                                                                          },
+                                                                                    ),
+                                                                              ),
+                                                                            );
+                                                                          },
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 16,
+                                                            ),
+                                                            Container(
+                                                              height: 40,
+                                                              width: double
+                                                                  .maxFinite,
+                                                              decoration: const BoxDecoration(
+                                                                color: Color(
+                                                                  0xFF3375e0,
+                                                                ),
+                                                                borderRadius:
+                                                                    BorderRadius.all(
+                                                                      Radius.circular(
+                                                                        8,
+                                                                      ),
+                                                                    ),
+                                                              ),
+                                                              child: RawMaterialButton(
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    items
+                                                                        .clear();
+                                                                    page = 1;
+                                                                    pageSize =
+                                                                        20;
+                                                                    getData(
+                                                                      'desc',
+                                                                      true,
+                                                                    );
+                                                                    Navigator.of(
+                                                                      context,
+                                                                      rootNavigator:
+                                                                          true,
+                                                                    ).pop();
+                                                                  });
+                                                                },
+                                                                child: const Center(
+                                                                  child: Text(
+                                                                    'Continue',
+                                                                    style: TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                          transitionBuilder:
+                                              (_, animation1, __, child) {
+                                                return SlideTransition(
+                                                  position: Tween(
+                                                    begin: const Offset(0, 1),
+                                                    end: const Offset(0, 0),
+                                                  ).animate(animation1),
+                                                  child: child,
+                                                );
+                                              },
+                                        );
+                                      },
+                                      child: Container(
+                                        width: 30,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.grey,
+                                          ),
+                                          color: const Color(0xFFd5f5f4),
+                                          borderRadius: BorderRadius.circular(
+                                            5,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: Image.asset(
+                                            "assets/icons/filter.png",
+                                            width: 20,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                               selectedIUsers.isNotEmpty
                                   ? Row(
                                       children: [
                                         InkWell(
-                                            onTap: () {
-                                              showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return StatefulBuilder(
-                                                        builder: (context,
-                                                            setState) {
-                                                      return AlertDialog(
-                                                        title: const Text(
-                                                            'Transfer'),
-                                                        content:
-                                                            FormField<String>(
-                                                          builder:
-                                                              (FormFieldState<
-                                                                      String>
-                                                                  state) {
-                                                            return Container(
-                                                              height: 50,
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.43,
-                                                              decoration: BoxDecoration(
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return StatefulBuilder(
+                                                  builder: (context, setState) {
+                                                    return AlertDialog(
+                                                      title: const Text(
+                                                        'Transfer',
+                                                      ),
+                                                      content: FormField<String>(
+                                                        builder:
+                                                            (
+                                                              FormFieldState<
+                                                                String
+                                                              >
+                                                              state,
+                                                            ) {
+                                                              return Container(
+                                                                height: 50,
+                                                                width:
+                                                                    MediaQuery.of(
+                                                                      context,
+                                                                    ).size.width *
+                                                                    0.43,
+                                                                decoration: BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                          .grey
-                                                                          .shade900,
-                                                                      width: 0),
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade900,
+                                                                    width: 0,
+                                                                  ),
                                                                   color: Colors
                                                                       .white,
                                                                   borderRadius:
-                                                                      const BorderRadius
-                                                                          .all(
-                                                                          Radius.circular(
-                                                                              5))),
-                                                              child:
-                                                                  DropdownButtonHideUnderline(
-                                                                child:
-                                                                    DropdownButton<
-                                                                        String>(
-                                                                  isExpanded:
-                                                                      true,
-                                                                  hint:
-                                                                      const Padding(
-                                                                    padding: EdgeInsets
-                                                                        .only(
-                                                                            left:
-                                                                                20),
-                                                                    child: Text(
-                                                                        'Staff'),
-                                                                  ),
-                                                                  value:
-                                                                      transferStaff,
-                                                                  items: commonDetails!
-                                                                      .data!
-                                                                      .transferStaffs!
-                                                                      .map(
-                                                                          (data) {
-                                                                    return DropdownMenuItem(
-                                                                      value: data
-                                                                          .tranStaffId
-                                                                          .toString(),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            left:
-                                                                                20),
-                                                                        child: Text(data
-                                                                            .tranStaffName
-                                                                            .toString()),
+                                                                      const BorderRadius.all(
+                                                                        Radius.circular(
+                                                                          5,
+                                                                        ),
                                                                       ),
-                                                                    );
-                                                                  }).toList(),
-                                                                  onChanged:
-                                                                      (newValue1) {
-                                                                    setState(
-                                                                        () {
-                                                                      transferStaff =
-                                                                          newValue1;
-                                                                    });
-                                                                  },
+                                                                ),
+                                                                child: DropdownButtonHideUnderline(
+                                                                  child: DropdownButton<String>(
+                                                                    isExpanded:
+                                                                        true,
+                                                                    hint: const Padding(
+                                                                      padding:
+                                                                          EdgeInsets.only(
+                                                                            left:
+                                                                                20,
+                                                                          ),
+                                                                      child: Text(
+                                                                        'Staff',
+                                                                      ),
+                                                                    ),
+                                                                    value:
+                                                                        transferStaff,
+                                                                    items: commonDetails!.data!.transferStaffs!.map((
+                                                                      data,
+                                                                    ) {
+                                                                      return DropdownMenuItem(
+                                                                        value: data
+                                                                            .tranStaffId
+                                                                            .toString(),
+                                                                        child: Padding(
+                                                                          padding: const EdgeInsets.only(
+                                                                            left:
+                                                                                20,
+                                                                          ),
+                                                                          child: Text(
+                                                                            data.tranStaffName.toString(),
+                                                                          ),
+                                                                        ),
+                                                                      );
+                                                                    }).toList(),
+                                                                    onChanged: (newValue1) {
+                                                                      setState(() {
+                                                                        transferStaff =
+                                                                            newValue1;
+                                                                      });
+                                                                    },
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                      ),
+                                                      actions: [
+                                                        // The "Yes" button
+                                                        TextButton(
+                                                          onPressed: () async {
+                                                            Common.showProgressDialog(
+                                                              context,
+                                                              "Loading..",
+                                                            );
+                                                            Map<String, dynamic>
+                                                            body = {
+                                                              "token":
+                                                                  widget.token,
+                                                              'leadMasterIds':
+                                                                  selectedIUsers,
+                                                              'staffId':
+                                                                  transferStaff,
+                                                            };
+                                                            BulkTransferLeadModel
+                                                            bulkTransfer =
+                                                                await HttpService.bulkTransferLead(
+                                                                  body,
+                                                                );
+                                                            if (bulkTransfer
+                                                                    .data ==
+                                                                true) {
+                                                              Common.toastMessaage(
+                                                                bulkTransfer
+                                                                    .message,
+                                                                Colors.green,
+                                                              );
+                                                              if (context
+                                                                  .mounted) {
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder: (context) => ViewLeads(
+                                                                      widget
+                                                                          .token!,
+                                                                      widget
+                                                                          .editLead,
+                                                                      widget
+                                                                          .deleteLead,
+                                                                      widget
+                                                                          .cloudCall,
+                                                                      pageName:
+                                                                          widget
+                                                                              .pageName,
+                                                                      status: widget
+                                                                          .status,
+                                                                      staff: widget
+                                                                          .staff,
+                                                                      isCalled:
+                                                                          widget
+                                                                              .isCalled,
+                                                                      fromDate:
+                                                                          widget
+                                                                              .fromDate,
+                                                                      toDate: widget
+                                                                          .toDate,
+                                                                      category:
+                                                                          widget
+                                                                              .category,
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              }
+                                                            } else {
+                                                              Common.toastMessaage(
+                                                                bulkTransfer
+                                                                    .message,
+                                                                Colors.red,
+                                                              );
+                                                              if (context
+                                                                  .mounted) {
+                                                                Navigator.of(
+                                                                  context,
+                                                                ).pop();
+                                                              }
+                                                            }
+                                                          },
+                                                          child: const Text(
+                                                            'Yes',
+                                                          ),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                              context,
+                                                            ).pop();
+                                                          },
+                                                          child: const Text(
+                                                            'No',
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: const Icon(
+                                            Icons.compare_arrows_rounded,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        InkWell(
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                    'Please Confirm',
+                                                  ),
+                                                  content: const Text(
+                                                    'Are you sure to Create Contact Group?',
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                AddBulkContactGroup(
+                                                                  widget.token,
+                                                                  selectedUserNumbers,
+                                                                ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      child: const Text('Yes'),
+                                                    ),
+                                                    // The "Yes" button
+
+                                                    // TextButton(
+                                                    //     onPressed: () async {
+                                                    //       Map<String, dynamic> body = {
+                                                    //         "token": widget.token,
+                                                    //         'leadMasterIds': selectedIUsers,
+                                                    //         'staffId': transferStaff,
+                                                    //       };
+                                                    //       BulkTransferLeadsModel transferLead =
+                                                    //       await HttpService.bulkDeleteLead(body);
+                                                    //       if (deleteBulk.data ==
+                                                    //           true) {
+                                                    //         Common.toastMessaage(
+                                                    //             deleteBulk.message,
+                                                    //             Colors.green);
+                                                    //         if (context
+                                                    //             .mounted) {
+                                                    //           Navigator.push(
+                                                    //             context,
+                                                    //             MaterialPageRoute(
+                                                    //                 builder:
+                                                    //                     (context) =>
+                                                    //                     ViewLeads(
+                                                    //                       widget.token!,
+                                                    //                       widget.editLead,
+                                                    //                       widget.deleteLead,
+                                                    //                       widget.cloudCall,
+                                                    //                       pageName: widget.pageName,
+                                                    //                       status: widget.status,
+                                                    //                       staff: widget.staff,
+                                                    //                       isCalled: widget.isCalled,
+                                                    //                       fromDate: widget.fromDate,
+                                                    //                       toDate: widget.toDate,
+                                                    //                       category: widget.category,
+                                                    //                     )),
+                                                    //           );
+                                                    //         }
+                                                    //       }
+                                                    //       else
+                                                    //       {
+                                                    //         Common.toastMessaage(
+                                                    //             deleteBulk.message,
+                                                    //             Colors.red);
+                                                    //         if (context
+                                                    //             .mounted) {
+                                                    //           Navigator.of(
+                                                    //               context)
+                                                    //               .pop();
+                                                    //         }
+                                                    //       }
+                                                    //     },
+                                                    //     child:
+                                                    //     const Text('Yes')),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(
+                                                          context,
+                                                        ).pop();
+                                                      },
+                                                      child: const Text('No'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: const Icon(
+                                            Icons.group_add,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        InkWell(
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                    'Please Confirm',
+                                                  ),
+                                                  content: const Text(
+                                                    'Are you sure to Delete Selected Leads?',
+                                                  ),
+                                                  actions: [
+                                                    // The "Yes" button
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        Map<String, dynamic>
+                                                        body = {
+                                                          "token": widget.token,
+                                                          'leadMasterIds':
+                                                              selectedIUsers,
+                                                        };
+                                                        BulkDeleteLeadModel
+                                                        deleteBulk =
+                                                            await HttpService.bulkDeleteLead(
+                                                              body,
+                                                            );
+                                                        if (deleteBulk.data ==
+                                                            true) {
+                                                          Common.toastMessaage(
+                                                            deleteBulk.message,
+                                                            Colors.green,
+                                                          );
+                                                          if (context.mounted) {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (context) => ViewLeads(
+                                                                  widget.token!,
+                                                                  widget
+                                                                      .editLead,
+                                                                  widget
+                                                                      .deleteLead,
+                                                                  widget
+                                                                      .cloudCall,
+                                                                  pageName: widget
+                                                                      .pageName,
+                                                                  status: widget
+                                                                      .status,
+                                                                  staff: widget
+                                                                      .staff,
+                                                                  isCalled: widget
+                                                                      .isCalled,
+                                                                  fromDate: widget
+                                                                      .fromDate,
+                                                                  toDate: widget
+                                                                      .toDate,
+                                                                  category: widget
+                                                                      .category,
                                                                 ),
                                                               ),
                                                             );
-                                                          },
-                                                        ),
-                                                        actions: [
-                                                          // The "Yes" button
-                                                          TextButton(
-                                                              onPressed:
-                                                                  () async {
-                                                                Common.showProgressDialog(
-                                                                    context,
-                                                                    "Loading..");
-                                                                Map<String,
-                                                                        dynamic>
-                                                                    body = {
-                                                                  "token": widget
-                                                                      .token,
-                                                                  'leadMasterIds':
-                                                                      selectedIUsers,
-                                                                  'staffId':
-                                                                      transferStaff
-                                                                };
-                                                                BulkTransferLeadModel
-                                                                    bulkTransfer =
-                                                                    await HttpService
-                                                                        .bulkTransferLead(
-                                                                            body);
-                                                                if (bulkTransfer
-                                                                        .data ==
-                                                                    true) {
-                                                                  Common.toastMessaage(
-                                                                      bulkTransfer
-                                                                          .message,
-                                                                      Colors
-                                                                          .green);
-                                                                  if (context
-                                                                      .mounted) {
-                                                                    Navigator
-                                                                        .push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) =>
-                                                                              ViewLeads(
-                                                                                widget.token!,
-                                                                                widget.editLead,
-                                                                                widget.deleteLead,
-                                                                                widget.cloudCall,
-                                                                                pageName: widget.pageName,
-                                                                                status: widget.status,
-                                                                                staff: widget.staff,
-                                                                                isCalled: widget.isCalled,
-                                                                                fromDate: widget.fromDate,
-                                                                                toDate: widget.toDate,
-                                                                                category: widget.category,
-                                                                              )),
-                                                                    );
-                                                                  }
-                                                                } else {
-                                                                  Common.toastMessaage(
-                                                                      bulkTransfer
-                                                                          .message,
-                                                                      Colors
-                                                                          .red);
-                                                                  if (context
-                                                                      .mounted) {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop();
-                                                                  }
-                                                                }
-                                                              },
-                                                              child: const Text(
-                                                                  'Yes')),
-                                                          TextButton(
-                                                              onPressed: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                              child: const Text(
-                                                                  'No'))
-                                                        ],
-                                                      );
-                                                    });
-                                                  });
-                                            },
-                                            child: const Icon(
-                                              Icons.compare_arrows_rounded,
-                                              color: Colors.white,
-                                            )),
-                                        const SizedBox(
-                                          width: 10,
+                                                          }
+                                                        } else {
+                                                          Common.toastMessaage(
+                                                            deleteBulk.message,
+                                                            Colors.red,
+                                                          );
+                                                          if (context.mounted) {
+                                                            Navigator.of(
+                                                              context,
+                                                            ).pop();
+                                                          }
+                                                        }
+                                                      },
+                                                      child: const Text('Yes'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(
+                                                          context,
+                                                        ).pop();
+                                                      },
+                                                      child: const Text('No'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: const Icon(
+                                            Icons.delete,
+                                            color: Colors.red,
+                                          ),
                                         ),
-                                        InkWell(
-                                            onTap: () {
-                                              showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: const Text(
-                                                          'Please Confirm'),
-                                                      content: const Text(
-                                                          'Are you sure to Create Contact Group?'),
-                                                      actions: [
-                                                        TextButton(
-                                                            onPressed:
-                                                                () async {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) => AddBulkContactGroup(
-                                                                        widget
-                                                                            .token,
-                                                                        selectedUserNumbers)),
-                                                              );
-                                                            },
-                                                            child: const Text(
-                                                                'Yes')),
-                                                        // The "Yes" button
-
-                                                        // TextButton(
-                                                        //     onPressed: () async {
-                                                        //       Map<String, dynamic> body = {
-                                                        //         "token": widget.token,
-                                                        //         'leadMasterIds': selectedIUsers,
-                                                        //         'staffId': transferStaff,
-                                                        //       };
-                                                        //       BulkTransferLeadsModel transferLead =
-                                                        //       await HttpService.bulkDeleteLead(body);
-                                                        //       if (deleteBulk.data ==
-                                                        //           true) {
-                                                        //         Common.toastMessaage(
-                                                        //             deleteBulk.message,
-                                                        //             Colors.green);
-                                                        //         if (context
-                                                        //             .mounted) {
-                                                        //           Navigator.push(
-                                                        //             context,
-                                                        //             MaterialPageRoute(
-                                                        //                 builder:
-                                                        //                     (context) =>
-                                                        //                     ViewLeads(
-                                                        //                       widget.token!,
-                                                        //                       widget.editLead,
-                                                        //                       widget.deleteLead,
-                                                        //                       widget.cloudCall,
-                                                        //                       pageName: widget.pageName,
-                                                        //                       status: widget.status,
-                                                        //                       staff: widget.staff,
-                                                        //                       isCalled: widget.isCalled,
-                                                        //                       fromDate: widget.fromDate,
-                                                        //                       toDate: widget.toDate,
-                                                        //                       category: widget.category,
-                                                        //                     )),
-                                                        //           );
-                                                        //         }
-                                                        //       }
-                                                        //       else
-                                                        //       {
-                                                        //         Common.toastMessaage(
-                                                        //             deleteBulk.message,
-                                                        //             Colors.red);
-                                                        //         if (context
-                                                        //             .mounted) {
-                                                        //           Navigator.of(
-                                                        //               context)
-                                                        //               .pop();
-                                                        //         }
-                                                        //       }
-                                                        //     },
-                                                        //     child:
-                                                        //     const Text('Yes')),
-                                                        TextButton(
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            child: const Text(
-                                                                'No'))
-                                                      ],
-                                                    );
-                                                  });
-                                            },
-                                            child: const Icon(
-                                              Icons.group_add,
-                                              color: Colors.white,
-                                            )),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        InkWell(
-                                            onTap: () {
-                                              showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: const Text(
-                                                          'Please Confirm'),
-                                                      content: const Text(
-                                                          'Are you sure to Delete Selected Leads?'),
-                                                      actions: [
-                                                        // The "Yes" button
-                                                        TextButton(
-                                                            onPressed:
-                                                                () async {
-                                                              Map<String,
-                                                                      dynamic>
-                                                                  body = {
-                                                                "token": widget
-                                                                    .token,
-                                                                'leadMasterIds':
-                                                                    selectedIUsers,
-                                                              };
-                                                              BulkDeleteLeadModel
-                                                                  deleteBulk =
-                                                                  await HttpService
-                                                                      .bulkDeleteLead(
-                                                                          body);
-                                                              if (deleteBulk
-                                                                      .data ==
-                                                                  true) {
-                                                                Common.toastMessaage(
-                                                                    deleteBulk
-                                                                        .message,
-                                                                    Colors
-                                                                        .green);
-                                                                if (context
-                                                                    .mounted) {
-                                                                  Navigator
-                                                                      .push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            ViewLeads(
-                                                                              widget.token!,
-                                                                              widget.editLead,
-                                                                              widget.deleteLead,
-                                                                              widget.cloudCall,
-                                                                              pageName: widget.pageName,
-                                                                              status: widget.status,
-                                                                              staff: widget.staff,
-                                                                              isCalled: widget.isCalled,
-                                                                              fromDate: widget.fromDate,
-                                                                              toDate: widget.toDate,
-                                                                              category: widget.category,
-                                                                            )),
-                                                                  );
-                                                                }
-                                                              } else {
-                                                                Common.toastMessaage(
-                                                                    deleteBulk
-                                                                        .message,
-                                                                    Colors.red);
-                                                                if (context
-                                                                    .mounted) {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                }
-                                                              }
-                                                            },
-                                                            child: const Text(
-                                                                'Yes')),
-                                                        TextButton(
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            child: const Text(
-                                                                'No'))
-                                                      ],
-                                                    );
-                                                  });
-                                            },
-                                            child: const Icon(
-                                              Icons.delete,
-                                              color: Colors.red,
-                                            )),
                                       ],
                                     )
-                                  : const SizedBox()
+                                  : const SizedBox(),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -706,979 +2003,84 @@ class _ViewLeadsState extends State<ViewLeads> {
                     ? Column(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15, right: 10, top: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text('Date from ',
-                                    style: TextStyle(fontSize: 16)),
-                                Text(outputFormat.format(fromdate),
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
-                                const Text(' to ',
-                                    style: TextStyle(fontSize: 16)),
-                                Text(outputFormat.format(todate),
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
-                                const SizedBox(
-                                  width: 15,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    showGeneralDialog(
-                                      barrierLabel: "showGeneralDialog",
-                                      barrierDismissible: true,
-                                      barrierColor:
-                                          Colors.black.withOpacity(0.6),
-                                      transitionDuration:
-                                          const Duration(milliseconds: 400),
-                                      context: context,
-                                      pageBuilder: (context, _, __) {
-                                        return StatefulBuilder(
-                                          builder: (context, setState) {
-                                            return Align(
-                                              alignment: Alignment.bottomCenter,
-                                              child: IntrinsicHeight(
-                                                child: Container(
-                                                  width: double.maxFinite,
-                                                  clipBehavior: Clip.antiAlias,
-                                                  padding:
-                                                      const EdgeInsets.all(16),
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(16),
-                                                      topRight:
-                                                          Radius.circular(16),
-                                                    ),
-                                                  ),
-                                                  child: Material(
-                                                    child: Column(
-                                                      children: [
-                                                        const SizedBox(
-                                                            height: 20),
-                                                        const Text(
-                                                          'Filtration',
-                                                          style: TextStyle(
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                            height: 20),
-                                                        Row(
-                                                          children: [
-                                                            Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                const Text(
-                                                                    'From Date',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    )),
-                                                                const SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      0.43,
-                                                                  child: Center(
-                                                                    child:
-                                                                        DateTimePicker(
-                                                                      decoration: InputDecoration(
-                                                                          filled: true,
-                                                                          //<-- SEE HERE
-                                                                          fillColor: Colors.white,
-                                                                          prefixIcon: const Icon(
-                                                                            Icons.arrow_right,
-                                                                            color:
-                                                                                Colors.grey,
-                                                                          ),
-                                                                          counterText: "",
-                                                                          hintText: 'From Date',
-                                                                          isDense: true,
-                                                                          border: OutlineInputBorder(borderSide: BorderSide(color: Colors.purple.shade100), borderRadius: BorderRadius.circular(5))),
-                                                                      initialValue:
-                                                                          fromdate
-                                                                              .toString(),
-                                                                      type: DateTimePickerType
-                                                                          .date,
-
-                                                                      //controller: fromDate,
-                                                                      firstDate:
-                                                                          DateTime(
-                                                                              1995),
-                                                                      lastDate: DateTime
-                                                                              .now()
-                                                                          .add(const Duration(
-                                                                              days: 365)),
-                                                                      // This will add one year from current date
-                                                                      validator:
-                                                                          (value) {
-                                                                        return null;
-                                                                      },
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        if (value
-                                                                            .isNotEmpty) {
-                                                                          setState(
-                                                                              () {
-                                                                            fromdate =
-                                                                                DateTime.parse(value);
-                                                                          });
-                                                                        }
-                                                                      },
-                                                                      // We can also use onSaved
-                                                                      onSaved:
-                                                                          (value) {
-                                                                        if (value!
-                                                                            .isNotEmpty) {
-                                                                          fromdate =
-                                                                              DateTime.parse(value);
-                                                                        }
-                                                                      },
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 12,
-                                                            ),
-                                                            Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                const Text(
-                                                                    'To Date',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    )),
-                                                                const SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      0.43,
-                                                                  child: Center(
-                                                                    child:
-                                                                        DateTimePicker(
-                                                                      decoration: InputDecoration(
-                                                                          filled: true,
-                                                                          //<-- SEE HERE
-                                                                          fillColor: Colors.white,
-                                                                          prefixIcon: const Icon(
-                                                                            Icons.arrow_right,
-                                                                            color:
-                                                                                Colors.grey,
-                                                                          ),
-                                                                          counterText: "",
-                                                                          hintText: 'From Date',
-                                                                          isDense: true,
-                                                                          border: OutlineInputBorder(borderSide: BorderSide(color: Colors.purple.shade100), borderRadius: BorderRadius.circular(5))),
-                                                                      initialValue:
-                                                                          todate
-                                                                              .toString(),
-                                                                      type: DateTimePickerType
-                                                                          .date,
-
-                                                                      //controller: fromDate,
-                                                                      firstDate:
-                                                                          DateTime(
-                                                                              1995),
-                                                                      lastDate: DateTime
-                                                                              .now()
-                                                                          .add(const Duration(
-                                                                              days: 365)),
-                                                                      // This will add one year from current date
-                                                                      validator:
-                                                                          (value) {
-                                                                        return null;
-                                                                      },
-                                                                      onChanged:
-                                                                          (value) {
-                                                                        if (value
-                                                                            .isNotEmpty) {
-                                                                          setState(
-                                                                              () {
-                                                                            todate =
-                                                                                DateTime.parse(value);
-                                                                          });
-                                                                        }
-                                                                      },
-                                                                      // We can also use onSaved
-                                                                      onSaved:
-                                                                          (value) {
-                                                                        if (value!
-                                                                            .isNotEmpty) {
-                                                                          todate =
-                                                                              DateTime.parse(value);
-                                                                        }
-                                                                      },
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 13,
-                                                        ),
-                                                        multiBranch=='true'&& roleId=='2'?
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(bottom: 13),
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                            children: [
-                                                              const Text(
-                                                                  'Branch',
-                                                                  style:
-                                                                  TextStyle(
-                                                                    fontSize:
-                                                                    15,
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                  )),
-                                                              const SizedBox(
-                                                                height: 5,
-                                                              ),
-                                                              SizedBox(
-                                                                width: MediaQuery.of(context).size.width *
-                                                                    0.9,
-                                                                child: FormField<
-                                                                    String>(
-                                                                  builder: (FormFieldState<
-                                                                      String>
-                                                                  state) {
-                                                                    return Container(
-                                                                      width: MediaQuery.of(context)
-                                                                          .size
-                                                                          .width *
-                                                                          0.9,
-                                                                      decoration: BoxDecoration(
-                                                                          border: Border.all(
-                                                                              color: Colors
-                                                                                  .grey.shade900,
-                                                                              width:
-                                                                              0),
-                                                                          color: Colors
-                                                                              .white,
-                                                                          borderRadius: const BorderRadius
-                                                                              .all(
-                                                                              Radius.circular(5))),
-                                                                      child:
-                                                                      DropdownButtonHideUnderline(
-                                                                        child: DropdownButton<
-                                                                            String>(
-                                                                          isExpanded:
-                                                                          true,
-                                                                          hint:
-                                                                          const Padding(
-                                                                            padding:
-                                                                            EdgeInsets.only(left: 20),
-                                                                            child:
-                                                                            Text('Branch'),
-                                                                          ),
-                                                                          value: branch,
-                                                                          items:commonDetails!.data!.branch!.map((data) {
-                                                                            return DropdownMenuItem(
-                                                                              value: data.branchId.toString(),
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.only(left: 20),
-                                                                                child: Text(data.branchName.toString()),
-                                                                              ),
-                                                                            );
-                                                                          }).toList(),
-                                                                          onChanged:
-                                                                              (newValue1) {
-                                                                            setState(() {
-                                                                              branch = newValue1;
-                                                                            });
-                                                                          },
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ):
-                                                        const SizedBox(),
-                                                        Row(
-                                                          children: [
-                                                            Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                const Text(
-                                                                    'Customer Interested Product',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    )),
-                                                                const SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                FormField<
-                                                                    String>(
-                                                                  builder: (FormFieldState<
-                                                                          String>
-                                                                      state) {
-                                                                    return Container(
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          0.9,
-                                                                      decoration: BoxDecoration(
-                                                                          border: Border.all(
-                                                                              color: Colors
-                                                                                  .grey.shade900,
-                                                                              width:
-                                                                                  0),
-                                                                          color: Colors
-                                                                              .white,
-                                                                          borderRadius: const BorderRadius
-                                                                              .all(
-                                                                              Radius.circular(5))),
-                                                                      child:
-                                                                          DropdownButtonHideUnderline(
-                                                                        child: DropdownButton<
-                                                                            String>(
-                                                                          isExpanded:
-                                                                              true,
-                                                                          hint:
-                                                                              const Padding(
-                                                                            padding:
-                                                                                EdgeInsets.only(left: 20),
-                                                                            child:
-                                                                                Text('Customer Interested Product'),
-                                                                          ),
-                                                                          value:
-                                                                              category,
-                                                                          items: commonDetails!
-                                                                              .data!
-                                                                              .leadCategory!
-                                                                              .map((data) {
-                                                                            return DropdownMenuItem(
-                                                                              value: data.leadCategoryId.toString(),
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.only(left: 20),
-                                                                                child: Text(data.leadCategory.toString()),
-                                                                              ),
-                                                                            );
-                                                                          }).toList(),
-                                                                          onChanged:
-                                                                              (newValue) {
-                                                                            setState(() {
-                                                                              category = newValue;
-                                                                            });
-                                                                          },
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            // const SizedBox(
-                                                            //   width: 12,
-                                                            // ),
-                                                            // Column(
-                                                            //   mainAxisAlignment:
-                                                            //       MainAxisAlignment
-                                                            //           .start,
-                                                            //   crossAxisAlignment:
-                                                            //       CrossAxisAlignment
-                                                            //           .start,
-                                                            //   children: [
-                                                            //     const Text(
-                                                            //         'Lead Status',
-                                                            //         style:
-                                                            //             TextStyle(
-                                                            //           fontSize:
-                                                            //               15,
-                                                            //           fontWeight:
-                                                            //               FontWeight
-                                                            //                   .w500,
-                                                            //         )),
-                                                            //     const SizedBox(
-                                                            //       height: 5,
-                                                            //     ),
-                                                            //     FormField<
-                                                            //         String>(
-                                                            //       builder: (FormFieldState<
-                                                            //               String>
-                                                            //           state) {
-                                                            //         return Container(
-                                                            //           width: MediaQuery.of(context)
-                                                            //                   .size
-                                                            //                   .width *
-                                                            //               0.43,
-                                                            //           decoration: BoxDecoration(
-                                                            //               border: Border.all(
-                                                            //                   color: Colors
-                                                            //                       .grey.shade900,
-                                                            //                   width:
-                                                            //                       0),
-                                                            //               color: Colors
-                                                            //                   .white,
-                                                            //               borderRadius: const BorderRadius
-                                                            //                   .all(
-                                                            //                   Radius.circular(5))),
-                                                            //           child:
-                                                            //               DropdownButtonHideUnderline(
-                                                            //             child: DropdownButton<
-                                                            //                 String>(
-                                                            //               isExpanded:
-                                                            //                   true,
-                                                            //               hint:
-                                                            //                   const Padding(
-                                                            //                 padding:
-                                                            //                     EdgeInsets.only(left: 20),
-                                                            //                 child:
-                                                            //                     Text('Status'),
-                                                            //               ),
-                                                            //               value:
-                                                            //                   status,
-                                                            //               items: commonDetails!
-                                                            //                   .data!
-                                                            //                   .callResult!
-                                                            //                   .map((data) {
-                                                            //                 return DropdownMenuItem(
-                                                            //                   value: data.callResultId.toString(),
-                                                            //                   child: Padding(
-                                                            //                     padding: const EdgeInsets.only(left: 20),
-                                                            //                     child: Text(data.callResult.toString()),
-                                                            //                   ),
-                                                            //                 );
-                                                            //               }).toList(),
-                                                            //               onChanged:
-                                                            //                   (newValue) {
-                                                            //                 setState(() {
-                                                            //                   status = newValue;
-                                                            //                 });
-                                                            //               },
-                                                            //             ),
-                                                            //           ),
-                                                            //         );
-                                                            //       },
-                                                            //     ),
-                                                            //   ],
-                                                            // ),
-                                                          ],
-                                                        ),
-                                                         const SizedBox(
-                                                          height: 13,
-                                                        ),
-                                                         Row(
-                                                          children: [
-                                                            // Column(
-                                                            //   mainAxisAlignment:
-                                                            //       MainAxisAlignment
-                                                            //           .start,
-                                                            //   crossAxisAlignment:
-                                                            //       CrossAxisAlignment
-                                                            //           .start,
-                                                            //   children: [
-                                                            //     const Text(
-                                                            //         'Customer Product',
-                                                            //         style:
-                                                            //             TextStyle(
-                                                            //           fontSize:
-                                                            //               15,
-                                                            //           fontWeight:
-                                                            //               FontWeight
-                                                            //                   .w500,
-                                                            //         )),
-                                                            //     const SizedBox(
-                                                            //       height: 5,
-                                                            //     ),
-                                                            //     FormField<
-                                                            //         String>(
-                                                            //       builder: (FormFieldState<
-                                                            //               String>
-                                                            //           state) {
-                                                            //         return Container(
-                                                            //           width: MediaQuery.of(context)
-                                                            //                   .size
-                                                            //                   .width *
-                                                            //               0.43,
-                                                            //           decoration: BoxDecoration(
-                                                            //               border: Border.all(
-                                                            //                   color: Colors
-                                                            //                       .grey.shade900,
-                                                            //                   width:
-                                                            //                       0),
-                                                            //               color: Colors
-                                                            //                   .white,
-                                                            //               borderRadius: const BorderRadius
-                                                            //                   .all(
-                                                            //                   Radius.circular(5))),
-                                                            //           child:
-                                                            //               DropdownButtonHideUnderline(
-                                                            //             child: DropdownButton<
-                                                            //                 String>(
-                                                            //               isExpanded:
-                                                            //                   true,
-                                                            //               hint:
-                                                            //                   const Padding(
-                                                            //                 padding:
-                                                            //                     EdgeInsets.only(left: 20),
-                                                            //                 child:
-                                                            //                     Text('category'),
-                                                            //               ),
-                                                            //               value:
-                                                            //                   category,
-                                                            //               items: commonDetails!
-                                                            //                   .data!
-                                                            //                   .leadCategory!
-                                                            //                   .map((data) {
-                                                            //                 return DropdownMenuItem(
-                                                            //                   value: data.leadCategoryId.toString(),
-                                                            //                   child: Padding(
-                                                            //                     padding: const EdgeInsets.only(left: 20),
-                                                            //                     child: Text(data.leadCategory.toString()),
-                                                            //                   ),
-                                                            //                 );
-                                                            //               }).toList(),
-                                                            //               onChanged:
-                                                            //                   (newValue) {
-                                                            //                 setState(() {
-                                                            //                   category = newValue;
-                                                            //                 });
-                                                            //               },
-                                                            //             ),
-                                                            //           ),
-                                                            //         );
-                                                            //       },
-                                                            //     ),
-                                                            //   ],
-                                                            // ),
-                                                            // const SizedBox(
-                                                            //   width: 12,
-                                                            // ),
-                                                            Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                const Text(
-                                                                    'Lead Status',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    )),
-                                                                const SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                FormField<
-                                                                    String>(
-                                                                  builder: (FormFieldState<
-                                                                          String>
-                                                                      state) {
-                                                                    return Container(
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                            0.9,
-                                                                      decoration: BoxDecoration(
-                                                                          border: Border.all(
-                                                                              color: Colors
-                                                                                  .grey.shade900,
-                                                                              width:
-                                                                                  0),
-                                                                          color: Colors
-                                                                              .white,
-                                                                          borderRadius: const BorderRadius
-                                                                              .all(
-                                                                              Radius.circular(5))),
-                                                                      child:
-                                                                          DropdownButtonHideUnderline(
-                                                                        child: DropdownButton<
-                                                                            String>(
-                                                                          isExpanded:
-                                                                              true,
-                                                                          hint:
-                                                                              const Padding(
-                                                                            padding:
-                                                                                EdgeInsets.only(left: 20),
-                                                                            child:
-                                                                                Text('Status'),
-                                                                          ),
-                                                                          value:
-                                                                              status,
-                                                                          items: commonDetails!
-                                                                              .data!
-                                                                              .callResult!
-                                                                              .map((data) {
-                                                                            return DropdownMenuItem(
-                                                                              value: data.callResultId.toString(),
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.only(left: 20),
-                                                                                child: Text(data.callResult.toString()),
-                                                                              ),
-                                                                            );
-                                                                          }).toList(),
-                                                                          onChanged:
-                                                                              (newValue) {
-                                                                            setState(() {
-                                                                              status = newValue;
-                                                                            });
-                                                                          },
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 13,
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                const Text(
-                                                                    'Staff',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    )),
-                                                                const SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                FormField<
-                                                                    String>(
-                                                                  builder: (FormFieldState<
-                                                                          String>
-                                                                      state) {
-                                                                    return Container(
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          0.43,
-                                                                      decoration: BoxDecoration(
-                                                                          border: Border.all(
-                                                                              color: Colors
-                                                                                  .grey.shade900,
-                                                                              width:
-                                                                                  0),
-                                                                          color: Colors
-                                                                              .white,
-                                                                          borderRadius: const BorderRadius
-                                                                              .all(
-                                                                              Radius.circular(5))),
-                                                                      child:
-                                                                          DropdownButtonHideUnderline(
-                                                                        child: DropdownButton<
-                                                                            String>(
-                                                                          isExpanded:
-                                                                              true,
-                                                                          hint:
-                                                                              const Padding(
-                                                                            padding:
-                                                                                EdgeInsets.only(left: 20),
-                                                                            child:
-                                                                                Text('Staff'),
-                                                                          ),
-                                                                          value:
-                                                                              staff,
-                                                                          items: commonDetails!
-                                                                              .data!
-                                                                              .staff!
-                                                                              .map((data) {
-                                                                            return DropdownMenuItem(
-                                                                              value: data.staffId.toString(),
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.only(left: 20),
-                                                                                child: Text(data.staffName.toString()),
-                                                                              ),
-                                                                            );
-                                                                          }).toList(),
-                                                                          onChanged:
-                                                                              (newValue1) {
-                                                                            setState(() {
-                                                                              staff = newValue1;
-                                                                            });
-                                                                          },
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 12,
-                                                            ),
-                                                            Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                const Text(
-                                                                    'Priority',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          15,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    )),
-                                                                const SizedBox(
-                                                                  height: 5,
-                                                                ),
-                                                                FormField<
-                                                                    String>(
-                                                                  builder: (FormFieldState<
-                                                                          String>
-                                                                      state) {
-                                                                    return Container(
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          0.43,
-                                                                      decoration: BoxDecoration(
-                                                                          border: Border.all(
-                                                                              color: Colors
-                                                                                  .grey.shade900,
-                                                                              width:
-                                                                                  0),
-                                                                          color: Colors
-                                                                              .white,
-                                                                          borderRadius: const BorderRadius
-                                                                              .all(
-                                                                              Radius.circular(5))),
-                                                                      child:
-                                                                          DropdownButtonHideUnderline(
-                                                                        child: DropdownButton<
-                                                                            String>(
-                                                                          isExpanded:
-                                                                              true,
-                                                                          hint:
-                                                                              const Padding(
-                                                                            padding:
-                                                                                EdgeInsets.only(left: 20),
-                                                                            child:
-                                                                                Text('Priority'),
-                                                                          ),
-                                                                          value:
-                                                                              priority,
-                                                                          items: commonDetails!
-                                                                              .data!
-                                                                              .priority!
-                                                                              .map((data) {
-                                                                            return DropdownMenuItem(
-                                                                              value: data.priorityId.toString(),
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.only(left: 20),
-                                                                                child: Text(data.priority.toString()),
-                                                                              ),
-                                                                            );
-                                                                          }).toList(),
-                                                                          onChanged:
-                                                                              (newValue1) {
-                                                                            setState(() {
-                                                                              priority = newValue1;
-                                                                            });
-                                                                            if (kDebugMode) {
-                                                                              print(priority);
-                                                                            }
-                                                                          },
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  },
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        const SizedBox(
-                                                            height: 16),
-                                                        Container(
-                                                          height: 40,
-                                                          width:
-                                                              double.maxFinite,
-                                                          decoration:
-                                                              const BoxDecoration(
-                                                            color: Color(
-                                                                0xFF3375e0),
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            8)),
-                                                          ),
-                                                          child:
-                                                              RawMaterialButton(
-                                                            onPressed: () {
-                                                              setState(() {
-                                                                items.clear();
-                                                                page = 1;
-                                                                pageSize = 20;
-                                                                getData('desc', true);
-                                                                Navigator.of(
-                                                                        context,
-                                                                        rootNavigator:
-                                                                            true)
-                                                                    .pop();
-                                                              });
-                                                            },
-                                                            child: const Center(
-                                                              child: Text(
-                                                                'Continue',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                      transitionBuilder:
-                                          (_, animation1, __, child) {
-                                        return SlideTransition(
-                                          position: Tween(
-                                            begin: const Offset(0, 1),
-                                            end: const Offset(0, 0),
-                                          ).animate(animation1),
-                                          child: child,
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Container(
-                                    width: 30,
-                                    height: 30,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        color: const Color(0xFFd5f5f4),
-                                        borderRadius: BorderRadius.circular(5)),
-                                    child: Center(
-                                        child: Image.asset(
-                                            "assets/icons/filter.png",
-                                            width: 20)),
+                            padding: const EdgeInsets.all(10.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    spreadRadius: 1,
+                                    blurRadius: 3,
+                                    offset: const Offset(0, 1),
                                   ),
-                                )
-                              ],
+                                ],
+                              ),
+                              child: TextField(
+                                controller: searchController,
+                                decoration: InputDecoration(
+                                  hintText: 'Search by Staff Name...',
+                                  prefixIcon: const Icon(
+                                    Icons.search,
+                                    color: Colors.grey,
+                                  ),
+                                  suffixIcon: searchQuery.isNotEmpty
+                                      ? IconButton(
+                                          icon: const Icon(
+                                            Icons.clear,
+                                            color: Colors.grey,
+                                          ),
+                                          onPressed: () {
+                                            searchController.clear();
+                                            setState(() {
+                                              searchQuery = '';
+                                            });
+                                          },
+                                        )
+                                      : null,
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 15,
+                                  ),
+                                ),
+                                onChanged: (value) {
+                                  setState(() {
+                                    searchQuery = value.toLowerCase();
+                                  });
+                                },
+                              ),
                             ),
                           ),
-                          const SizedBox(
-                            height: 5,
+
+                          const SizedBox(height: 5),
+                          Text(
+                            'Total Leads : ${viewLeads!.data!.totalLeads}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          Text('Total Leads : ${viewLeads!.data!.totalLeads}',
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          const SizedBox(height: 10),
                           viewLeads!.data!.details!.isNotEmpty
                               ? Expanded(
                                   child: ScrollablePositionedList.builder(
-                                    //reverse: true,
                                     initialScrollIndex:
                                         widget.scrollToIndex == null
-                                            ? 0
-                                            : widget.scrollToIndex!,
-                                    //you can pass the desired index here//
+                                        ? 0
+                                        : widget.scrollToIndex!,
                                     itemCount:
-                                        items.length + (isLoading ? 1 : 0),
+                                        getFilteredItems().length +
+                                        (isLoading ? 1 : 0),
                                     itemBuilder: (context, index) {
-                                      if (index == items.length) {
-                                        // When reaching the end of the list, show a loader
+                                      if (index == getFilteredItems().length) {
                                         return _buildLoaderListItem();
                                       }
+                                      final item = getFilteredItems()[index];
                                       return Dismissible(
-                                        key: const Key('0'),
+                                        key: Key(
+                                          item.callMasterId.toString(),
+                                        ), // Unique key for each item
                                         background: Container(
                                           color: Colors.green,
                                           child: const Align(
@@ -1687,9 +2089,7 @@ class _ViewLeadsState extends State<ViewLeads> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.start,
                                               children: <Widget>[
-                                                SizedBox(
-                                                  width: 20,
-                                                ),
+                                                SizedBox(width: 20),
                                                 Icon(
                                                   Icons.call,
                                                   color: Colors.white,
@@ -1726,9 +2126,7 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                   ),
                                                   textAlign: TextAlign.right,
                                                 ),
-                                                SizedBox(
-                                                  width: 20,
-                                                ),
+                                                SizedBox(width: 20),
                                               ],
                                             ),
                                           ),
@@ -1737,450 +2135,468 @@ class _ViewLeadsState extends State<ViewLeads> {
                                           if (direction ==
                                               DismissDirection.endToStart) {
                                             showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  scrollable: true,
+                                                  title: const Text(
+                                                    'Please Confirm',
+                                                  ),
+                                                  content: const Text(
+                                                    'Are you sure to Delete?',
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        DeleteLeadModel delete =
+                                                            await HttpService.deleteLead(
+                                                              widget.token,
+                                                              item.callMasterId,
+                                                            );
+                                                        if (delete.data ==
+                                                            true) {
+                                                          Common.toastMessaage(
+                                                            delete.message,
+                                                            Colors.green,
+                                                          );
+                                                          if (context.mounted) {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (context) => ViewLeads(
+                                                                  widget.token!,
+                                                                  widget
+                                                                      .editLead,
+                                                                  widget
+                                                                      .deleteLead,
+                                                                  widget
+                                                                      .cloudCall,
+                                                                  pageName: widget
+                                                                      .pageName,
+                                                                  status: widget
+                                                                      .status,
+                                                                  staff: widget
+                                                                      .staff,
+                                                                  isCalled: widget
+                                                                      .isCalled,
+                                                                  fromDate: widget
+                                                                      .fromDate,
+                                                                  toDate: widget
+                                                                      .toDate,
+                                                                  category: widget
+                                                                      .category,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }
+                                                        } else {
+                                                          Common.toastMessaage(
+                                                            delete.message,
+                                                            Colors.red,
+                                                          );
+                                                          if (context.mounted) {
+                                                            Navigator.of(
+                                                              context,
+                                                            ).pop();
+                                                          }
+                                                        }
+                                                      },
+                                                      child: const Text('Yes'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(
+                                                          context,
+                                                        ).pop();
+                                                      },
+                                                      child: const Text('No'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          } else {
+                                            if (widget.cloudCall == true) {
+                                              showDialog(
                                                 context: context,
-                                                builder:
-                                                    (BuildContext context) {
+                                                builder: (BuildContext context) {
                                                   return AlertDialog(
                                                     scrollable: true,
                                                     title: const Text(
-                                                        'Please Confirm'),
-                                                    content: const Text(
-                                                        'Are you sure to Delete?'),
-                                                    actions: [
-                                                      // The "Yes" button
-                                                      TextButton(
-                                                          onPressed: () async {
-                                                            DeleteLeadModel
-                                                                delete =
-                                                                await HttpService
-                                                                    .deleteLead(
-                                                                        widget
-                                                                            .token,
-                                                                        items[index]
-                                                                            .callMasterId);
-                                                            if (delete.data ==
+                                                      'Choose Call Type',
+                                                    ),
+                                                    content: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        InkWell(
+                                                          onTap: () async {
+                                                            Common.showProgressDialog(
+                                                              context,
+                                                              "Loading..",
+                                                            );
+                                                            CloudCallModel
+                                                            object1 = await HttpService.addCloudCall(
+                                                              widget.token,
+                                                              item.callMasterId,
+                                                              item.contactNumber1,
+                                                            );
+                                                            if (object1.data ==
                                                                 true) {
-                                                              Common.toastMessaage(
-                                                                  delete
-                                                                      .message,
-                                                                  Colors.green);
                                                               if (context
                                                                   .mounted) {
                                                                 Navigator.push(
                                                                   context,
                                                                   MaterialPageRoute(
-                                                                      builder:
-                                                                          (context) =>
-                                                                              ViewLeads(
-                                                                                widget.token!,
-                                                                                widget.editLead,
-                                                                                widget.deleteLead,
-                                                                                widget.cloudCall,
-                                                                                pageName: widget.pageName,
-                                                                                status: widget.status,
-                                                                                staff: widget.staff,
-                                                                                isCalled: widget.isCalled,
-                                                                                fromDate: widget.fromDate,
-                                                                                toDate: widget.toDate,
-                                                                                category: widget.category,
-                                                                              )),
+                                                                    builder: (context) => ViewLeads(
+                                                                      widget
+                                                                          .token!,
+                                                                      widget
+                                                                          .editLead,
+                                                                      widget
+                                                                          .deleteLead,
+                                                                      widget
+                                                                          .cloudCall,
+                                                                      pageName:
+                                                                          widget
+                                                                              .pageName,
+                                                                      status: widget
+                                                                          .status,
+                                                                      staff: widget
+                                                                          .staff,
+                                                                      isCalled:
+                                                                          widget
+                                                                              .isCalled,
+                                                                      fromDate:
+                                                                          widget
+                                                                              .fromDate,
+                                                                      toDate: widget
+                                                                          .toDate,
+                                                                      category:
+                                                                          widget
+                                                                              .category,
+                                                                    ),
+                                                                  ),
                                                                 );
                                                               }
                                                             } else {
                                                               Common.toastMessaage(
-                                                                  delete
-                                                                      .message,
-                                                                  Colors.red);
+                                                                object1.message,
+                                                                Colors.red,
+                                                              );
                                                               if (context
-                                                                  .mounted) {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              }
+                                                                  .mounted)
+                                                                Navigator.pop(
+                                                                  context,
+                                                                );
                                                             }
                                                           },
-                                                          child: const Text(
-                                                              'Yes')),
-                                                      TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          },
-                                                          child:
-                                                              const Text('No'))
-                                                    ],
-                                                  );
-                                                });
-                                          } else {
-                                            if (widget.cloudCall == true) {
-                                              showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      scrollable: true,
-                                                      title: const Text(
-                                                          'Choose Call Type'),
-                                                      content: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          InkWell(
-                                                            onTap: () async {
-                                                              Common.showProgressDialog(
-                                                                  context,
-                                                                  "Loading..");
-                                                              CloudCallModel object1 =
-                                                                  await HttpService.addCloudCall(
-                                                                      widget
-                                                                          .token,
-                                                                      items[index]
-                                                                          .callMasterId,
-                                                                      items[index]
-                                                                          .contactNumber1);
-                                                              if (object1
-                                                                      .data ==
-                                                                  true) {
-                                                                if (context
-                                                                    .mounted) {
-                                                                  Navigator
-                                                                      .push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) =>
-                                                                            ViewLeads(
-                                                                              widget.token!,
-                                                                              widget.editLead,
-                                                                              widget.deleteLead,
-                                                                              widget.cloudCall,
-                                                                              pageName: widget.pageName,
-                                                                              status: widget.status,
-                                                                              staff: widget.staff,
-                                                                              isCalled: widget.isCalled,
-                                                                              fromDate: widget.fromDate,
-                                                                              toDate: widget.toDate,
-                                                                              category: widget.category,
-                                                                            )),
-                                                                  );
-                                                                }
-                                                              } else {
-                                                                Common.toastMessaage(
-                                                                    object1
-                                                                        .message,
-                                                                    Colors.red);
-                                                                if (context
-                                                                    .mounted) {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                }
-                                                              }
-                                                            },
-                                                            child: SizedBox(
-                                                              height: 50,
-                                                              child: Row(
-                                                                children: [
-                                                                  Container(
-                                                                    height: 30,
-                                                                    width: 30,
-                                                                    decoration: BoxDecoration(
-                                                                        color: Colors
-                                                                            .grey
-                                                                            .shade300,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(5)),
-                                                                    child:
-                                                                        const Icon(
-                                                                      Icons
-                                                                          .cloud_circle_rounded,
-                                                                      color: Colors
-                                                                          .black,
-                                                                    ),
+                                                          child: SizedBox(
+                                                            height: 50,
+                                                            child: Row(
+                                                              children: [
+                                                                Container(
+                                                                  height: 30,
+                                                                  width: 30,
+                                                                  decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade300,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                          5,
+                                                                        ),
                                                                   ),
-                                                                  const SizedBox(
-                                                                    width: 20,
+                                                                  child: const Icon(
+                                                                    Icons
+                                                                        .cloud_circle_rounded,
+                                                                    color: Colors
+                                                                        .black,
                                                                   ),
-                                                                  const Text(
-                                                                    'Cloud Call',
-                                                                    style: TextStyle(
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 20,
+                                                                ),
+                                                                const Text(
+                                                                  'Cloud Call',
+                                                                  style:
+                                                                      TextStyle(
                                                                         fontSize:
-                                                                            18),
-                                                                  ),
-                                                                ],
-                                                              ),
+                                                                            18,
+                                                                      ),
+                                                                ),
+                                                              ],
                                                             ),
                                                           ),
-                                                          const SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          InkWell(
-                                                            onTap: () async {
-                                                              String url =
-                                                                  'tel:${'+${items[index].contactNumber1}'}';
-                                                              await launchUrl(
-                                                                  Uri.parse(
-                                                                      url));
-                                                            },
-                                                            child: SizedBox(
-                                                                height: 50,
-                                                                child: Row(
-                                                                  children: [
-                                                                    Container(
-                                                                      height:
-                                                                          30,
-                                                                      width: 30,
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors
-                                                                              .grey
-                                                                              .shade300,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(5)),
-                                                                      child:
-                                                                          const Icon(
-                                                                        Icons
-                                                                            .call,
-                                                                        color: Colors
-                                                                            .black,
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () async {
+                                                            String url =
+                                                                'tel:+${item.contactNumber1}';
+                                                            await launchUrl(
+                                                              Uri.parse(url),
+                                                            );
+                                                          },
+                                                          child: SizedBox(
+                                                            height: 50,
+                                                            child: Row(
+                                                              children: [
+                                                                Container(
+                                                                  height: 30,
+                                                                  width: 30,
+                                                                  decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade300,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                          5,
+                                                                        ),
+                                                                  ),
+                                                                  child: const Icon(
+                                                                    Icons.call,
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 20,
+                                                                ),
+                                                                const Text(
+                                                                  'Phone Call',
+                                                                  style:
+                                                                      TextStyle(
+                                                                        fontSize:
+                                                                            18,
                                                                       ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      width: 20,
-                                                                    ),
-                                                                    const Text(
-                                                                      'Phone Call',
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              18),
-                                                                    ),
-                                                                  ],
-                                                                )),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  });
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              );
                                             } else {
                                               String url =
-                                                  'tel:+${items[index].contactNumber1}';
+                                                  'tel:+${item.contactNumber1}';
                                               await launchUrl(Uri.parse(url));
                                             }
                                           }
                                           return null;
                                         },
                                         child: InkWell(
-                                            onLongPress: () {
-                                              setState(() {
-                                                items[index].isSelected =
-                                                    !items[index].isSelected;
-                                                if (items[index].isSelected ==
-                                                    true) {
-                                                  selectedIUsers.add(
-                                                      items[index]
-                                                          .callMasterId);
-                                                  selectedUserNumbers.add(
-                                                      items[index]
-                                                          .contactNumber1);
-                                                } else {
-                                                  selectedIUsers.remove(
-                                                      items[index]
-                                                          .callMasterId);
-                                                  selectedUserNumbers.remove(
-                                                      items[index]
-                                                          .contactNumber1);
-                                                }
-                                              });
-                                            },
-                                            onTap: () {
-                                              selectedIUsers.isNotEmpty
-                                                  ? setState(() {
-                                                      items[index].isSelected =
-                                                          !items[index]
-                                                              .isSelected!;
-                                                      if (items[index]
-                                                              .isSelected ==
-                                                          true) {
-                                                        selectedIUsers.add(
-                                                            items[index]
-                                                                .callMasterId);
-                                                        selectedUserNumbers.add(
-                                                            items[index]
-                                                                .contactNumber1);
-                                                      } else {
-                                                        selectedIUsers.remove(
-                                                            items[index]
-                                                                .callMasterId);
-                                                        selectedUserNumbers
-                                                            .remove(items[index]
-                                                                .contactNumber1);
-                                                      }
-                                                    })
-                                                  : Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) => LeadDetails(
-                                                              widget.token!,
-                                                              widget.editLead,
-                                                              widget.deleteLead,
-                                                              widget.cloudCall,
-                                                              items[index]
-                                                                  .callMasterId
-                                                                  .toString(),
-                                                              pageName: widget
-                                                                  .pageName,
-                                                              status:
-                                                                  widget.status,
-                                                              staff:
-                                                                  widget.staff,
-                                                              isCalled: widget
-                                                                  .isCalled,
-                                                              fromDate: widget
-                                                                  .fromDate,
-                                                              toDate:
-                                                                  widget.toDate,
-                                                              category: widget
-                                                                  .category,
-                                                              scrollToIndex:
-                                                                  index,
-                                                              page: page,
-                                                              pageSize: page *
-                                                                  pageSize,
-                                                              leadType: widget
-                                                                  .leadType)),
-                                                    );
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 10,
-                                                  right: 10,
-                                                  bottom: 10),
-                                              child: Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    1,
-                                                decoration: BoxDecoration(
-                                                  color: items[index]
-                                                              .isSelected ==
-                                                          false
-                                                      ? Colors.white
-                                                      : Colors.blue.shade100,
-                                                  boxShadow: const [
-                                                    BoxShadow(
-                                                      color: Colors.grey,
-                                                      offset: Offset(2.0, 2.0),
-                                                    )
-                                                  ],
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 10,
-                                                              right: 10,
-                                                              left: 10),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          SingleChildScrollView(
-                                                            scrollDirection:
-                                                                Axis.horizontal,
-                                                            child: Row(
-                                                              children: [
-                                                                if (items[index]
-                                                                        .priority ==
-                                                                    '1')
-                                                                  Container(
-                                                                    width: 10.0,
-                                                                    height:
-                                                                        10.0,
-                                                                    decoration:
-                                                                        const BoxDecoration(
-                                                                      color: Colors
-                                                                          .grey,
-                                                                      shape: BoxShape
-                                                                          .circle,
-                                                                    ),
-                                                                  ),
-                                                                if (items[index]
-                                                                        .priority ==
-                                                                    '2')
-                                                                  Container(
-                                                                    width: 10.0,
-                                                                    height:
-                                                                        10.0,
-                                                                    decoration:
-                                                                        const BoxDecoration(
-                                                                      color: Colors
-                                                                          .green,
-                                                                      shape: BoxShape
-                                                                          .circle,
-                                                                    ),
-                                                                  ),
-                                                                if (items[index]
-                                                                        .priority ==
-                                                                    '3')
-                                                                  Container(
-                                                                    width: 10.0,
-                                                                    height:
-                                                                        10.0,
-                                                                    decoration:
-                                                                        const BoxDecoration(
-                                                                      color: Colors
-                                                                          .red,
-                                                                      shape: BoxShape
-                                                                          .circle,
-                                                                    ),
-                                                                  ),
-                                                                const SizedBox(
-                                                                  width: 5,
-                                                                ),
-                                                                SizedBox(
-                                                                  width: 170,
-                                                                  child: Text(
-                                                                    items[index]
-                                                                        .clientName
-                                                                        .toString(),
-                                                                    // items.length.toString(),
-                                                                    style: const TextStyle(
-                                                                        fontSize:
-                                                                            16,
-                                                                        color: Colors
-                                                                            .black,
-                                                                        fontWeight:
-                                                                            FontWeight.bold),
-                                                                    maxLines: 1,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
+                                          onLongPress: () {
+                                            setState(() {
+                                              item.isSelected =
+                                                  !item.isSelected;
+                                              if (item.isSelected == true) {
+                                                selectedIUsers.add(
+                                                  item.callMasterId,
+                                                );
+                                                selectedUserNumbers.add(
+                                                  item.contactNumber1,
+                                                );
+                                              } else {
+                                                selectedIUsers.remove(
+                                                  item.callMasterId,
+                                                );
+                                                selectedUserNumbers.remove(
+                                                  item.contactNumber1,
+                                                );
+                                              }
+                                            });
+                                          },
+                                          onTap: () {
+                                            selectedIUsers.isNotEmpty
+                                                ? setState(() {
+                                                    item.isSelected =
+                                                        !item.isSelected!;
+                                                    if (item.isSelected ==
+                                                        true) {
+                                                      selectedIUsers.add(
+                                                        item.callMasterId,
+                                                      );
+                                                      selectedUserNumbers.add(
+                                                        item.contactNumber1,
+                                                      );
+                                                    } else {
+                                                      selectedIUsers.remove(
+                                                        item.callMasterId,
+                                                      );
+                                                      selectedUserNumbers
+                                                          .remove(
+                                                            item.contactNumber1,
+                                                          );
+                                                    }
+                                                  })
+                                                : Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          LeadDetails(
+                                                            widget.token!,
+                                                            widget.editLead,
+                                                            widget.deleteLead,
+                                                            widget.cloudCall,
+                                                            item.callMasterId
+                                                                .toString(),
+                                                            pageName:
+                                                                widget.pageName,
+                                                            status:
+                                                                widget.status,
+                                                            staff: widget.staff,
+                                                            isCalled:
+                                                                widget.isCalled,
+                                                            fromDate:
+                                                                widget.fromDate,
+                                                            toDate:
+                                                                widget.toDate,
+                                                            category:
+                                                                widget.category,
+                                                            scrollToIndex:
+                                                                index,
+                                                            page: page,
+                                                            pageSize:
+                                                                page * pageSize,
+                                                            leadType:
+                                                                widget.leadType,
+                                                          ),
+                                                    ),
+                                                  );
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 10,
+                                              right: 10,
+                                              bottom: 10,
+                                            ),
+                                            child: Container(
+                                              width:
+                                                  MediaQuery.of(
+                                                    context,
+                                                  ).size.width *
+                                                  1,
+                                              decoration: BoxDecoration(
+                                                color: item.isSelected == false
+                                                    ? Colors.white
+                                                    : Colors.blue.shade100,
+                                                boxShadow: const [
+                                                  BoxShadow(
+                                                    color: Colors.grey,
+                                                    offset: Offset(2.0, 2.0),
+                                                  ),
+                                                ],
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                          top: 10,
+                                                          right: 10,
+                                                          left: 10,
+                                                        ),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        SingleChildScrollView(
+                                                          scrollDirection:
+                                                              Axis.horizontal,
+                                                          child: Row(
+                                                            children: [
+                                                              if (item.priority ==
+                                                                  '1')
+                                                                Container(
+                                                                  width: 10.0,
+                                                                  height: 10.0,
+                                                                  decoration: const BoxDecoration(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    shape: BoxShape
+                                                                        .circle,
                                                                   ),
                                                                 ),
-                                                                Align(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .topRight,
-                                                                  child:
-                                                                      Container(
-                                                                    decoration: BoxDecoration(
-                                                                        color: Colors
-                                                                            .pink
-                                                                            .shade100,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(5)),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: const EdgeInsets.only(
+                                                              if (item.priority ==
+                                                                  '2')
+                                                                Container(
+                                                                  width: 10.0,
+                                                                  height: 10.0,
+                                                                  decoration: const BoxDecoration(
+                                                                    color: Colors
+                                                                        .green,
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                  ),
+                                                                ),
+                                                              if (item.priority ==
+                                                                  '3')
+                                                                Container(
+                                                                  width: 10.0,
+                                                                  height: 10.0,
+                                                                  decoration: const BoxDecoration(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    shape: BoxShape
+                                                                        .circle,
+                                                                  ),
+                                                                ),
+                                                              const SizedBox(
+                                                                width: 5,
+                                                              ),
+                                                              SizedBox(
+                                                                width: 170,
+                                                                child: Text(
+                                                                  item.clientName
+                                                                      .toString(),
+                                                                  style: const TextStyle(
+                                                                    fontSize:
+                                                                        16,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                  maxLines: 1,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
+                                                              ),
+                                                              Align(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .topRight,
+                                                                child: Container(
+                                                                  decoration: BoxDecoration(
+                                                                    color: Colors
+                                                                        .pink
+                                                                        .shade100,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                          5,
+                                                                        ),
+                                                                  ),
+                                                                  child: Padding(
+                                                                    padding:
+                                                                        const EdgeInsets.only(
                                                                           left:
                                                                               5,
                                                                           right:
@@ -2188,429 +2604,443 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                           top:
                                                                               2,
                                                                           bottom:
-                                                                              2),
-                                                                      child:
-                                                                          Text(
-                                                                        items[index]
-                                                                            .leadCategory
-                                                                            .toString(),
-                                                                        style:
-                                                                            const TextStyle(
-                                                                          fontSize:
-                                                                              13,
-                                                                          color:
-                                                                              Colors.red,
-                                                                          fontWeight:
-                                                                              FontWeight.w500,
+                                                                              2,
                                                                         ),
-                                                                        maxLines:
+                                                                    child: Text(
+                                                                      item.leadCategory
+                                                                          .toString(),
+                                                                      style: const TextStyle(
+                                                                        fontSize:
+                                                                            13,
+                                                                        color: Colors
+                                                                            .red,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                      maxLines:
+                                                                          1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      softWrap:
+                                                                          false,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 3,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                SizedBox(
+                                                                  width:
+                                                                      MediaQuery.of(
+                                                                        context,
+                                                                      ).size.width *
+                                                                      0.68,
+                                                                  child: Padding(
+                                                                    padding:
+                                                                        const EdgeInsets.only(
+                                                                          left:
+                                                                              10,
+                                                                        ),
+                                                                    child: Column(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .start,
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        Text(
+                                                                          item.contactNumber1
+                                                                              .toString(),
+                                                                          style: const TextStyle(
+                                                                            fontSize:
+                                                                                13,
+                                                                            color:
+                                                                                Colors.black54,
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                          ),
+                                                                        ),
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            SizedBox(
+                                                                              width: 150,
+                                                                              child: Text(
+                                                                                'Assigned to : ${item.staffName}',
+                                                                                style: const TextStyle(
+                                                                                  fontSize: 13,
+                                                                                  color: Colors.black54,
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                ),
+                                                                                overflow: TextOverflow.ellipsis,
+                                                                              ),
+                                                                            ),
+                                                                            Container(
+                                                                              decoration: BoxDecoration(
+                                                                                color: _colors[item.callResultId!],
+                                                                                borderRadius: BorderRadius.circular(
+                                                                                  5,
+                                                                                ),
+                                                                              ),
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsets.only(
+                                                                                  left: 5,
+                                                                                  right: 5,
+                                                                                  top: 2,
+                                                                                  bottom: 2,
+                                                                                ),
+                                                                                child: Text(
+                                                                                  item.callResult.toString(),
+                                                                                  style: const TextStyle(
+                                                                                    fontSize: 13,
+                                                                                    color: Colors.white,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              2,
+                                                                        ),
+                                                                        item.callResultId ==
+                                                                                1
+                                                                            ? Container(
+                                                                                decoration: BoxDecoration(
+                                                                                  color: const Color(
+                                                                                    0xFFd5f5f4,
+                                                                                  ),
+                                                                                  borderRadius: BorderRadius.circular(
+                                                                                    5,
+                                                                                  ),
+                                                                                ),
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.only(
+                                                                                    left: 5,
+                                                                                    right: 5,
+                                                                                    top: 5,
+                                                                                    bottom: 5,
+                                                                                  ),
+                                                                                  child: Row(
+                                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                    children: [
+                                                                                      Image.asset(
+                                                                                        "assets/icons/calendar.png",
+                                                                                        width: 20,
+                                                                                      ),
+                                                                                      const SizedBox(
+                                                                                        width: 15,
+                                                                                      ),
+                                                                                      Column(
+                                                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                        children: [
+                                                                                          const Text(
+                                                                                            'Created Time',
+                                                                                            style: TextStyle(
+                                                                                              fontSize: 13,
+                                                                                              color: Colors.black54,
+                                                                                              fontWeight: FontWeight.w500,
+                                                                                            ),
+                                                                                          ),
+                                                                                          const SizedBox(
+                                                                                            height: 3,
+                                                                                          ),
+                                                                                          Text(
+                                                                                            item.createdDate.toString(),
+                                                                                            style: const TextStyle(
+                                                                                              fontSize: 13,
+                                                                                              color: Colors.black,
+                                                                                              fontWeight: FontWeight.w500,
+                                                                                            ),
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                              )
+                                                                            : Row(
+                                                                                children: [
+                                                                                  Container(
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: const Color(
+                                                                                        0xFFd5f5f4,
+                                                                                      ),
+                                                                                      borderRadius: BorderRadius.circular(
+                                                                                        5,
+                                                                                      ),
+                                                                                    ),
+                                                                                    child: Padding(
+                                                                                      padding: const EdgeInsets.only(
+                                                                                        left: 5,
+                                                                                        right: 5,
+                                                                                        top: 5,
+                                                                                        bottom: 5,
+                                                                                      ),
+                                                                                      child: Row(
+                                                                                        children: [
+                                                                                          Image.asset(
+                                                                                            "assets/icons/calendar.png",
+                                                                                            width: 20,
+                                                                                          ),
+                                                                                          const SizedBox(
+                                                                                            width: 5,
+                                                                                          ),
+                                                                                          Column(
+                                                                                            children: [
+                                                                                              const Text(
+                                                                                                'Called Date',
+                                                                                                style: TextStyle(
+                                                                                                  fontSize: 13,
+                                                                                                  color: Colors.black54,
+                                                                                                  fontWeight: FontWeight.w500,
+                                                                                                ),
+                                                                                              ),
+                                                                                              const SizedBox(
+                                                                                                height: 3,
+                                                                                              ),
+                                                                                              Text(
+                                                                                                item.isCalled ==
+                                                                                                        false
+                                                                                                    ? '--'
+                                                                                                    : item.calledDate.toString(),
+                                                                                                style: const TextStyle(
+                                                                                                  fontSize: 13,
+                                                                                                  color: Colors.black,
+                                                                                                  fontWeight: FontWeight.w500,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ],
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  const SizedBox(
+                                                                                    width: 8,
+                                                                                  ),
+                                                                                  Container(
+                                                                                    decoration: BoxDecoration(
+                                                                                      color: const Color(
+                                                                                        0xFFd5f5f4,
+                                                                                      ),
+                                                                                      borderRadius: BorderRadius.circular(
+                                                                                        5,
+                                                                                      ),
+                                                                                    ),
+                                                                                    child: Padding(
+                                                                                      padding: const EdgeInsets.only(
+                                                                                        left: 5,
+                                                                                        right: 5,
+                                                                                        top: 5,
+                                                                                        bottom: 5,
+                                                                                      ),
+                                                                                      child: Row(
+                                                                                        children: [
+                                                                                          Image.asset(
+                                                                                            "assets/icons/calendar.png",
+                                                                                            width: 20,
+                                                                                          ),
+                                                                                          const SizedBox(
+                                                                                            width: 5,
+                                                                                          ),
+                                                                                          Column(
+                                                                                            children: [
+                                                                                              const Text(
+                                                                                                'Followup Date',
+                                                                                                style: TextStyle(
+                                                                                                  fontSize: 13,
+                                                                                                  color: Colors.black54,
+                                                                                                  fontWeight: FontWeight.w500,
+                                                                                                ),
+                                                                                              ),
+                                                                                              const SizedBox(
+                                                                                                height: 3,
+                                                                                              ),
+                                                                                              Text(
+                                                                                                item.scheduledDate.toString(),
+                                                                                                style: const TextStyle(
+                                                                                                  fontSize: 13,
+                                                                                                  color: Colors.black,
+                                                                                                  fontWeight: FontWeight.w500,
+                                                                                                ),
+                                                                                              ),
+                                                                                            ],
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            Column(
+                                                              children: [
+                                                                Container(
+                                                                  constraints:
+                                                                      const BoxConstraints(
+                                                                        maxHeight:
+                                                                            60,
+                                                                      ),
+                                                                  child: Container(
+                                                                    constraints: const BoxConstraints(
+                                                                      minHeight:
+                                                                          20,
+                                                                      minWidth:
+                                                                          20,
+                                                                      maxHeight:
+                                                                          50,
+                                                                      maxWidth:
+                                                                          50,
+                                                                    ),
+                                                                    decoration: BoxDecoration(
+                                                                      border: Border.all(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        width:
+                                                                            0,
+                                                                      ),
+                                                                      boxShadow: const [
+                                                                        BoxShadow(
+                                                                          color:
+                                                                              Colors.grey,
+                                                                          blurRadius:
+                                                                              5,
+                                                                          offset: Offset(
                                                                             1,
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                        softWrap:
-                                                                            false,
+                                                                            1,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                      color: Colors
+                                                                          .white,
+                                                                      shape: BoxShape
+                                                                          .circle,
+                                                                      image: DecorationImage(
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                        image: NetworkImage(
+                                                                          item.profilePic
+                                                                              .toString(),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                InkWell(
+                                                                  onTap: () async {
+                                                                    if (widget
+                                                                            .cloudCall ==
+                                                                        true) {
+                                                                      // Call dialog code is already handled in dismissible
+                                                                    } else {
+                                                                      String
+                                                                      url =
+                                                                          'tel:+${item.contactNumber1}';
+                                                                      await launchUrl(
+                                                                        Uri.parse(
+                                                                          url,
+                                                                        ),
+                                                                      );
+                                                                    }
+                                                                  },
+                                                                  child: Container(
+                                                                    width: 65,
+                                                                    height: 30,
+                                                                    decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                          .green,
+                                                                      border: Border.all(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .shade300,
+                                                                      ),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                            8,
+                                                                          ),
+                                                                    ),
+                                                                    child: const Center(
+                                                                      child: Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.center,
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.center,
+                                                                        children: [
+                                                                          Icon(
+                                                                            Icons.call,
+                                                                            color:
+                                                                                Colors.white,
+                                                                            size:
+                                                                                15,
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                5,
+                                                                          ),
+                                                                          Text(
+                                                                            'Call',
+                                                                            style: TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors.white,
+                                                                              fontWeight: FontWeight.bold,
+                                                                            ),
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ],
                                                             ),
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 3,
-                                                          ),
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Column(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  SizedBox(
-                                                                    width: MediaQuery.of(context)
-                                                                            .size
-                                                                            .width *
-                                                                        0.68,
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          left:
-                                                                              10),
-                                                                      child:
-                                                                          Column(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.start,
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          Text(
-                                                                            items[index].contactNumber1.toString(),
-                                                                            style: const TextStyle(
-                                                                                fontSize: 13,
-                                                                                color: Colors.black54,
-                                                                                fontWeight: FontWeight.w500),
-                                                                          ),
-                                                                          Row(
-                                                                            mainAxisAlignment:
-                                                                                MainAxisAlignment.spaceBetween,
-                                                                            children: [
-                                                                              SizedBox(
-                                                                                width: 150,
-                                                                                child: Text(
-                                                                                  'Assigned to : ${items[index].staffName}',
-                                                                                  style: const TextStyle(fontSize: 13, color: Colors.black54, fontWeight: FontWeight.w500),
-                                                                                  overflow: TextOverflow.ellipsis,
-                                                                                ),
-                                                                              ),
-                                                                              Container(
-                                                                                decoration: BoxDecoration(color: _colors[items[index].callResultId!], borderRadius: BorderRadius.circular(5)),
-                                                                                child: Padding(
-                                                                                  padding: const EdgeInsets.only(left: 5, right: 5, top: 2, bottom: 2),
-                                                                                  child: Text(
-                                                                                    items[index].callResult.toString(),
-                                                                                    style: const TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          const SizedBox(
-                                                                            height:
-                                                                                2,
-                                                                          ),
-                                                                          items[index].callResultId == 1
-                                                                              ? Container(
-                                                                                  decoration: BoxDecoration(color: const Color(0xFFd5f5f4), borderRadius: BorderRadius.circular(5)),
-                                                                                  child: Padding(
-                                                                                    padding: const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
-                                                                                    child: Row(
-                                                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                      children: [
-                                                                                        Image.asset("assets/icons/calendar.png", width: 20),
-                                                                                        const SizedBox(
-                                                                                          width: 15,
-                                                                                        ),
-                                                                                        Column(
-                                                                                          mainAxisAlignment: MainAxisAlignment.start,
-                                                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                          children: [
-                                                                                            const Text(
-                                                                                              'Created Time',
-                                                                                              style: TextStyle(fontSize: 13, color: Colors.black54, fontWeight: FontWeight.w500),
-                                                                                            ),
-                                                                                            const SizedBox(
-                                                                                              height: 3,
-                                                                                            ),
-                                                                                            Text(
-                                                                                              items[index].createdDate.toString(),
-                                                                                              style: const TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.w500),
-                                                                                            ),
-                                                                                          ],
-                                                                                        ),
-                                                                                      ],
-                                                                                    ),
-                                                                                  ),
-                                                                                )
-                                                                              : Row(
-                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                                  children: [
-                                                                                    Container(
-                                                                                      decoration: BoxDecoration(color: const Color(0xFFd5f5f4), borderRadius: BorderRadius.circular(5)),
-                                                                                      child: Padding(
-                                                                                        padding: const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
-                                                                                        child: Row(
-                                                                                          mainAxisAlignment: MainAxisAlignment.start,
-                                                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                          children: [
-                                                                                            Image.asset("assets/icons/calendar.png", width: 20),
-                                                                                            const SizedBox(
-                                                                                              width: 5,
-                                                                                            ),
-                                                                                            Column(
-                                                                                              children: [
-                                                                                                const Text(
-                                                                                                  'Called Date',
-                                                                                                  style: TextStyle(fontSize: 13, color: Colors.black54, fontWeight: FontWeight.w500),
-                                                                                                ),
-                                                                                                const SizedBox(
-                                                                                                  height: 3,
-                                                                                                ),
-                                                                                                Text(
-                                                                                                  items[index].isCalled == false ? '--' : items[index].calledDate.toString(),
-                                                                                                  style: const TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.w500),
-                                                                                                ),
-                                                                                              ],
-                                                                                            ),
-                                                                                          ],
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    Container(
-                                                                                      decoration: BoxDecoration(color: const Color(0xFFd5f5f4), borderRadius: BorderRadius.circular(5)),
-                                                                                      child: Padding(
-                                                                                        padding: const EdgeInsets.only(left: 5, right: 5, top: 5, bottom: 5),
-                                                                                        child: Row(
-                                                                                          mainAxisAlignment: MainAxisAlignment.start,
-                                                                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                          children: [
-                                                                                            Image.asset("assets/icons/calendar.png", width: 20),
-                                                                                            const SizedBox(
-                                                                                              width: 5,
-                                                                                            ),
-                                                                                            Column(
-                                                                                              children: [
-                                                                                                const Text(
-                                                                                                  'Followup Date',
-                                                                                                  style: TextStyle(fontSize: 13, color: Colors.black54, fontWeight: FontWeight.w500),
-                                                                                                ),
-                                                                                                const SizedBox(
-                                                                                                  height: 3,
-                                                                                                ),
-                                                                                                Text(
-                                                                                                  items[index].scheduledDate.toString(),
-                                                                                                  style: const TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.w500),
-                                                                                                ),
-                                                                                              ],
-                                                                                            ),
-                                                                                          ],
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              Column(
-                                                                children: [
-                                                                  Container(
-                                                                    constraints:
-                                                                        const BoxConstraints(
-                                                                      maxHeight:
-                                                                          60,
-                                                                    ),
-                                                                    child:
-                                                                        Container(
-                                                                      constraints:
-                                                                          const BoxConstraints(
-                                                                        minHeight:
-                                                                            20,
-                                                                        minWidth:
-                                                                            20,
-                                                                        maxHeight:
-                                                                            50,
-                                                                        maxWidth:
-                                                                            50,
-                                                                      ),
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        border: Border.all(
-                                                                            color:
-                                                                                Colors.white,
-                                                                            width: 0),
-                                                                        boxShadow: const [
-                                                                          BoxShadow(
-                                                                              color: Colors.grey,
-                                                                              blurRadius: 5,
-                                                                              offset: Offset(1, 1)),
-                                                                        ],
-                                                                        color: Colors
-                                                                            .white,
-                                                                        shape: BoxShape
-                                                                            .circle,
-                                                                        image: DecorationImage(
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                            image: NetworkImage(items[index].profilePic.toString())),
-                                                                        // image: AssetImage(
-                                                                        //     'assets/images/img.jpeg')),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    height: 10,
-                                                                  ),
-                                                                  InkWell(
-                                                                    onTap:
-                                                                        () async {
-                                                                      if (widget
-                                                                              .cloudCall ==
-                                                                          true) {
-                                                                        showDialog(
-                                                                            context:
-                                                                                context,
-                                                                            builder:
-                                                                                (BuildContext context) {
-                                                                              return AlertDialog(
-                                                                                scrollable: true,
-                                                                                title: const Text('Choose Call Type'),
-                                                                                content: Column(
-                                                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    InkWell(
-                                                                                      onTap: () async {
-                                                                                        Common.showProgressDialog(context, "Loading..");
-                                                                                        CloudCallModel object1 = await HttpService.addCloudCall(widget.token, items[index].callMasterId.toString(), items[index].contactNumber1);
-                                                                                        if (object1.data == true) {
-                                                                                          if (context.mounted) {
-                                                                                            Navigator.push(
-                                                                                              context,
-                                                                                              MaterialPageRoute(
-                                                                                                  builder: (context) => ViewLeads(
-                                                                                                        widget.token!,
-                                                                                                        widget.editLead,
-                                                                                                        widget.deleteLead,
-                                                                                                        widget.cloudCall,
-                                                                                                        pageName: widget.pageName,
-                                                                                                        status: widget.status,
-                                                                                                        staff: widget.staff,
-                                                                                                        isCalled: widget.isCalled,
-                                                                                                        fromDate: widget.fromDate,
-                                                                                                        toDate: widget.toDate,
-                                                                                                        category: widget.category,
-                                                                                                      )),
-                                                                                            );
-                                                                                          }
-                                                                                        } else {
-                                                                                          Common.toastMessaage(object1.message, Colors.red);
-                                                                                          if (context.mounted) Navigator.pop(context);
-                                                                                        }
-                                                                                      },
-                                                                                      child: SizedBox(
-                                                                                        height: 50,
-                                                                                        child: Row(
-                                                                                          children: [
-                                                                                            Container(
-                                                                                              height: 30,
-                                                                                              width: 30,
-                                                                                              decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(5)),
-                                                                                              child: const Icon(
-                                                                                                Icons.cloud_circle_rounded,
-                                                                                                color: Colors.black,
-                                                                                              ),
-                                                                                            ),
-                                                                                            const SizedBox(
-                                                                                              width: 20,
-                                                                                            ),
-                                                                                            const Text(
-                                                                                              'Cloud Call',
-                                                                                              style: TextStyle(fontSize: 18),
-                                                                                            ),
-                                                                                          ],
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                    const SizedBox(
-                                                                                      height: 10,
-                                                                                    ),
-                                                                                    InkWell(
-                                                                                      onTap: () async {
-                                                                                        String url = 'tel:+${items[index].contactNumber1}';
-                                                                                        await launchUrl(Uri.parse(url));
-                                                                                      },
-                                                                                      child: SizedBox(
-                                                                                          height: 50,
-                                                                                          child: Row(
-                                                                                            children: [
-                                                                                              Container(
-                                                                                                height: 30,
-                                                                                                width: 30,
-                                                                                                decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(5)),
-                                                                                                child: const Icon(
-                                                                                                  Icons.call,
-                                                                                                  color: Colors.black,
-                                                                                                ),
-                                                                                              ),
-                                                                                              const SizedBox(
-                                                                                                width: 20,
-                                                                                              ),
-                                                                                              const Text(
-                                                                                                'Phone Call',
-                                                                                                style: TextStyle(fontSize: 18),
-                                                                                              ),
-                                                                                            ],
-                                                                                          )),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              );
-                                                                            });
-                                                                      } else {
-                                                                        String
-                                                                            url =
-                                                                            'tel:+${items[index].contactNumber1}';
-                                                                        await launchUrl(
-                                                                            Uri.parse(url));
-                                                                      }
-                                                                    },
-                                                                    child:
-                                                                        Container(
-                                                                      width: 65,
-                                                                      height:
-                                                                          30,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Colors
-                                                                            .green,
-                                                                        border: Border.all(
-                                                                            color:
-                                                                                Colors.grey.shade300),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8),
-                                                                      ),
-                                                                      child:
-                                                                          const Center(
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.center,
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.center,
-                                                                          children: [
-                                                                            Icon(
-                                                                              Icons.call,
-                                                                              color: Colors.white,
-                                                                              size: 15,
-                                                                            ),
-                                                                            SizedBox(
-                                                                              width: 5,
-                                                                            ),
-                                                                            Text('Call',
-                                                                                style: TextStyle(fontFamily: "MontserratMedium", fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold)),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          const SizedBox(
-                                                            height: 8,
-                                                          ),
-                                                        ],
-                                                      ),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 8,
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
-                                            )),
+                                            ),
+                                          ),
+                                        ),
                                       );
                                     },
                                     itemScrollController: itemScrollController,
@@ -2636,56 +3066,60 @@ class _ViewLeadsState extends State<ViewLeads> {
                                       const Text(
                                         'Result Not Found',
                                         style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
+                                      const SizedBox(height: 10),
                                       const Text(
                                         'Whoops... this information is \n not available for a moment',
                                         style: TextStyle(fontSize: 15),
                                       ),
-                                      const SizedBox(
-                                        height: 25,
-                                      ),
+                                      const SizedBox(height: 25),
                                       InkWell(
                                         onTap: () {
                                           Navigator.of(context).push(
                                             MaterialPageRoute(
-                                                builder: (context) =>
-                                                    Dashboard(widget.token)),
+                                              builder: (context) =>
+                                                  Dashboard(widget.token),
+                                            ),
                                           );
                                         },
                                         child: Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                          width:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.width *
                                               0.4,
                                           height: 40,
                                           decoration: BoxDecoration(
                                             color: Colors.black,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
                                           ),
                                           child: const Center(
-                                            child: Text('Go Back',
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.w500)),
+                                            child: Text(
+                                              'Go Back',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),
                         ],
                       )
                     : Center(
-                        child: Lottie.asset('assets/main/loading.json',
-                            fit: BoxFit.fill),
+                        child: Lottie.asset(
+                          'assets/main/loading.json',
+                          fit: BoxFit.fill,
+                        ),
                       ),
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.centerDocked,
@@ -2695,16 +3129,22 @@ class _ViewLeadsState extends State<ViewLeads> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => Dashboard(widget.token)),
+                        builder: (context) => Dashboard(widget.token),
+                      ),
                     );
                   },
-                  child: Image.asset("assets/icons/menu.png",
-                      width: 25), //icon inside button
+                  child: Image.asset(
+                    "assets/icons/menu.png",
+                    width: 25,
+                  ), //icon inside button
                 ),
                 bottomNavigationBar: configure != null
                     ? BottomNavigation(
-                        widget.token!, configure!.data!.whatsappConfigured)
-                    : const SizedBox())
+                        widget.token!,
+                        configure!.data!.whatsappConfigured,
+                      )
+                    : const SizedBox(),
+              )
             : Scaffold(
                 backgroundColor: Colors.white,
                 body: SizedBox(
@@ -2726,11 +3166,11 @@ class _ViewLeadsState extends State<ViewLeads> {
                       const Text(
                         'No Network Found !',
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      const SizedBox(
-                        height: 15,
-                      ),
+                      const SizedBox(height: 15),
                       InkWell(
                         onTap: () {
                           getData('desc', true);
@@ -2749,9 +3189,10 @@ class _ViewLeadsState extends State<ViewLeads> {
                                 child: Text(
                                   'Try Again',
                                   style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold),
+                                    color: Colors.black,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
@@ -2760,246 +3201,236 @@ class _ViewLeadsState extends State<ViewLeads> {
                       ),
                     ],
                   ),
-                )),
+                ),
+              ),
       ),
     );
   }
 
   Widget _buildLoaderListItem() {
     return Shimmer.fromColors(
-        enabled: true,
-        baseColor: Colors.grey.shade300,
-        highlightColor: Colors.grey.shade100,
-        child: SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              const SizedBox(
-                height: 10,
+      enabled: true,
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 12.0,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(height: 8.0),
+                  Container(
+                    width: double.infinity,
+                    height: 12.0,
+                    color: Colors.white,
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 12.0,
+            ),
+            const SizedBox(height: 16.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 96.0,
+                    height: 72.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
                       color: Colors.white,
                     ),
-                    const SizedBox(height: 8.0),
-                    Container(
-                      width: double.infinity,
-                      height: 12.0,
+                  ),
+                  const SizedBox(width: 12.0),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: 10.0,
+                          color: Colors.white,
+                          margin: const EdgeInsets.only(bottom: 8.0),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: 10.0,
+                          color: Colors.white,
+                          margin: const EdgeInsets.only(bottom: 8.0),
+                        ),
+                        Container(
+                          width: 100.0,
+                          height: 10.0,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: 12.0,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(height: 8.0),
+                  Container(
+                    width: double.infinity,
+                    height: 12.0,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 96.0,
+                    height: 72.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
                       color: Colors.white,
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 96.0,
-                      height: 72.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.0),
-                        color: Colors.white,
-                      ),
+                  ),
+                  const SizedBox(width: 12.0),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 200,
+                          height: 10.0,
+                          color: Colors.white,
+                          margin: const EdgeInsets.only(bottom: 8.0),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: 10.0,
+                          color: Colors.white,
+                          margin: const EdgeInsets.only(bottom: 8.0),
+                        ),
+                        Container(
+                          width: 100.0,
+                          height: 10.0,
+                          color: Colors.white,
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 12.0),
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            height: 10.0,
-                            color: Colors.white,
-                            margin: const EdgeInsets.only(bottom: 8.0),
-                          ),
-                          Container(
-                            width: double.infinity,
-                            height: 10.0,
-                            color: Colors.white,
-                            margin: const EdgeInsets.only(bottom: 8.0),
-                          ),
-                          Container(
-                            width: 100.0,
-                            height: 10.0,
-                            color: Colors.white,
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 12.0,
+            ),
+            const SizedBox(height: 16.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(width: 200, height: 12.0, color: Colors.white),
+                  const SizedBox(height: 8.0),
+                  Container(
+                    width: double.infinity,
+                    height: 12.0,
+                    color: Colors.white,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 96.0,
+                    height: 72.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
                       color: Colors.white,
                     ),
-                    const SizedBox(height: 8.0),
-                    Container(
-                      width: double.infinity,
-                      height: 12.0,
-                      color: Colors.white,
+                  ),
+                  const SizedBox(width: 12.0),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: 10.0,
+                          color: Colors.white,
+                          margin: const EdgeInsets.only(bottom: 8.0),
+                        ),
+                        Container(
+                          width: double.infinity,
+                          height: 10.0,
+                          color: Colors.white,
+                          margin: const EdgeInsets.only(bottom: 8.0),
+                        ),
+                        Container(
+                          width: 100.0,
+                          height: 10.0,
+                          color: Colors.white,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 96.0,
-                      height: 72.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.0),
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(width: 12.0),
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: 200,
-                            height: 10.0,
-                            color: Colors.white,
-                            margin: const EdgeInsets.only(bottom: 8.0),
-                          ),
-                          Container(
-                            width: double.infinity,
-                            height: 10.0,
-                            color: Colors.white,
-                            margin: const EdgeInsets.only(bottom: 8.0),
-                          ),
-                          Container(
-                            width: 100.0,
-                            height: 10.0,
-                            color: Colors.white,
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 200,
-                      height: 12.0,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(height: 8.0),
-                    Container(
-                      width: double.infinity,
-                      height: 12.0,
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 96.0,
-                      height: 72.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.0),
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(width: 12.0),
-                    Expanded(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: double.infinity,
-                            height: 10.0,
-                            color: Colors.white,
-                            margin: const EdgeInsets.only(bottom: 8.0),
-                          ),
-                          Container(
-                            width: double.infinity,
-                            height: 10.0,
-                            color: Colors.white,
-                            margin: const EdgeInsets.only(bottom: 8.0),
-                          ),
-                          Container(
-                            width: 100.0,
-                            height: 10.0,
-                            color: Colors.white,
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
 class MessageViewWidget extends StatelessWidget {
-  const MessageViewWidget({
-    Key? key,
-    required this.label,
-  }) : super(key: key);
+  const MessageViewWidget({Key? key, required this.label}) : super(key: key);
 
   final String label;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.symmetric(vertical: 8.0),
-        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
-        decoration: BoxDecoration(
-          color: Colors.blue.shade100,
-          borderRadius: const BorderRadius.all(
-            Radius.circular(
-              10.0,
-            ),
-          ),
-        ),
-        child: Text(label));
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade100,
+        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+      ),
+      child: Text(label),
+    );
   }
 }

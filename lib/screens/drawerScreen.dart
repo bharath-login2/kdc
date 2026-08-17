@@ -254,7 +254,7 @@ class _DraweScreenState extends State<DraweScreen> {
                                                             .spaceBetween,
                                                     children: [
                                                       Text(
-                                                        'New Version Available',
+                                                        'Version V.1.1.0',
                                                         style: TextStyle(
                                                           fontSize: 16,
                                                           color: _isVisible
@@ -269,7 +269,7 @@ class _DraweScreenState extends State<DraweScreen> {
                                                             _launchURL(Platform
                                                                     .isIOS
                                                                 ? 'https://apps.apple.com/us/app/login2/id6450980527'
-                                                                : 'https://play.google.com/store/apps/details?id=com.kdc.crm');
+                                                                : 'https://play.google.com/store/apps/details?id=com.login2Pro');
                                                           },
                                                           child: const Icon(
                                                             Icons

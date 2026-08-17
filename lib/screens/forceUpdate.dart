@@ -70,7 +70,7 @@ class _ForceUpdateState extends State<ForceUpdate> {
                                     "UPDATE NOW",
                                   ),
                                   onPressed: () {
-                                    _launchURL(Platform.isIOS?'https://apps.apple.com/us/app/login2/id6450980527':'https://play.google.com/store/apps/details?id=com.kdc.crm');
+                                    _launchURL(Platform.isIOS?'https://apps.apple.com/us/app/login2/id6450980527':'https://play.google.com/store/apps/details?id=com.login2Pro');
                                   },
                                 ),
                               ],

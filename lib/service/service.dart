@@ -357,8 +357,9 @@ class HttpService {
     pageSize,
     isFirst,
     leadType,
-    branchId,
-  ) async {
+    branchId, {
+    String? search,
+  }) async {
     var params = {
       "token": token,
       "fromDate": fromdate,
@@ -374,6 +375,7 @@ class HttpService {
       "isFirst": isFirst,
       "leadType": leadType,
       "branchId": branchId,
+      "search": search,
     };
 
     try {
@@ -399,8 +401,9 @@ class HttpService {
     page,
     pageSize,
     isFirst,
-    branchId,
-  ) async {
+    branchId, {
+    String? search,
+  }) async {
     var params = {
       "token": token,
       "fromDate": fromdate,
@@ -413,6 +416,7 @@ class HttpService {
       "pageSize": pageSize,
       "isFirst": isFirst,
       "branchId": branchId,
+      "search": search,
     };
     try {
       var result = await _dio.get(
@@ -460,6 +464,14 @@ class HttpService {
     nextFollowupDate,
     descriptions,
     code,
+    job,
+    location,
+    customerNeed,
+    purpose,
+    challenges,
+    newObjection,
+    googleReviewStatus,
+    reasonForLostSales,
   ) async {
     var formData = FormData.fromMap({
       'token': token,
@@ -477,6 +489,14 @@ class HttpService {
       'priority': priorityId,
       'country_code': code,
       "additionalFields": jsonEncode(descriptions),
+      "job": job,
+      "location": location,
+      "customer_need": customerNeed,
+      "purpose": purpose,
+      "challenges": challenges,
+      "new_objection": newObjection,
+      "google_review_status": googleReviewStatus,
+      "reason_for_lost_sales": reasonForLostSales,
     });
 
     try {
@@ -715,6 +735,7 @@ class HttpService {
     callMasterId,
     calledDate,
     callHistoryId,
+    callResultReasonId,
     priorityId,
     checked,
     timeBefore,
@@ -740,6 +761,7 @@ class HttpService {
       "call_master_id": callMasterId,
       "called_date": calledDate,
       "cloud_call_id": callHistoryId,
+      "call_reason": callResultReasonId,
       "address": address,
       "priority": priorityId,
       "reminder": checked,
@@ -761,6 +783,7 @@ class HttpService {
         data: formData,
       );
       AddLeadFollowupModel model = AddLeadFollowupModel.fromJson(result.data);
+      print('addLeadsFollowup result: ${result.data}'); // Debug print
       return model;
     } on Exception {
       return null;
@@ -775,6 +798,7 @@ class HttpService {
     cost,
     leadTypeId,
     leadSubTypeId,
+    callResultReasonId,
     remarks,
     calledDate,
     callMasterId, {
@@ -795,6 +819,7 @@ class HttpService {
       "call_result_id": callResultId,
       "lead_category_id": leadTypeId,
       "lead_sub_category_id": leadSubTypeId,
+      "call_reason": callResultReasonId,
       "cost": cost,
       "remarks": remarks,
       "call_details_id": callFollowupId,
@@ -860,8 +885,16 @@ class HttpService {
     address,
     remark,
     descriptions,
-    code,
-  ) async {
+    code, {
+    String? job,
+    String? location,
+    String? customerNeed,
+    String? purpose,
+    String? challenges,
+    String? newObjection,
+    String? googleReviewStatus,
+    String? reasonForLostSales,
+  }) async {
     var formData = FormData.fromMap({
       'token': token,
       'branchId': branchId,
@@ -877,6 +910,14 @@ class HttpService {
       'call_master_id': callMasterId,
       'country_code': code,
       "additionalFields": jsonEncode(descriptions),
+      "job": job ?? "",
+      "location": location ?? "",
+      "customer_need": customerNeed ?? "",
+      "purpose": purpose ?? "",
+      "challenges": challenges ?? "",
+      "new_objection": newObjection ?? "",
+      "google_review_status": googleReviewStatus ?? "",
+      "reason_for_lost_sales": reasonForLostSales ?? "",
     });
     try {
       //print('cgf');
@@ -1069,13 +1110,14 @@ class HttpService {
     }
   }
 
-  static Future callHistory(token, userId, fromDate, toDate) async {
+  static Future callHistory(token, userId, fromDate, toDate, direction) async {
     //print(userId);
     var formData = FormData.fromMap({
       "token": token,
       "staff_id": userId,
       "fromDate": fromDate,
       "toDate": toDate,
+      "direction": direction,
     });
 
     try {

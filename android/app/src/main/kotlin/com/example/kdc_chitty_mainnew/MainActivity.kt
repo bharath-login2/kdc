@@ -1,4 +1,4 @@
-package com.kdc.crm
+package com.login2Pro
 
 import io.flutter.embedding.android.FlutterActivity
 

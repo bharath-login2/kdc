@@ -36,9 +36,29 @@ void callbackDispatcher() {
     }
   });
 }
+// Future<void> main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp();
+//   runApp( const MyApp());
+//   Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+// }
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.dumpErrorToConsole(details);
+    log(details.exceptionAsString());
+    if (details.stack != null) {
+      log(details.stack.toString());
+    }
+  };
+
   await Firebase.initializeApp();
-  runApp( const MyApp());
-  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+
+  Workmanager().initialize(
+    callbackDispatcher,
+    isInDebugMode: true,
+  );
+
+  runApp(const MyApp());
 }

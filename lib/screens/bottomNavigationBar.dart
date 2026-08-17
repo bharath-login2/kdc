@@ -1,8 +1,10 @@
+import 'package:kdc_chitty_mainnew/models/userManagement/viewStaffModel.dart';
+import 'package:kdc_chitty_mainnew/service/service.dart';
+import '../../core/common.dart';
 import '../../screens/homePage.dart';
 import '../../screens/leadManagement/addLeads.dart';
-import '../../screens/settings/whatsappSettings.dart';
+import '../../screens/leadManagement/callHistoryPage.dart';
 import '../../screens/userManagement/viewUsers.dart';
-import '../../screens/whatsAppGroup/groupList.dart';
 import 'package:flutter/material.dart';
 
 class BottomNavigation extends StatefulWidget {
@@ -16,6 +18,56 @@ class BottomNavigation extends StatefulWidget {
 }
 
 class _BottomNavigationState extends State<BottomNavigation> {
+  ViewStaffModel? viewStaff;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getStaffData();
+  }
+
+  getStaffData() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      ViewStaffModel? staffData = await HttpService.viewStaffs(widget.token);
+      setState(() {
+        viewStaff = staffData;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      print('Error loading staff: $e');
+    }
+  }
+
+  void _permissionDialogue(BuildContext context, title) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: const Text('Alert !!!'),
+          content: const Text(
+            'You have no permission to access the feature please contact the support team',
+          ),
+          actions: [
+            // The "Yes" button
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(
@@ -23,11 +75,16 @@ class _BottomNavigationState extends State<BottomNavigation> {
       //bottom navigation bar on scaffold
       color: const Color(0xFF406dbe),
       shape: const AutomaticNotchedShape(
-          RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15), topRight: Radius.circular(15))),
-          RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15)))),
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15),
+            topRight: Radius.circular(15),
+          ),
+        ),
+        RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+        ),
+      ),
       //shape of notch
 
       //notche margin between floating button and bottom appbar
@@ -42,15 +99,13 @@ class _BottomNavigationState extends State<BottomNavigation> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                      builder: (context) => HomePage(widget.token)),
+                    builder: (context) => HomePage(widget.token),
+                  ),
                 );
               },
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.175,
-                child: const Icon(
-                  Icons.home,
-                  color: Colors.white,
-                ),
+                child: const Icon(Icons.home, color: Colors.white),
               ),
             ),
           ),
@@ -75,34 +130,26 @@ class _BottomNavigationState extends State<BottomNavigation> {
               ),
             ),
           ),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.2,
-          ),
+          SizedBox(width: MediaQuery.of(context).size.width * 0.2),
           Padding(
             padding: const EdgeInsets.only(top: 4),
             child: InkWell(
-              onTap: () {
-                widget.whatsappConfigaure == true
-                    ? Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GroupList(widget.token),
-                        ),
-                      )
-                    : Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => WhatsappSettings(widget.token),
-                        ),
-                      );
+              onTap: () async {
+                String name = await Common.getSharedPref("name") ?? "";
+                String userId = await Common.getSharedPref("userId") ?? "";
+                if (context.mounted) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CallHistoryPage(widget.token, name, userId, true),
+                    ),
+                  );
+                }
               },
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.175,
-                child: Image.asset(
-                  "assets/main/whatsappIcon.png",
-                  width: 21,
-                  height: 21,
-                ),
+                child: const Icon(Icons.call, color: Colors.white),
               ),
             ),
           ),
@@ -110,19 +157,18 @@ class _BottomNavigationState extends State<BottomNavigation> {
             padding: const EdgeInsets.only(top: 4),
             child: InkWell(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ViewUsers(widget.token),
-                  ),
-                );
+                viewStaff!.data!.staffManagementPermission == true
+                    ? Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ViewUsers(widget.token),
+                        ),
+                      )
+                    : _permissionDialogue(context, 'Designation List');
               },
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.175,
-                child: const Icon(
-                  Icons.person,
-                  color: Colors.white,
-                ),
+                child: const Icon(Icons.person, color: Colors.white),
               ),
             ),
           ),

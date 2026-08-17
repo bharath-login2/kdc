@@ -29,12 +29,13 @@ class Data {
   List<Activities>? activities;
   List<AdditionalFields>? additionalFields;
 
-  Data(
-      {this.voiceListerningPermission,
-        this.followUpData,
-        this.callHistory,
-        this.activities,
-        this.additionalFields});
+  Data({
+    this.voiceListerningPermission,
+    this.followUpData,
+    this.callHistory,
+    this.activities,
+    this.additionalFields,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     voiceListerningPermission = json['voiceListerningPermission'];
@@ -77,8 +78,9 @@ class Data {
       data['activities'] = activities!.map((v) => v.toJson()).toList();
     }
     if (additionalFields != null) {
-      data['additionalFields'] =
-          additionalFields!.map((v) => v.toJson()).toList();
+      data['additionalFields'] = additionalFields!
+          .map((v) => v.toJson())
+          .toList();
     }
     return data;
   }
@@ -96,6 +98,9 @@ class FollowUpData {
   String? proPicThumb;
   String? callStatusId;
   String? callResultId;
+  String? callResponse;
+  String? callResponseId;
+  String? callReason;
   bool? isCalled;
   bool? isEdit;
   bool? isDelete;
@@ -104,25 +109,29 @@ class FollowUpData {
   bool? isReminder;
   String? time;
 
-  FollowUpData(
-      {this.callDetailsId,
-        this.scheduledDate,
-        this.date,
-        this.calledDate,
-        this.remarks,
-        this.callMasterId,
-        this.callResult,
-        this.staffName,
-        this.proPicThumb,
-        this.callStatusId,
-        this.callResultId,
-        this.isCalled,
-        this.isEdit,
-        this.isDelete,
-        this.dispalyDate,
-        this.isSetReminder,
-        this.isReminder,
-        this.time});
+  FollowUpData({
+    this.callDetailsId,
+    this.scheduledDate,
+    this.date,
+    this.calledDate,
+    this.remarks,
+    this.callMasterId,
+    this.callResult,
+    this.staffName,
+    this.proPicThumb,
+    this.callStatusId,
+    this.callResultId,
+    this.callResponse,
+    this.callResponseId,
+    this.callReason,
+    this.isCalled,
+    this.isEdit,
+    this.isDelete,
+    this.dispalyDate,
+    this.isSetReminder,
+    this.isReminder,
+    this.time,
+  });
 
   FollowUpData.fromJson(Map<String, dynamic> json) {
     callDetailsId = json['call_details_id'];
@@ -136,6 +145,9 @@ class FollowUpData {
     proPicThumb = json['pro_pic_thumb'];
     callStatusId = json['call_status_id'];
     callResultId = json['call_result_id'];
+    callResponse = json['call_response'];
+    callResponseId = json['call_response_id'];
+    callReason = json['reason'];
     isCalled = json['is_called'];
     isEdit = json['is_edit'];
     isDelete = json['is_delete'];
@@ -158,6 +170,9 @@ class FollowUpData {
     data['pro_pic_thumb'] = proPicThumb;
     data['call_status_id'] = callStatusId;
     data['call_result_id'] = callResultId;
+    data['call_response'] = callResponse;
+    data['call_response_id'] = callResponseId;
+    data['reason'] = callReason;
     data['is_called'] = isCalled;
     data['is_edit'] = isEdit;
     data['is_delete'] = isDelete;
@@ -191,27 +206,28 @@ class CallHistory {
   int? currentpos;
   String? currentpostlabel;
 
-  CallHistory(
-      {this.id,
-        this.staffName,
-        this.callHistoryImage,
-        this.sourceNumber,
-        this.destinationNumber,
-        this.date,
-        this.startTime,
-        this.endTime,
-        this.time,
-        this.callDuration,
-        this.callDurationHr,
-        this.resourceURL,
-        this.status,
-        this.isAttended,
-        this.direction,
-        this.isTransfered,
-        this.isplayed,
-        this.audioplayed,
-        this.currentpos,
-        this.currentpostlabel});
+  CallHistory({
+    this.id,
+    this.staffName,
+    this.callHistoryImage,
+    this.sourceNumber,
+    this.destinationNumber,
+    this.date,
+    this.startTime,
+    this.endTime,
+    this.time,
+    this.callDuration,
+    this.callDurationHr,
+    this.resourceURL,
+    this.status,
+    this.isAttended,
+    this.direction,
+    this.isTransfered,
+    this.isplayed,
+    this.audioplayed,
+    this.currentpos,
+    this.currentpostlabel,
+  });
 
   CallHistory.fromJson(Map<String, dynamic> json) {
     id = json['id'];

@@ -8,17 +8,33 @@ class PushNotificationModel {
   bool? editLead;
   bool? deleteLead;
   bool? cloudcall;
-  PushNotificationModel({this.title,this.message,this.type,this.detailId,this.detailParentId,this.notificationId,this.editLead,this.deleteLead,this.cloudcall});
+  PushNotificationModel({
+    this.title,
+    this.message,
+    this.type,
+    this.detailId,
+    this.detailParentId,
+    this.notificationId,
+    this.editLead,
+    this.deleteLead,
+    this.cloudcall,
+  });
   PushNotificationModel.fromJson(Map<String, dynamic> json) {
-    title = json['title'];
-    message = json['message'];
-    type = json['type'];
-    notificationId = json['notificationId'];
-    detailId = json['detailId'];
-    detailParentId = json['detailParentId'];
-    editLead = json['editLead'];
-    editLead = json['deleteLead'];
-    cloudcall = json['cloudcall'];
+    title = json['title']?.toString();
+    message = json['message']?.toString();
+    type = json['type']?.toString();
+    notificationId = json['notificationId'] != null
+        ? int.tryParse(json['notificationId'].toString())
+        : null;
+    detailId = json['detailId'] != null
+        ? int.tryParse(json['detailId'].toString())
+        : null;
+    detailParentId = json['detailParentId'] != null
+        ? int.tryParse(json['detailParentId'].toString())
+        : null;
+    editLead = json['editLead']?.toString() == 'true';
+    deleteLead = json['deleteLead']?.toString() == 'true';
+    cloudcall = json['cloudcall']?.toString() == 'true';
   }
 
   Map<String, dynamic> toJson() {
@@ -35,7 +51,3 @@ class PushNotificationModel {
     return data;
   }
 }
-
-
-
-

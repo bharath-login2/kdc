@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import '../../core/common.dart';
 import '../../models/userManagement/addUserCommonDataModel.dart';
@@ -241,6 +242,10 @@ class _AddUserState extends State<AddUser> {
                             controller: phoneNumber,
                             width: 0.9,
                             iconData: Icons.call,
+                            keyboardType: TextInputType.phone,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
                           ),
                           const SizedBox(height: 15),
                           InputTextField(
