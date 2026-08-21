@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:kdc_chitty_mainnew/models/lead_management/callResultReasonModel.dart';
 import 'package:lottie/lottie.dart';
@@ -12,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../widgets/inputTextFeildWidget.dart';
+import '../../widgets/leadDynamicFormWidget.dart';
 
 // ignore: must_be_immutable
 class EditFollowup extends StatefulWidget {
@@ -30,6 +32,8 @@ class EditFollowup extends StatefulWidget {
   String? pageName;
   bool? isCalled;
   int? scrollToIndex;
+  String? clientName;
+  bool isViewOnly;
 
   EditFollowup(
     this.token,
@@ -47,6 +51,8 @@ class EditFollowup extends StatefulWidget {
     this.pageName,
     this.isCalled,
     this.scrollToIndex,
+    this.clientName,
+    this.isViewOnly = false,
   });
 
   @override
@@ -54,6 +60,8 @@ class EditFollowup extends StatefulWidget {
 }
 
 class _EditFollowupState extends State<EditFollowup> {
+  final GlobalKey<LeadDynamicFormWidgetState> leadFormKey = GlobalKey<LeadDynamicFormWidgetState>();
+  LeadDynamicFormData currentFormData = LeadDynamicFormData();
   AddLeadCommonDataModel? commonDetails;
   LeadSubTypeModel? leadSubTypeList;
   CallResultResonModel? callResultReason;
@@ -86,6 +94,7 @@ class _EditFollowupState extends State<EditFollowup> {
   String priorityId = '2';
 
   FollowupDetailsModel? followupDetails;
+  TextEditingController clientNameController = TextEditingController();
   TextEditingController calledDate1 = TextEditingController();
   TextEditingController nextFollowupDate1 = TextEditingController();
   TextEditingController leadTypeVal = TextEditingController();
@@ -118,6 +127,9 @@ class _EditFollowupState extends State<EditFollowup> {
         result = false;
       });
     }
+    if (widget.token == null || widget.token!.isEmpty) {
+      widget.token = await Common.getSharedPref("token");
+    }
     commonDetails = await HttpService.addLeadCommonData(widget.token);
     followupDetails = await HttpService.followupDetails(
       widget.token,
@@ -132,7 +144,8 @@ class _EditFollowupState extends State<EditFollowup> {
       }
 
       setState(() {
-        // Populate all fields from followupDetails
+        clientNameController.text =
+            followupDetails?.data?.clientName ?? widget.clientName ?? '';
         callResult = followupDetails!.data!.callResult.toString();
         callResultId = followupDetails!.data!.callResultId.toString();
         callStatus = followupDetails!.data!.callResponse.toString();
@@ -148,8 +161,15 @@ class _EditFollowupState extends State<EditFollowup> {
           );
         }
 
-        leadType = followupDetails!.data!.leadCategory.toString();
-        leadTypeId = followupDetails!.data!.leadCategoryId.toString();
+        if (followupDetails!.data!.callResult != null &&
+            followupDetails!.data!.callResult!.isNotEmpty) {
+          leadType = followupDetails!.data!.callResult.toString();
+          leadTypeId = followupDetails!.data!.callResultId?.toString() ??
+              followupDetails!.data!.leadCategoryId.toString();
+        } else {
+          leadType = followupDetails!.data!.leadCategory.toString();
+          leadTypeId = followupDetails!.data!.leadCategoryId.toString();
+        }
 
         cost.text = followupDetails!.data!.cost?.toString() ?? '';
         remarks.text = followupDetails!.data!.remarks?.toString() ?? '';
@@ -181,7 +201,7 @@ class _EditFollowupState extends State<EditFollowup> {
         }
 
         // Set controller values for display
-        leadTypeVal.text = followupDetails!.data!.leadCategory.toString();
+        leadTypeVal.text = leadType;
         leadSubTypeVal.text = followupDetails!.data!.leadSubCategory.toString();
         callResultVal.text = followupDetails!.data!.callResult.toString();
         callStatusVal.text =
@@ -199,6 +219,34 @@ class _EditFollowupState extends State<EditFollowup> {
     if (commonDetails != null) {
       setState(() {});
     }
+  }
+
+  List<Map<String, String>> getLeadCategoryOptions() {
+    List<Map<String, String>> categories = [];
+    if (commonDetails?.data?.leadCategory != null) {
+      for (var item in commonDetails!.data!.leadCategory!) {
+        if (item.leadCategory != null && item.leadCategoryId != null) {
+          categories.add({
+            'id': item.leadCategoryId.toString(),
+            'name': item.leadCategory.toString(),
+          });
+        }
+      }
+    }
+    if (commonDetails?.data?.callResult != null) {
+      for (var item in commonDetails!.data!.callResult!) {
+        if (item.callResult != null && item.callResultId != null) {
+          final idStr = item.callResultId.toString();
+          if (!categories.any((c) => c['id'] == idStr)) {
+            categories.add({
+              'id': idStr,
+              'name': item.callResult.toString(),
+            });
+          }
+        }
+      }
+    }
+    return categories;
   }
 
   @override
@@ -252,9 +300,9 @@ class _EditFollowupState extends State<EditFollowup> {
                             ),
                           ),
                           const SizedBox(width: 25),
-                          const Text(
-                            'Edit Followup',
-                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          Text(
+                            widget.isViewOnly ? 'View Followup' : 'Edit Followup',
+                            style: const TextStyle(color: Colors.white, fontSize: 18),
                           ),
                         ],
                       ),
@@ -265,24 +313,52 @@ class _EditFollowupState extends State<EditFollowup> {
             ),
             body: commonDetails != null && followupDetails != null
                 ? SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left: 15,
-                        right: 15,
-                        top: 20,
-                        bottom: 20,
-                      ),
+                    child: IgnorePointer(
+                      ignoring: widget.isViewOnly,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 15,
+                          right: 15,
+                          top: 20,
+                          bottom: 20,
+                        ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           TextFormField(
+                            controller: clientNameController,
+                            readOnly: widget.isViewOnly,
+                            style: const TextStyle(color: Colors.black),
+                            decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.only(
+                                left: 10,
+                                top: 2,
+                                bottom: 2,
+                              ),
+                              labelText: 'Name *',
+                              fillColor: Colors.white,
+                              filled: true,
+                              prefixIcon: Icon(
+                                Icons.person_outline,
+                                color: Colors.grey,
+                              ),
+                              border: OutlineInputBorder(),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey),
+                              ),
+                              labelStyle: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          TextFormField(
                             controller: calledDate1,
                             readOnly: true,
                             onTap: () async {
+                              if (widget.isViewOnly) return;
                               await showDatePicker(
                                 context: context,
                                 initialDate: DateTime.now(),
-                                firstDate: DateTime.now(),
+                                firstDate: DateTime(2000),
                                 lastDate: DateTime(2100),
                               ).then((selectedDate) {
                                 if (selectedDate != null) {
@@ -328,85 +404,26 @@ class _EditFollowupState extends State<EditFollowup> {
                             ),
                           ),
                           const SizedBox(height: 15),
-
-                          // Lead Status
+                          // Lead Category (read-only field populated from Lead Details)
                           TextFormField(
-                            controller: callResultVal,
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    scrollable: true,
-                                    title: const Text('Status'),
-                                    content: ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: commonDetails!
-                                          .data!
-                                          .callResult!
-                                          .length,
-                                      itemBuilder: (context, ind) {
-                                        return InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              callResultVal.text =
-                                                  commonDetails!
-                                                      .data!
-                                                      .callResult![ind]
-                                                      .callResult
-                                                      .toString();
-                                              callResult = commonDetails!
-                                                  .data!
-                                                  .callResult![ind]
-                                                  .callResult
-                                                  .toString();
-
-                                              callResultId = commonDetails!
-                                                  .data!
-                                                  .callResult![ind]
-                                                  .callResultId
-                                                  .toString();
-                                              callResultReasonList();
-                                              if (callResultId != '2') {
-                                                nextFollowupDate1.text = '';
-                                              }
-                                              Navigator.pop(context, true);
-                                            });
-                                          },
-                                          child: SizedBox(
-                                            height: 50,
-                                            child: Text(
-                                              commonDetails!
-                                                  .data!
-                                                  .callResult![ind]
-                                                  .callResult
-                                                  .toString(),
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            maxLines: 1,
+                            controller: TextEditingController(
+                              text: (leadType.isEmpty || leadType == 'Lead Category')
+                                  ? ''
+                                  : leadType,
+                            ),
                             readOnly: true,
-                            keyboardType: TextInputType.text,
+                            style: const TextStyle(color: Colors.black),
                             decoration: const InputDecoration(
                               contentPadding: EdgeInsets.only(
                                 left: 10,
                                 top: 2,
                                 bottom: 2,
                               ),
-                              labelText: 'Lead Status',
+                              labelText: 'Lead Category',
                               fillColor: Colors.white,
                               filled: true,
                               prefixIcon: Icon(
-                                Icons.arrow_drop_down_circle_outlined,
+                                Icons.category_outlined,
                                 color: Colors.grey,
                               ),
                               border: OutlineInputBorder(),
@@ -415,6 +432,58 @@ class _EditFollowupState extends State<EditFollowup> {
                               ),
                               labelStyle: TextStyle(color: Colors.grey),
                             ),
+                          ),
+                          const SizedBox(height: 15),
+                          LeadDynamicFormWidget(
+                            key: leadFormKey,
+                            token: widget.token!,
+                            commonDetails: commonDetails,
+                            isReadOnly: widget.isViewOnly,
+                            initialChannelId: followupDetails?.data?.connectingChannelId,
+                            initialStatusId: followupDetails?.data?.connectingStatusId,
+                            initialReasonId: followupDetails?.data?.connectingReasonId,
+                            initialCallStatusId: followupDetails?.data?.callResultId,
+                            initialCallStatusReasonId: followupDetails?.data?.callStatusReasonId ?? followupDetails?.data?.callResponseId,
+                            initialTriedToReduce: followupDetails?.data?.triedToReduceRejection,
+                            initialReduceMethods: followupDetails?.data?.reduceRejectionMethodIds is List
+                                ? (followupDetails!.data!.reduceRejectionMethodIds as List).map((e) => e.toString()).toList()
+                                : null,
+                            initialReductionChallenges: followupDetails?.data?.reductionChallenges,
+                            initialRejectionToRelation: followupDetails?.data?.rejectionToRelation,
+                            initialRelationActions: followupDetails?.data?.relationActionIds is List
+                                ? (followupDetails!.data!.relationActionIds as List).map((e) => e.toString()).toList()
+                                : null,
+                            initialRelationChallenges: followupDetails?.data?.relationChallenges,
+                            initialProspectQualified: followupDetails?.data?.prospectQualified,
+                            initialProspectParams: followupDetails?.data?.prospectParameterIds is List
+                                ? (followupDetails!.data!.prospectParameterIds as List).map((e) => e.toString()).toList()
+                                : null,
+                            initialProspectParamValues: followupDetails?.data?.prospectParamValues is Map
+                                ? Map<String, Map<String, String>>.from(followupDetails!.data!.prospectParamValues)
+                                : null,
+                            initialProspectChallenges: followupDetails?.data?.prospectChallenges,
+                            initialProductCustomization: followupDetails?.data?.productCustomization,
+                            initialCustomizationParams: followupDetails?.data?.customizationParameterIds is List
+                                ? (followupDetails!.data!.customizationParameterIds as List).map((e) => e.toString()).toList()
+                                : null,
+                            initialCustomizationChallenges: followupDetails?.data?.customizationChallenges,
+                            initialCustomerSummary: followupDetails?.data?.customerSummary,
+                            initialCustomerChallenges: followupDetails?.data?.customerChallenges,
+                            initialCustomerRating: followupDetails?.data?.customerRating != null
+                                ? int.tryParse(followupDetails!.data!.customerRating.toString())
+                                : null,
+                             initialRelationshipBuild: followupDetails?.data?.relationshipBuild,
+                             initialRelationshipParams: followupDetails?.data?.relationshipParameterIds is List
+                                 ? (followupDetails!.data!.relationshipParameterIds as List).map((e) => e.toString()).toList()
+                                 : null,
+                            onChanged: (formData) {
+                              setState(() {
+                                currentFormData = formData;
+                                callResultId = formData.callStatusId ?? '';
+                                callStatusId = formData.callStatusReasonId ?? '';
+                                callResultReasonId = formData.callStatusReasonId ?? '';
+                              });
+                            },
                           ),
                           const SizedBox(height: 15),
 
@@ -426,6 +495,7 @@ class _EditFollowupState extends State<EditFollowup> {
                                     controller: nextFollowupDate1,
                                     readOnly: true,
                                     onTap: () async {
+                                      if (widget.isViewOnly) return;
                                       await showDatePicker(
                                         context: context,
                                         initialDate: DateTime.now(),
@@ -495,187 +565,7 @@ class _EditFollowupState extends State<EditFollowup> {
                                   ),
                                 )
                               : const SizedBox(),
-                          const SizedBox(height: 15),
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 15),
-                            child: TextFormField(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      scrollable: true,
-                                      title: const Text('Reason *'),
-                                      content: SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                            .32,
-                                        width:
-                                            MediaQuery.of(context).size.height *
-                                            .8,
-                                        child: callResultReason!.data!.isEmpty
-                                            ? const Center(
-                                                child: Text(
-                                                  "Reason list is Empty...",
-                                                  style: TextStyle(
-                                                    color: Colors.red,
-                                                  ),
-                                                ),
-                                              )
-                                            : ListView.builder(
-                                                shrinkWrap: true,
-                                                itemCount: callResultReason!
-                                                    .data!
-                                                    .length,
-                                                itemBuilder: (context, ind) {
-                                                  return InkWell(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        callResultReasonName =
-                                                            callResultReason!
-                                                                .data![ind]
-                                                                .reason
-                                                                .toString();
-                                                        callResultReasonId =
-                                                            callResultReason!
-                                                                .data![ind]
-                                                                .id
-                                                                .toString();
-                                                        Navigator.pop(
-                                                          context,
-                                                          true,
-                                                        );
-                                                      });
-                                                    },
-                                                    child: SizedBox(
-                                                      height: 50,
-                                                      child: Text(
-                                                        callResultReason!
-                                                            .data![ind]
-                                                            .reason
-                                                            .toString(),
-                                                        style: const TextStyle(
-                                                          fontSize: 18,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              maxLines: 1,
-                              readOnly: true,
-                              controller: callReasonVal,
-                              decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.only(
-                                  left: 10,
-                                  top: 2,
-                                  bottom: 2,
-                                ),
-                                labelText: 'Reason *',
-                                fillColor: Colors.white,
-                                filled: true,
-                                prefixIcon: Icon(
-                                  Icons.reply_all_sharp,
-                                  color: Colors.grey,
-                                ),
-                                border: OutlineInputBorder(),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
-                                labelStyle: TextStyle(color: Colors.grey),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 15),
-                          TextFormField(
-                            controller: callStatusVal,
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    scrollable: true,
-                                    title: const Text('Call Status *'),
-                                    content: ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: commonDetails!
-                                          .data!
-                                          .callStatus!
-                                          .length,
-                                      itemBuilder: (context, ind) {
-                                        return InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              callStatusVal.text =
-                                                  commonDetails!
-                                                      .data!
-                                                      .callStatus![ind]
-                                                      .callResponse
-                                                      .toString();
-                                              callStatus = commonDetails!
-                                                  .data!
-                                                  .callStatus![ind]
-                                                  .callResponse
-                                                  .toString();
-
-                                              callStatusId = commonDetails!
-                                                  .data!
-                                                  .callStatus![ind]
-                                                  .callResponseId
-                                                  .toString();
-
-                                              Navigator.pop(context, true);
-                                            });
-                                          },
-                                          child: SizedBox(
-                                            height: 50,
-                                            child: Text(
-                                              commonDetails!
-                                                  .data!
-                                                  .callStatus![ind]
-                                                  .callResponse
-                                                  .toString(),
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            maxLines: 1,
-                            readOnly: true,
-                            keyboardType: TextInputType.text,
-                            decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.only(
-                                left: 10,
-                                top: 2,
-                                bottom: 2,
-                              ),
-                              labelText: 'Call Status *',
-                              fillColor: Colors.white,
-                              filled: true,
-                              prefixIcon: Icon(
-                                Icons.arrow_drop_down_circle_outlined,
-                                color: Colors.grey,
-                              ),
-                              border: OutlineInputBorder(),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
-                              ),
-                              labelStyle: TextStyle(color: Colors.grey),
-                            ),
-                          ),
-
+                          
                           // Remarks
                           const SizedBox(height: 15),
                           InputTextField(
@@ -686,210 +576,33 @@ class _EditFollowupState extends State<EditFollowup> {
                             width: 1,
                             height: 80,
                             maxLine: 3,
+                            readOnly: widget.isViewOnly,
                           ),
+                          
                           const SizedBox(height: 15),
 
-                          // Address and Cost in same row
-                          Row(
+                          // Priority in single field
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: TextFormField(
-                                  controller: address,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Address',
-                                    fillColor: Colors.white,
-                                    filled: true,
-                                    prefixIcon: Icon(
-                                      Icons.location_on_outlined,
-                                      color: Colors.grey,
-                                    ),
-                                    border: OutlineInputBorder(),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    labelStyle: TextStyle(color: Colors.grey),
+                              const Padding(
+                                padding: EdgeInsets.only(
+                                  left: 4,
+                                  bottom: 4,
+                                ),
+                                child: Text(
+                                  'Possibility',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
-                              // const SizedBox(width: 10),
-                              // Expanded(
-                              //   child: TextFormField(
-                              //     controller: cost,
-                              //     keyboardType: TextInputType.number,
-                              //     decoration: const InputDecoration(
-                              //       contentPadding: EdgeInsets.only(
-                              //         left: 10,
-                              //         top: 2,
-                              //         bottom: 2,
-                              //       ),
-                              //       labelText: 'Cost',
-                              //       fillColor: Colors.white,
-                              //       filled: true,
-                              //       prefixIcon: Icon(
-                              //         Icons.currency_rupee,
-                              //         color: Colors.grey,
-                              //       ),
-                              //       border: OutlineInputBorder(),
-                              //       focusedBorder: OutlineInputBorder(
-                              //         borderSide: BorderSide(
-                              //           color: Colors.grey,
-                              //         ),
-                              //       ),
-                              //       labelStyle: TextStyle(color: Colors.grey),
-                              //     ),
-                              //   ),
-                              // ),
-                            ],
-                          ),
-                          const SizedBox(height: 15),
-
-                          // Customer Interested Product and Priority in same row
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 4,
-                                        bottom: 4,
-                                      ),
-                                      child: Text(
-                                        'Customer Interested Product',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    TextFormField(
-                                      controller: leadTypeVal,
-                                      onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              scrollable: true,
-                                              title: const Text(
-                                                'Customer Interested Product',
-                                              ),
-                                              content: ListView.builder(
-                                                shrinkWrap: true,
-                                                itemCount: commonDetails!
-                                                    .data!
-                                                    .leadCategory!
-                                                    .length,
-                                                itemBuilder: (context, ind) {
-                                                  return InkWell(
-                                                    onTap: () async {
-                                                      leadSubTypeList =
-                                                          await HttpService.leadSubType(
-                                                            commonDetails!
-                                                                .data!
-                                                                .leadCategory![ind]
-                                                                .leadCategoryId
-                                                                .toString(),
-                                                          );
-
-                                                      setState(() {
-                                                        leadTypeVal
-                                                            .text = commonDetails!
-                                                            .data!
-                                                            .leadCategory![ind]
-                                                            .leadCategory
-                                                            .toString();
-                                                        leadSubType =
-                                                            'Lead Sub Category';
-                                                        leadSubTypeId = '';
-                                                        leadType = commonDetails!
-                                                            .data!
-                                                            .leadCategory![ind]
-                                                            .leadCategory
-                                                            .toString();
-                                                        leadTypeId = commonDetails!
-                                                            .data!
-                                                            .leadCategory![ind]
-                                                            .leadCategoryId
-                                                            .toString();
-                                                        Navigator.pop(
-                                                          context,
-                                                          true,
-                                                        );
-                                                      });
-                                                    },
-                                                    child: SizedBox(
-                                                      height: 50,
-                                                      child: Text(
-                                                        commonDetails!
-                                                            .data!
-                                                            .leadCategory![ind]
-                                                            .leadCategory
-                                                            .toString(),
-                                                        style: const TextStyle(
-                                                          fontSize: 18,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                      maxLines: 1,
-                                      readOnly: true,
-                                      keyboardType: TextInputType.text,
-                                      decoration: const InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                          left: 10,
-                                          top: 12,
-                                          bottom: 12,
-                                        ),
-
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        prefixIcon: Icon(
-                                          Icons.arrow_drop_down_circle_outlined,
-                                          color: Colors.grey,
-                                        ),
-                                        border: OutlineInputBorder(),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 4,
-                                        bottom: 4,
-                                      ),
-                                      child: Text(
-                                        'Priority',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    TextFormField(
+                              TextFormField(
                                       controller: priorityVal,
                                       onTap: () {
+                                        if (widget.isViewOnly) return;
                                         if (commonDetails != null &&
                                             commonDetails!.data!.priority !=
                                                 null) {
@@ -898,7 +611,7 @@ class _EditFollowupState extends State<EditFollowup> {
                                             builder: (BuildContext context) {
                                               return AlertDialog(
                                                 scrollable: true,
-                                                title: const Text('Priority'),
+                                                title: const Text('Possibility'),
                                                 content: ListView.builder(
                                                   shrinkWrap: true,
                                                   itemCount: commonDetails!
@@ -959,7 +672,6 @@ class _EditFollowupState extends State<EditFollowup> {
                                           top: 12,
                                           bottom: 12,
                                         ),
-
                                         fillColor: Colors.white,
                                         filled: true,
                                         prefixIcon: Icon(
@@ -976,9 +688,6 @@ class _EditFollowupState extends State<EditFollowup> {
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
                           const SizedBox(height: 15),
 
                           // Lead Sub Category
@@ -1007,6 +716,7 @@ class _EditFollowupState extends State<EditFollowup> {
                                       TextFormField(
                                         controller: leadSubTypeVal,
                                         onTap: () {
+                                          if (widget.isViewOnly) return;
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
@@ -1074,12 +784,10 @@ class _EditFollowupState extends State<EditFollowup> {
                                             top: 12,
                                             bottom: 12,
                                           ),
-                                          // REMOVED: labelText and labelStyle
                                           fillColor: Colors.white,
                                           filled: true,
                                           prefixIcon: Icon(
-                                            Icons
-                                                .arrow_drop_down_circle_outlined,
+                                            Icons.arrow_drop_down_circle_outlined,
                                             color: Colors.grey,
                                           ),
                                           border: OutlineInputBorder(),
@@ -1095,285 +803,6 @@ class _EditFollowupState extends State<EditFollowup> {
                                 )
                               : const SizedBox(),
 
-                          // Job and Location in same row
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 4,
-                                        bottom: 4,
-                                      ),
-                                      child: Text(
-                                        'Job',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    TextFormField(
-                                      controller: job,
-                                      decoration: const InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                          left: 10,
-                                          top: 12,
-                                          bottom: 12,
-                                        ),
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        // prefixIcon: Icon(
-                                        //   Icons.work_outline,
-                                        //   color: Colors.grey,
-                                        // ),
-                                        border: OutlineInputBorder(),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 4,
-                                        bottom: 4,
-                                      ),
-                                      child: Text(
-                                        'Location',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    TextFormField(
-                                      controller: location,
-                                      decoration: const InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                          left: 10,
-                                          top: 12,
-                                          bottom: 12,
-                                        ),
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        // prefixIcon: Icon(
-                                        //   Icons.location_on_outlined,
-                                        //   color: Colors.grey,
-                                        // ),
-                                        border: OutlineInputBorder(),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 15),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 4,
-                                        bottom: 4,
-                                      ),
-                                      child: Text(
-                                        'Customer Need & Purpose',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    TextFormField(
-                                      controller: customerNeed,
-                                      decoration: const InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                          left: 10,
-                                          top: 12,
-                                          bottom: 12,
-                                        ),
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        // prefixIcon: Icon(
-                                        //   Icons.person_outline,
-                                        //   color: Colors.grey,
-                                        // ),
-                                        border: OutlineInputBorder(),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              // Expanded(
-                              //   child: TextFormField(
-                              //     controller: purpose,
-                              //     decoration: const InputDecoration(
-                              //       labelText: 'Purpose',
-                              //       fillColor: Colors.white,
-                              //       filled: true,
-                              //       prefixIcon: Icon(
-                              //         Icons.flag_outlined,
-                              //         color: Colors.grey,
-                              //       ),
-                              //       border: OutlineInputBorder(),
-                              //       focusedBorder: OutlineInputBorder(
-                              //         borderSide: BorderSide(
-                              //           color: Colors.grey,
-                              //         ),
-                              //       ),
-                              //       labelStyle: TextStyle(color: Colors.grey),
-                              //     ),
-                              //   ),
-                              // ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 4,
-                                        bottom: 4,
-                                      ),
-                                      child: Text(
-                                        'Challenges',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    TextFormField(
-                                      controller: challenges,
-                                      decoration: const InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                          left: 10,
-                                          top: 12,
-                                          bottom: 12,
-                                        ),
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        // prefixIcon: Icon(
-                                        //   Icons.warning_outlined,
-                                        //   color: Colors.grey,
-                                        // ),
-                                        border: OutlineInputBorder(),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 15),
-
-                          // Challenges and New Objection in same row
-                          Row(
-                            children: [
-                              // Expanded(
-                              //   child: TextFormField(
-                              //     controller: challenges,
-                              //     decoration: const InputDecoration(
-                              //       labelText: 'Challenges',
-                              //       fillColor: Colors.white,
-                              //       filled: true,
-                              //       prefixIcon: Icon(
-                              //         Icons.warning_outlined,
-                              //         color: Colors.grey,
-                              //       ),
-                              //       border: OutlineInputBorder(),
-                              //       focusedBorder: OutlineInputBorder(
-                              //         borderSide: BorderSide(
-                              //           color: Colors.grey,
-                              //         ),
-                              //       ),
-                              //       labelStyle: TextStyle(color: Colors.grey),
-                              //     ),
-                              //   ),
-                              // ),
-                              // const SizedBox(width: 10),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 4,
-                                        bottom: 4,
-                                      ),
-                                      child: Text(
-                                        'New Objection',
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    TextFormField(
-                                      controller: newObjection,
-                                      decoration: const InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                          left: 10,
-                                          top: 12,
-                                          bottom: 12,
-                                        ),
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        // prefixIcon: Icon(
-                                        //   Icons.block_outlined,
-                                        //   color: Colors.grey,
-                                        // ),
-                                        border: OutlineInputBorder(),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                            ],
-                          ),
                           const SizedBox(height: 15),
 
                           // Google Review Status
@@ -1405,7 +834,9 @@ class _EditFollowupState extends State<EditFollowup> {
                                             : googleReviewNo
                                             ? false
                                             : null,
-                                        onChanged: (value) {
+                                        onChanged: widget.isViewOnly
+                                            ? null
+                                            : (value) {
                                           setState(() {
                                             googleReviewYes = true;
                                             googleReviewNo = false;
@@ -1422,7 +853,9 @@ class _EditFollowupState extends State<EditFollowup> {
                                             : googleReviewNo
                                             ? false
                                             : null,
-                                        onChanged: (value) {
+                                        onChanged: widget.isViewOnly
+                                            ? null
+                                            : (value) {
                                           setState(() {
                                             googleReviewYes = false;
                                             googleReviewNo = true;
@@ -1439,15 +872,12 @@ class _EditFollowupState extends State<EditFollowup> {
 
                           TextFormField(
                             controller: reasonForLostSales,
+                            readOnly: widget.isViewOnly,
                             maxLines: 3,
                             decoration: const InputDecoration(
-                              labelText: 'Reason for Lost Sales',
+                              labelText: 'Enter Customer Feed back',
                               fillColor: Colors.white,
                               filled: true,
-                              // prefixIcon: Icon(
-                              //   Icons.description_outlined,
-                              //   color: Colors.grey,
-                              // ),
                               border: OutlineInputBorder(),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(color: Colors.grey),
@@ -1458,74 +888,99 @@ class _EditFollowupState extends State<EditFollowup> {
                           const SizedBox(height: 25),
 
                           // Submit Button
+                          if (!widget.isViewOnly)
                           InkWell(
                             onTap: () async {
                               final connectivityResult = await (Connectivity()
                                   .checkConnectivity());
-                              if (connectivityResult ==
-                                      ConnectivityResult.mobile ||
-                                  connectivityResult ==
-                                      ConnectivityResult.wifi) {
-                                if (callResultId == '') {
-                                  Common.toastMessaage(
-                                    'Choose any Status',
-                                    Colors.red,
-                                  );
-                                } else if (callResultReasonId.isEmpty) {
-                                  Common.toastMessaage(
-                                    'Please select a Reason',
-                                    Colors.red,
-                                  );
-                                } else if (callStatusId.isEmpty) {
-                                  Common.toastMessaage(
-                                    'Please select Call Status',
-                                    Colors.red,
-                                  );
-                                } else if (callResultId == '2' &&
-                                    nextFollowupDate1.text == '') {
-                                  Common.toastMessaage(
-                                    'Choose next followup date',
-                                    Colors.red,
-                                  );
-                                } else {
-                                  if (context.mounted) {
-                                    Common.showProgressDialog(
-                                      context,
-                                      "Loading..",
-                                    );
+                              if (connectivityResult == ConnectivityResult.mobile ||
+                                  connectivityResult == ConnectivityResult.wifi) {
+                                  if (leadTypeId.isEmpty || leadType.isEmpty || leadType == 'Lead Category') {
+                                    Common.toastMessaage('Please select Lead Category', Colors.red);
+                                    return;
                                   }
-                                  String googleReviewStatus = '';
-                                  if (googleReviewYes) {
-                                    googleReviewStatus = 'Yes';
-                                  } else if (googleReviewNo) {
-                                    googleReviewStatus = 'No';
-                                  }
+                                 if (leadFormKey.currentState != null && !leadFormKey.currentState!.validate()) {
+                                   return;
+                                 }
+                                 if (callResultId == '2' &&
+                                     nextFollowupDate1.text == '') {
+                                   Common.toastMessaage(
+                                     'Choose next followup date',
+                                     Colors.red,
+                                   );
+                                 } else {
+                                   if (context.mounted) {
+                                     Common.showProgressDialog(
+                                       context,
+                                       "Loading..",
+                                     );
+                                   }
+                                   String googleReviewStatus = '';
+                                   if (googleReviewYes) {
+                                     googleReviewStatus = 'Yes';
+                                   } else if (googleReviewNo) {
+                                     googleReviewStatus = 'No';
+                                   }
 
-                                  EditLeadFollowupModel object1 =
-                                      await HttpService.editLeadsFollowup(
-                                        widget.token,
-                                        widget.callFollowupId,
-                                        callResultId,
-                                        nextFollowupDate1.text,
-                                        cost.text,
-                                        leadTypeId,
-                                        leadSubTypeId,
-                                        callResultReasonId,
-                                        remarks.text,
-                                        calledDate1.text,
-                                        widget.callMasterId,
-                                        address: address.text,
-                                        job: job.text,
-                                        location: location.text,
-                                        customerNeed: customerNeed.text,
-                                        purpose: purpose.text,
-                                        challenges: challenges.text,
-                                        newObjection: newObjection.text,
-                                        googleReviewStatus: googleReviewStatus,
-                                        reasonForLostSales:
-                                            reasonForLostSales.text,
-                                        priorityId: priorityId,
-                                      );
+                                   Map<String, dynamic> extraDynamicFields = {
+                                     'connecting_channel_id': currentFormData.connectingChannelId,
+                                     'connecting_channel_name': currentFormData.connectingChannelName,
+                                     'connecting_status_id': currentFormData.connectingStatusId,
+                                     'connecting_status_name': currentFormData.connectingStatusName,
+                                     'connecting_reason_id': currentFormData.connectingReasonId,
+                                     'connecting_reason_name': currentFormData.connectingReasonName,
+                                     'connecting_reason_type': currentFormData.connectingReasonType,
+                                     'lead_status': currentFormData.leadStatus,
+                                     'rejection_category_ids': jsonEncode(currentFormData.rejectionCategoryIds),
+                                     'rejection_category_reasons': jsonEncode(currentFormData.rejectionCategoryReasons),
+                                     'tried_to_reduce_rejection': currentFormData.triedToReduceRejection,
+                                     'reduce_rejection_method_ids': jsonEncode(currentFormData.reduceRejectionMethodIds),
+                                     'reduction_challenges': currentFormData.reductionChallenges,
+                                     'rejection_to_relation': currentFormData.rejectionToRelation,
+                                     'relation_action_ids': jsonEncode(currentFormData.relationActionIds),
+                                     'relation_challenges': currentFormData.relationChallenges,
+                                     'prospect_qualified': currentFormData.prospectQualified,
+                                     'prospect_parameter_ids': jsonEncode(currentFormData.prospectParameterIds),
+                                     'prospect_purpose': currentFormData.sharedPurpose,
+                                     'prospect_pain_point': currentFormData.sharedPainPoint,
+                                     'prospect_challenges': currentFormData.prospectChallenges,
+                                     'product_customization': currentFormData.productCustomization,
+                                     'customization_parameter_ids': jsonEncode(currentFormData.customizationParameterIds),
+                                     'customization_challenges': currentFormData.customizationChallenges,
+                                     'customer_summary': currentFormData.customerSummary,
+                                     'customer_challenges': currentFormData.customerChallenges,
+                                     'customer_rating': currentFormData.customerRating,
+                                     'call_lead_category': leadTypeId,
+                                     'relationship_build': currentFormData.relationshipBuild,
+                                     'relationship_parameters': jsonEncode(currentFormData.relationshipParameterIds),
+                                   };
+
+                                   EditLeadFollowupModel object1 =
+                                       await HttpService.editLeadsFollowup(
+                                         widget.token,
+                                         widget.callFollowupId,
+                                         callResultId,
+                                         nextFollowupDate1.text,
+                                         cost.text,
+                                         leadTypeId,
+                                         leadSubTypeId,
+                                         callResultReasonId,
+                                         remarks.text,
+                                         calledDate1.text,
+                                         widget.callMasterId,
+                                         address: address.text,
+                                         job: job.text,
+                                         location: location.text,
+                                         customerNeed: customerNeed.text,
+                                         purpose: purpose.text,
+                                         challenges: challenges.text,
+                                         newObjection: newObjection.text,
+                                         googleReviewStatus: googleReviewStatus,
+                                         reasonForLostSales:
+                                             reasonForLostSales.text,
+                                         priorityId: priorityId,
+                                         dynamicFormData: extraDynamicFields,
+                                       );
 
                                   if (object1.status == true) {
                                     Common.toastMessaage(
@@ -1603,7 +1058,8 @@ class _EditFollowupState extends State<EditFollowup> {
                         ],
                       ),
                     ),
-                  )
+                  ),
+                )
                 : Center(
                     child: Lottie.asset(
                       'assets/main/loading.json',

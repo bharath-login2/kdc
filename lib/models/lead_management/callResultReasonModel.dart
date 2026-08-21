@@ -1,15 +1,15 @@
 class CallResultResonModel {
-  List<Data>? data;
+  List<CallResultResonData>? data;
   bool? status;
   String? message;
 
   CallResultResonModel({this.data, this.status, this.message});
 
   CallResultResonModel.fromJson(Map<String, dynamic> json) {
-    if (json['data'] != null) {
-      data = <Data>[];
+    if (json['data'] != null && json['data'] is List) {
+      data = <CallResultResonData>[];
       json['data'].forEach((v) {
-        data!.add(Data.fromJson(v));
+        data!.add(CallResultResonData.fromJson(v));
       });
     }
     status = json['status'];
@@ -27,13 +27,13 @@ class CallResultResonModel {
   }
 }
 
-class Data {
+class CallResultResonData {
   String? id;
   String? reason;
 
-  Data({this.id, this.reason});
+  CallResultResonData({this.id, this.reason});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  CallResultResonData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     reason = json['reason'];
   }

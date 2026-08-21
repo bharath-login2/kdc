@@ -248,18 +248,21 @@ class CallResult {
 class CallResultNew {
   String? callResultIdNew;
   String? callResultNew;
+  String? type;
 
-  CallResultNew({this.callResultIdNew, this.callResultNew});
+  CallResultNew({this.callResultIdNew, this.callResultNew, this.type});
 
   CallResultNew.fromJson(Map<String, dynamic> json) {
-    callResultIdNew = json['call_result_id_new'];
-    callResultNew = json['call_result_new'];
+    callResultIdNew = json['call_result_id_new']?.toString();
+    callResultNew = json['call_result_new']?.toString();
+    type = json['type']?.toString();
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data['call_result_id_new'] = callResultIdNew;
     data['call_result_new'] = callResultNew;
+    data['type'] = type;
     return data;
   }
 }

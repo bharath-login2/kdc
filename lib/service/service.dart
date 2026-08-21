@@ -44,6 +44,14 @@ import '../../models/lead_management/leadTransferModel.dart';
 import '../../models/lead_management/searchModel.dart';
 import '../../models/lead_management/viewLeadCategoryModel.dart';
 import '../../models/lead_management/viewLeadsModel.dart';
+import '../../models/lead_management/connectingChannelModel.dart';
+import '../../models/lead_management/connectingStatusModel.dart';
+import '../../models/lead_management/connectingReasonsModel.dart';
+import '../../models/lead_management/reduceRejectionMethodModel.dart';
+import '../../models/lead_management/rejectionRelationActionModel.dart';
+import '../../models/lead_management/prospectParametersModel.dart';
+import '../../models/lead_management/productCustomizationParameterModel.dart';
+import '../../models/lead_management/relationshipParametersModel.dart';
 import '../../models/loginCheckModel.dart';
 import '../../models/loginModel.dart';
 import '../../models/sendOtpModel.dart';
@@ -438,12 +446,161 @@ class HttpService {
         "${baseUrl}lead_management_master_data",
         queryParameters: params,
       );
-
+      print('lead_management_master_data:$result');
       AddLeadCommonDataModel model = AddLeadCommonDataModel.fromJson(
         result.data,
       );
       return model;
     } on Exception {
+      return null;
+    }
+  }
+
+  static Future<ConnectingChannelModel?> getConnectingChannel(String token) async {
+    var params = {"token": token};
+    try {
+      var result = await _dio.get(
+        "${baseUrl}get_connecting_channel",
+        queryParameters: params,
+      );
+      var data = result.data is String ? jsonDecode(result.data) : result.data;
+      return ConnectingChannelModel.fromJson(data);
+    } on Exception catch (e) {
+      if (kDebugMode) print('getConnectingChannel error: $e');
+      return null;
+    }
+  }
+
+  static Future<ConnectingStatusModel?> getConnectingStatus(String token) async {
+    var params = {"token": token};
+    try {
+      var result = await _dio.get(
+        "${baseUrl}get_connecting_status",
+        queryParameters: params,
+      );
+      var data = result.data is String ? jsonDecode(result.data) : result.data;
+      return ConnectingStatusModel.fromJson(data);
+    } on Exception catch (e) {
+      if (kDebugMode) print('getConnectingStatus error: $e');
+      return null;
+    }
+  }
+
+  static Future<ConnectingReasonsModel?> getConnectingReasons(
+      String token, String statusId, String type) async {
+    var params = {
+      "token": token,
+      "status_id": statusId,
+      "type": type,
+    };
+    try {
+      var result = await _dio.get(
+        "${baseUrl}get_connecting_reasons",
+        queryParameters: params,
+      );
+      var data = result.data is String ? jsonDecode(result.data) : result.data;
+      return ConnectingReasonsModel.fromJson(data);
+    } on Exception catch (e) {
+      if (kDebugMode) print('getConnectingReasons error: $e');
+      return null;
+    }
+  }
+
+  static Future<CallResultResonModel?> getLeadResultReasons(
+      String token, String callResultId) async {
+    var params = {
+      "token": token,
+      "callResultId": callResultId,
+    };
+    try {
+      var result = await _dio.get(
+        "${baseUrl}get_lead_result_reasons",
+        queryParameters: params,
+      );
+      var data = result.data is String ? jsonDecode(result.data) : result.data;
+      return CallResultResonModel.fromJson(data);
+    } on Exception catch (e) {
+      if (kDebugMode) print('getLeadResultReasons error: $e');
+      return null;
+    }
+  }
+
+  static Future<ReduceRejectionMethodModel?> getReduceRejectionMethod(
+      String token) async {
+    var params = {"token": token};
+    try {
+      var result = await _dio.get(
+        "${baseUrl}get_reduce_rejection_method",
+        queryParameters: params,
+      );
+      var data = result.data is String ? jsonDecode(result.data) : result.data;
+      return ReduceRejectionMethodModel.fromJson(data);
+    } on Exception catch (e) {
+      if (kDebugMode) print('getReduceRejectionMethod error: $e');
+      return null;
+    }
+  }
+
+  static Future<RejectionRelationActionModel?> getRejectionRelationAction(
+      String token) async {
+    var params = {"token": token};
+    try {
+      var result = await _dio.get(
+        "${baseUrl}get_rejection_relation_action",
+        queryParameters: params,
+      );
+      var data = result.data is String ? jsonDecode(result.data) : result.data;
+      return RejectionRelationActionModel.fromJson(data);
+    } on Exception catch (e) {
+      if (kDebugMode) print('getRejectionRelationAction error: $e');
+      return null;
+    }
+  }
+
+  static Future<ProspectParametersModel?> getProspectParameters(
+      String token) async {
+    var params = {"token": token};
+    try {
+      var result = await _dio.get(
+        "${baseUrl}get_prospect_parameters",
+        queryParameters: params,
+      );
+      var data = result.data is String ? jsonDecode(result.data) : result.data;
+      return ProspectParametersModel.fromJson(data);
+    } on Exception catch (e) {
+      if (kDebugMode) print('getProspectParameters error: $e');
+      return null;
+    }
+  }
+
+  static Future<ProductCustomizationParameterModel?>
+      getProductCustomizationParameter(String token) async {
+    var params = {"token": token};
+    try {
+      var result = await _dio.get(
+        "${baseUrl}get_product_customization_parameter",
+        queryParameters: params,
+      );
+      var data = result.data is String ? jsonDecode(result.data) : result.data;
+      return ProductCustomizationParameterModel.fromJson(data);
+    } on Exception catch (e) {
+      if (kDebugMode) print('getProductCustomizationParameter error: $e');
+      return null;
+    }
+  }
+
+  static Future<RelationshipParametersModel?> getRelationshipParameters(
+      String token) async {
+    var params = {"token": token};
+    try {
+      var result = await _dio.get(
+        "${baseUrl}get_relationship_parameters",
+        queryParameters: params,
+      );
+      var data = result.data is String ? jsonDecode(result.data) : result.data;
+      return RelationshipParametersModel.fromJson(data);
+    } on Exception catch (e) {
+      if (kDebugMode) print('getRelationshipParameters error: $e');
       return null;
     }
   }
@@ -471,9 +628,10 @@ class HttpService {
     challenges,
     newObjection,
     googleReviewStatus,
-    reasonForLostSales,
-  ) async {
-    var formData = FormData.fromMap({
+    reasonForLostSales, {
+    Map<String, dynamic>? dynamicFormData,
+  }) async {
+    Map<String, dynamic> map = {
       'token': token,
       'branchId': branchId,
       'next_followup_date': nextFollowupDate,
@@ -497,7 +655,19 @@ class HttpService {
       "new_objection": newObjection,
       "google_review_status": googleReviewStatus,
       "reason_for_lost_sales": reasonForLostSales,
-    });
+    };
+
+    if (dynamicFormData != null) {
+      dynamicFormData.forEach((key, value) {
+        if (value is List || value is Map) {
+          map[key] = jsonEncode(value);
+        } else {
+          map[key] = value;
+        }
+      });
+    }
+
+    var formData = FormData.fromMap(map);
 
     try {
       var result = await _dio.post("${baseUrl}add_leads", data: formData);
@@ -666,7 +836,8 @@ class HttpService {
       var result = await _dio.get(
         "${baseUrl}lead_details",
         queryParameters: params,
-      );
+      );  
+      print('leadDetails:$result');
       LeadDeatailsModel model = LeadDeatailsModel.fromJson(result.data);
       return model;
     } on Exception {
@@ -747,9 +918,10 @@ class HttpService {
     challenges,
     newObjection,
     googleReviewStatus,
-    reasonForLostSales,
-  ) async {
-    var formData = FormData.fromMap({
+    reasonForLostSales, {
+    Map<String, dynamic>? dynamicFormData,
+  }) async {
+    Map<String, dynamic> map = {
       "token": token,
       "next_followup_date": nextFollowupDate,
       "call_result_id": callResultId,
@@ -767,7 +939,6 @@ class HttpService {
       "reminder": checked,
       "time_before": timeBefore,
       "is_lead_to_customer": addClient,
-      // Add all the new fields here
       "job": job,
       "location": location,
       "customer_need": customerNeed,
@@ -776,10 +947,22 @@ class HttpService {
       "new_objection": newObjection,
       "google_review_status": googleReviewStatus,
       "reason_for_lost_sales": reasonForLostSales,
-    });
+    };
+
+    if (dynamicFormData != null) {
+      dynamicFormData.forEach((key, value) {
+        if (value is List || value is Map) {
+          map[key] = jsonEncode(value);
+        } else {
+          map[key] = value;
+        }
+      });
+    }
+
+    var formData = FormData.fromMap(map);
     try {
       var result = await _dio.post(
-        "${baseUrl}add_lead_followup",
+        "${baseUrl}add_lead_followup_new",
         data: formData,
       );
       AddLeadFollowupModel model = AddLeadFollowupModel.fromJson(result.data);
@@ -812,8 +995,9 @@ class HttpService {
     String? googleReviewStatus,
     String? reasonForLostSales,
     String? priorityId,
+    Map<String, dynamic>? dynamicFormData,
   }) async {
-    var formData = FormData.fromMap({
+    Map<String, dynamic> map = {
       "token": token,
       "next_followup_date": nextFollowupDate,
       "call_result_id": callResultId,
@@ -835,11 +1019,23 @@ class HttpService {
       "google_review_status": googleReviewStatus ?? "",
       "reason_for_lost_sales": reasonForLostSales ?? "",
       "priority_id": priorityId ?? "2",
-    });
+    };
+
+    if (dynamicFormData != null) {
+      dynamicFormData.forEach((key, value) {
+        if (value is List || value is Map) {
+          map[key] = jsonEncode(value);
+        } else {
+          map[key] = value;
+        }
+      });
+    }
+
+    var formData = FormData.fromMap(map);
 
     try {
       var result = await _dio.post(
-        "${baseUrl}edit_lead_followup",
+        "${baseUrl}edit_lead_followup_new",
         data: formData,
       );
       EditLeadFollowupModel model = EditLeadFollowupModel.fromJson(result.data);
@@ -959,6 +1155,7 @@ class HttpService {
         "${baseUrl}get_lead_followup_details",
         data: formData,
       );
+      print('get_lead_followup_details:$result');
       FollowupDetailsModel model = FollowupDetailsModel.fromJson(result.data);
       return model;
     } on Exception {

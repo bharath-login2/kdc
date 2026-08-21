@@ -2673,32 +2673,6 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                                                   transfer.message,
                                                                                   Colors.green,
                                                                                 );
-                                                                                if (context.mounted) {
-                                                                                  Navigator.push(
-                                                                                    context,
-                                                                                    MaterialPageRoute(
-                                                                                      builder:
-                                                                                          (
-                                                                                            context,
-                                                                                          ) => LeadDetails(
-                                                                                            widget.token,
-                                                                                            widget.editLead,
-                                                                                            widget.deleteLead,
-                                                                                            widget.cloudCall,
-                                                                                            widget.callMasterId,
-                                                                                            pageName: widget.pageName,
-                                                                                            status: widget.status,
-                                                                                            staff: widget.staff,
-                                                                                            isCalled: widget.isCalled,
-                                                                                            fromDate: widget.fromDate,
-                                                                                            toDate: widget.toDate,
-                                                                                            category: widget.category,
-                                                                                            searchKey: widget.searchKey,
-                                                                                            leadType: widget.leadType,
-                                                                                          ),
-                                                                                    ),
-                                                                                  );
-                                                                                }
                                                                               } else {
                                                                                 Common.toastMessaage(
                                                                                   transfer.message,
@@ -3252,97 +3226,29 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                               .data!
                                                               .followUpData![index]
                                                               .isCalled ==
-                                                          false) {
+                                                          true) {
                                                         Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
-                                                            builder: (context) => AddFollowup(
+                                                            builder: (
+                                                              context,
+                                                            ) => EditFollowup(
                                                               widget.token,
                                                               widget.editLead,
                                                               widget.deleteLead,
                                                               widget.cloudCall,
-                                                              widget
-                                                                  .callMasterId,
-                                                              pageName: widget
-                                                                  .pageName,
-                                                              status:
-                                                                  widget.status,
-                                                              staff:
-                                                                  widget.staff,
-                                                              isCalled: widget
-                                                                  .isCalled,
-                                                              fromDate: widget
-                                                                  .fromDate,
-                                                              toDate:
-                                                                  widget.toDate,
-                                                              category: widget
-                                                                  .category,
-                                                              leadType: leadDetails!
-                                                                  .data!
-                                                                  .leadCategory,
-                                                              leadTypeId:
-                                                                  leadDetails!
-                                                                      .data!
-                                                                      .leadCategoryId,
-                                                              leadSubType:
-                                                                  leadDetails!
-                                                                      .data!
-                                                                      .leadSubCategory,
-                                                              leadSubTypeId:
-                                                                  leadDetails!
-                                                                      .data!
-                                                                      .leadSubCategoryId,
-                                                              priority:
-                                                                  leadDetails!
-                                                                      .data!
-                                                                      .priority,
-                                                              priorityId:
-                                                                  leadDetails!
-                                                                      .data!
-                                                                      .priorityId,
-                                                              cost: leadDetails!
-                                                                  .data!
-                                                                  .cost,
-                                                              address:
-                                                                  leadDetails!
-                                                                      .data!
-                                                                      .address,
-                                                              job: leadDetails!
-                                                                  .data!
-                                                                  .job,
-                                                              location:
-                                                                  leadDetails!
-                                                                      .data!
-                                                                      .location,
-                                                              customerNeed:
-                                                                  leadDetails!
-                                                                      .data!
-                                                                      .customerNeed,
-                                                              purpose:
-                                                                  leadDetails!
-                                                                      .data!
-                                                                      .purpose,
-                                                              challenges:
-                                                                  leadDetails!
-                                                                      .data!
-                                                                      .challenges,
-                                                              newObjection:
-                                                                  leadDetails!
-                                                                      .data!
-                                                                      .newObjection,
-                                                              googleReviewStatus:
-                                                                  leadDetails!
-                                                                      .data!
-                                                                      .googleReviewStatus,
-                                                              reasonForLostSales:
-                                                                  leadDetails!
-                                                                      .data!
-                                                                      .reasonForLostSales,
-                                                              searchKey: widget
-                                                                  .searchKey
-                                                                  .toString(),
-                                                              leadType1: widget
-                                                                  .leadType,
+                                                              widget.callMasterId,
+                                                              leadDetailsAdditional!.data!.followUpData![index].callDetailsId.toString(),
+                                                              pageName: widget.pageName,
+                                                              status: widget.status,
+                                                              staff: widget.staff,
+                                                              isCalled: widget.isCalled,
+                                                              fromDate: widget.fromDate,
+                                                              toDate: widget.toDate,
+                                                              category: widget.category,
+                                                              scrollToIndex: widget.scrollToIndex,
+                                                              clientName: leadDetails?.data?.clientName,
+                                                              isViewOnly: true,
                                                             ),
                                                           ),
                                                         );
@@ -3407,78 +3313,76 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                                     MainAxisAlignment
                                                                         .spaceBetween,
                                                                 children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      Container(
-                                                                        constraints: const BoxConstraints(
-                                                                          maxHeight:
-                                                                              50,
-                                                                        ),
-                                                                        child: Container(
+                                                                  Expanded(
+                                                                    child: Row(
+                                                                      children: [
+                                                                        Container(
                                                                           constraints: const BoxConstraints(
-                                                                            minHeight:
-                                                                                20,
-                                                                            minWidth:
-                                                                                20,
                                                                             maxHeight:
-                                                                                40,
-                                                                            maxWidth:
-                                                                                40,
+                                                                                50,
                                                                           ),
-                                                                          decoration: BoxDecoration(
-                                                                            border: Border.all(
-                                                                              color: Colors.white,
-                                                                              width: 0,
+                                                                          child: Container(
+                                                                            constraints: const BoxConstraints(
+                                                                              minHeight:
+                                                                                  20,
+                                                                              minWidth:
+                                                                                  20,
+                                                                              maxHeight:
+                                                                                  36,
+                                                                              maxWidth:
+                                                                                  36,
                                                                             ),
-                                                                            boxShadow: const [
-                                                                              BoxShadow(
-                                                                                color: Colors.grey,
-                                                                                blurRadius: 5,
-                                                                                offset: Offset(
-                                                                                  1,
-                                                                                  1,
+                                                                            decoration: BoxDecoration(
+                                                                              border: Border.all(
+                                                                                color: Colors.white,
+                                                                                width: 0,
+                                                                              ),
+                                                                              boxShadow: const [
+                                                                                BoxShadow(
+                                                                                  color: Colors.grey,
+                                                                                  blurRadius: 5,
+                                                                                  offset: Offset(
+                                                                                    1,
+                                                                                    1,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                              color:
+                                                                                  Colors.white,
+                                                                              shape:
+                                                                                  BoxShape.circle,
+                                                                              image: DecorationImage(
+                                                                                fit: BoxFit.cover,
+                                                                                image: NetworkImage(
+                                                                                  leadDetailsAdditional!.data!.followUpData![index].proPicThumb.toString(),
                                                                                 ),
                                                                               ),
-                                                                            ],
-                                                                            color:
-                                                                                Colors.white,
-                                                                            shape:
-                                                                                BoxShape.circle,
-                                                                            image: DecorationImage(
-                                                                              fit: BoxFit.cover,
-                                                                              image: NetworkImage(
-                                                                                leadDetailsAdditional!.data!.followUpData![index].proPicThumb.toString(),
-                                                                              ),
                                                                             ),
-                                                                            // image: AssetImage(
-                                                                            //     'assets/images/img.jpeg')),
                                                                           ),
                                                                         ),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            90,
-                                                                        child: Text(
-                                                                          leadDetailsAdditional!
-                                                                              .data!
-                                                                              .followUpData![index]
-                                                                              .staffName
-                                                                              .toString(),
-                                                                          style: const TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                          ),
-                                                                          maxLines:
-                                                                              2,
-                                                                          overflow:
-                                                                              TextOverflow.ellipsis,
+                                                                        const SizedBox(
+                                                                          width:
+                                                                              8,
                                                                         ),
-                                                                      ),
-                                                                    ],
+                                                                        Flexible(
+                                                                          child: Text(
+                                                                            leadDetailsAdditional!
+                                                                                .data!
+                                                                                .followUpData![index]
+                                                                                .staffName
+                                                                                .toString(),
+                                                                            style: const TextStyle(
+                                                                              fontWeight:
+                                                                                  FontWeight.bold,
+                                                                            ),
+                                                                            maxLines:
+                                                                                1,
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                   Row(
                                                                     children: [
@@ -3795,66 +3699,62 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                                               ),
                                                                             )
                                                                           : const SizedBox(),
-                                                                      const SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      leadDetailsAdditional!.data!.followUpData![index].isEdit ==
-                                                                              true
-                                                                          ? InkWell(
-                                                                              onTap: () {
-                                                                                Navigator.push(
-                                                                                  context,
-                                                                                  MaterialPageRoute(
-                                                                                    builder:
-                                                                                        (
-                                                                                          context,
-                                                                                        ) => EditFollowup(
-                                                                                          widget.token,
-                                                                                          widget.editLead,
-                                                                                          widget.deleteLead,
-                                                                                          widget.cloudCall,
-                                                                                          widget.callMasterId,
-                                                                                          leadDetailsAdditional!.data!.followUpData![index].callDetailsId.toString(),
-                                                                                          pageName: widget.pageName,
-                                                                                          status: widget.status,
-                                                                                          staff: widget.staff,
-                                                                                          isCalled: widget.isCalled,
-                                                                                          fromDate: widget.fromDate,
-                                                                                          toDate: widget.toDate,
-                                                                                          category: widget.category,
-                                                                                          scrollToIndex: widget.scrollToIndex,
-                                                                                        ),
-                                                                                  ),
-                                                                                );
-                                                                              },
-                                                                              child: const Icon(
-                                                                                Icons.edit,
-                                                                                color: Colors.blue,
-                                                                                size: 20,
-                                                                              ),
-                                                                            )
-                                                                          : const SizedBox(),
-                                                                      const SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      leadDetailsAdditional!.data!.followUpData![index].isDelete ==
-                                                                              true
-                                                                          ? InkWell(
-                                                                              onTap: () {
-                                                                                _deleteFollowup(
-                                                                                  context,
-                                                                                  leadDetailsAdditional!.data!.followUpData![index].callDetailsId,
-                                                                                );
-                                                                              },
-                                                                              child: const Icon(
-                                                                                Icons.delete,
-                                                                                color: Colors.red,
-                                                                                size: 20,
-                                                                              ),
-                                                                            )
-                                                                          : const SizedBox(),
+
+                                                                      if (leadDetailsAdditional!.data!.followUpData![index].isEdit == true)
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.only(left: 6),
+                                                                          child: InkWell(
+                                                                            onTap: () {
+                                                                              Navigator.push(
+                                                                                context,
+                                                                                MaterialPageRoute(
+                                                                                  builder:
+                                                                                      (
+                                                                                        context,
+                                                                                      ) => EditFollowup(
+                                                                                        widget.token,
+                                                                                        widget.editLead,
+                                                                                        widget.deleteLead,
+                                                                                        widget.cloudCall,
+                                                                                        widget.callMasterId,
+                                                                                        leadDetailsAdditional!.data!.followUpData![index].callDetailsId.toString(),
+                                                                                        pageName: widget.pageName,
+                                                                                        status: widget.status,
+                                                                                        staff: widget.staff,
+                                                                                        isCalled: widget.isCalled,
+                                                                                        fromDate: widget.fromDate,
+                                                                                        toDate: widget.toDate,
+                                                                                        category: widget.category,
+                                                                                        scrollToIndex: widget.scrollToIndex,
+                                                                                        clientName: leadDetails?.data?.clientName,
+                                                                                      ),
+                                                                                ),
+                                                                              );
+                                                                            },
+                                                                            child: const Icon(
+                                                                              Icons.edit,
+                                                                              color: Colors.blue,
+                                                                              size: 20,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      if (leadDetailsAdditional!.data!.followUpData![index].isDelete == true)
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.only(left: 6),
+                                                                          child: InkWell(
+                                                                            onTap: () {
+                                                                              _deleteFollowup(
+                                                                                context,
+                                                                                leadDetailsAdditional!.data!.followUpData![index].callDetailsId,
+                                                                              );
+                                                                            },
+                                                                            child: const Icon(
+                                                                              Icons.delete,
+                                                                              color: Colors.red,
+                                                                              size: 20,
+                                                                            ),
+                                                                          ),
+                                                                        ),
                                                                       const SizedBox(
                                                                         width:
                                                                             10,
@@ -7814,6 +7714,7 @@ class _LeadDetailsState extends State<LeadDetails> {
                                 widget.deleteLead,
                                 widget.cloudCall,
                                 widget.callMasterId,
+                                clientName: leadDetails?.data?.clientName,
                                 pageName: widget.pageName,
                                 status: widget.status,
                                 staff: widget.staff,
@@ -7821,8 +7722,12 @@ class _LeadDetailsState extends State<LeadDetails> {
                                 fromDate: widget.fromDate,
                                 toDate: widget.toDate,
                                 category: widget.category,
-                                leadType: leadDetails!.data!.leadCategory,
-                                leadTypeId: leadDetails!.data!.leadCategoryId,
+                                leadType: (leadDetails?.data?.callResult != null && leadDetails!.data!.callResult!.isNotEmpty)
+                                    ? leadDetails!.data!.callResult
+                                    : leadDetails?.data?.leadCategory,
+                                leadTypeId: (leadDetails?.data?.callResultId != null && leadDetails!.data!.callResultId!.isNotEmpty)
+                                    ? leadDetails!.data!.callResultId
+                                    : leadDetails?.data?.leadCategoryId,
                                 leadSubType: leadDetails!.data!.leadSubCategory,
                                 leadSubTypeId:
                                     leadDetails!.data!.leadSubCategoryId,

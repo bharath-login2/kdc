@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ import '../../models/lead_management/leadSubTypeModel.dart';
 import '../../screens/homePage.dart';
 import '../../screens/leadManagement/dashboard.dart';
 import '../../service/service.dart';
+import '../../widgets/leadDynamicFormWidget.dart';
 import 'leadDetails.dart';
 
 // ignore: must_be_immutable
@@ -50,6 +52,8 @@ class AddLeads extends StatefulWidget {
 
 class _AddLeadsState extends State<AddLeads> {
   GlobalKey<FormState> globalKey = GlobalKey<FormState>();
+  final GlobalKey<LeadDynamicFormWidgetState> leadFormKey = GlobalKey<LeadDynamicFormWidgetState>();
+  LeadDynamicFormData currentFormData = LeadDynamicFormData();
   AddLeadCommonDataModel? commonDetails;
   CommonConfigureModel? configure;
   LeadSubTypeModel? leadSubTypeList;
@@ -121,6 +125,9 @@ class _AddLeadsState extends State<AddLeads> {
     setState(() {
       result = result1;
     });
+    if (widget.token == null || widget.token!.isEmpty) {
+      widget.token = await Common.getSharedPref("token");
+    }
     commonDetails = await HttpService.addLeadCommonData(widget.token);
     if (commonDetails != null) {
       code = commonDetails!.data!.countryCode.toString();
@@ -1069,29 +1076,29 @@ class _AddLeadsState extends State<AddLeads> {
                                       },
                                       maxLines: 1,
                                       readOnly: true,
-                                      decoration: const InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                          left: 10,
-                                          top: 2,
-                                          bottom: 2,
-                                        ),
-                                        labelText: 'Lead Status',
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        prefixIcon: Icon(
-                                          Icons.arrow_drop_down_circle_outlined,
-                                          color: Colors.grey,
-                                        ),
-                                        border: OutlineInputBorder(),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        labelStyle: TextStyle(
-                                          color: Colors.grey,
-                                        ),
-                                      ),
+                                      // decoration: const InputDecoration(
+                                      //   contentPadding: EdgeInsets.only(
+                                      //     left: 10,
+                                      //     top: 2,
+                                      //     bottom: 2,
+                                      //   ),
+                                      //   labelText: 'Lead Status',
+                                      //   fillColor: Colors.white,
+                                      //   filled: true,
+                                      //   prefixIcon: Icon(
+                                      //     Icons.arrow_drop_down_circle_outlined,
+                                      //     color: Colors.grey,
+                                      //   ),
+                                      //   border: OutlineInputBorder(),
+                                      //   focusedBorder: OutlineInputBorder(
+                                      //     borderSide: BorderSide(
+                                      //       color: Colors.grey,
+                                      //     ),
+                                      //   ),
+                                      //   labelStyle: TextStyle(
+                                      //     color: Colors.grey,
+                                      //   ),
+                                      // ),
                                     ),
                                   ),
                                   const SizedBox(height: 15),
@@ -2482,6 +2489,8 @@ class _AddLeadsState extends State<AddLeads> {
                                               'Priority cannot be empty',
                                               Colors.red,
                                             );
+                                          } else if (leadFormKey.currentState != null && !leadFormKey.currentState!.validate()) {
+                                            return;
                                           } else if (callResultId == '') {
                                             Common.toastMessaage(
                                               'Status cannot be empty',
@@ -2647,36 +2656,65 @@ class _AddLeadsState extends State<AddLeads> {
                                                 );
                                               }
                                             } else {
-                                              AddLeadModel object =
-                                                  await HttpService.addLeads(
-                                                    widget.token,
-                                                    branch,
-                                                    clientName.text,
-                                                    leadTypeId,
-                                                    leadSubTypeId,
-                                                    contactNo.text,
-                                                    assignStaffId,
-                                                    cost.text,
-                                                    priorityId,
-                                                    address.text,
-                                                    remark.text,
-                                                    callResultId,
-                                                    nextFollowupDate1.text,
-                                                    descriptions,
-                                                    code,
-                                                    job.text,
-                                                    location.text,
-                                                    customerNeed.text,
-                                                    purpose.text,
-                                                    challenges.text,
-                                                    newObjection.text,
-                                                    googleReviewYes
-                                                        ? 'Yes'
-                                                        : googleReviewNo
-                                                        ? 'No'
-                                                        : '',
-                                                    reasonForLostSales.text,
-                                                  );
+                                              Map<String, dynamic> extraDynamicFields = {
+                                                               'connecting_channel_id': currentFormData.connectingChannelId,
+                                                               'connecting_channel_name': currentFormData.connectingChannelName,
+                                                               'connecting_status_id': currentFormData.connectingStatusId,
+                                                               'connecting_status_name': currentFormData.connectingStatusName,
+                                                               'connecting_reason_id': currentFormData.connectingReasonId,
+                                                               'connecting_reason_name': currentFormData.connectingReasonName,
+                                                               'connecting_reason_type': currentFormData.connectingReasonType,
+                                                               'lead_status': currentFormData.leadStatus,
+                                                               'rejection_category_ids': jsonEncode(currentFormData.rejectionCategoryIds),
+                                                               'rejection_category_reasons': jsonEncode(currentFormData.rejectionCategoryReasons),
+                                                               'tried_to_reduce_rejection': currentFormData.triedToReduceRejection,
+                                                               'reduce_rejection_method_ids': jsonEncode(currentFormData.reduceRejectionMethodIds),
+                                                               'reduction_challenges': currentFormData.reductionChallenges,
+                                                               'rejection_to_relation': currentFormData.rejectionToRelation,
+                                                               'relation_action_ids': jsonEncode(currentFormData.relationActionIds),
+                                                               'relation_challenges': currentFormData.relationChallenges,
+                                                               'prospect_qualified': currentFormData.prospectQualified,
+                                                               'prospect_parameter_ids': jsonEncode(currentFormData.prospectParameterIds),
+                                                               'prospect_purpose': currentFormData.sharedPurpose,
+                                                               'prospect_pain_point': currentFormData.sharedPainPoint,
+                                                               'prospect_challenges': currentFormData.prospectChallenges,
+                                                               'product_customization': currentFormData.productCustomization,
+                                                               'customization_parameter_ids': jsonEncode(currentFormData.customizationParameterIds),
+                                                               'customization_challenges': currentFormData.customizationChallenges,
+                                                               'customer_summary': currentFormData.customerSummary,
+                                                               'customer_challenges': currentFormData.customerChallenges,
+                                                               'customer_rating': currentFormData.customerRating,
+                                                             };
+                                                             AddLeadModel object = await HttpService.addLeads(
+                                                               widget.token,
+                                                               branch,
+                                                               clientName.text,
+                                                               leadTypeId,
+                                                               leadSubTypeId,
+                                                               contactNo.text,
+                                                               assignStaffId,
+                                                               cost.text,
+                                                               priorityId,
+                                                               address.text,
+                                                               remark.text,
+                                                               callResultId,
+                                                               nextFollowupDate1.text,
+                                                               descriptions,
+                                                               code,
+                                                               job.text,
+                                                               location.text,
+                                                               customerNeed.text,
+                                                               purpose.text,
+                                                               challenges.text,
+                                                               newObjection.text,
+                                                               googleReviewYes
+                                                                   ? 'Yes'
+                                                                   : googleReviewNo
+                                                                   ? 'No'
+                                                                   : '',
+                                                               reasonForLostSales.text,
+                                                               dynamicFormData: extraDynamicFields,
+                                                             );
                                               if (object.status == true) {
                                                 Common.toastMessaage(
                                                   object.message,
