@@ -54,6 +54,7 @@ class LeadDynamicFormData {
 
   String? relationshipBuild; // 'Yes' or 'No'
   List<String> relationshipParameterIds = [];
+  String? relationshipChallenges;
 
   LeadDynamicFormData();
 }
@@ -70,6 +71,7 @@ class LeadDynamicFormWidget extends StatefulWidget {
   final String? initialReasonId;
   final String? initialCallStatusId;
   final String? initialCallStatusReasonId;
+  final Map<String, String>? initialRejectionCategoryReasons;
   final String? initialTriedToReduce;
   final List<String>? initialReduceMethods;
   final String? initialReductionChallenges;
@@ -79,6 +81,8 @@ class LeadDynamicFormWidget extends StatefulWidget {
   final String? initialProspectQualified;
   final List<String>? initialProspectParams;
   final Map<String, Map<String, String>>? initialProspectParamValues;
+  final String? initialProspectPurpose;
+  final String? initialProspectPainPoint;
   final String? initialProspectChallenges;
   final String? initialProductCustomization;
   final List<String>? initialCustomizationParams;
@@ -88,6 +92,7 @@ class LeadDynamicFormWidget extends StatefulWidget {
   final int? initialCustomerRating;
   final String? initialRelationshipBuild;
   final List<String>? initialRelationshipParams;
+  final String? initialRelationshipChallenges;
 
   const LeadDynamicFormWidget({
     super.key,
@@ -100,6 +105,7 @@ class LeadDynamicFormWidget extends StatefulWidget {
     this.initialReasonId,
     this.initialCallStatusId,
     this.initialCallStatusReasonId,
+    this.initialRejectionCategoryReasons,
     this.initialTriedToReduce,
     this.initialReduceMethods,
     this.initialReductionChallenges,
@@ -109,6 +115,8 @@ class LeadDynamicFormWidget extends StatefulWidget {
     this.initialProspectQualified,
     this.initialProspectParams,
     this.initialProspectParamValues,
+    this.initialProspectPurpose,
+    this.initialProspectPainPoint,
     this.initialProspectChallenges,
     this.initialProductCustomization,
     this.initialCustomizationParams,
@@ -118,6 +126,7 @@ class LeadDynamicFormWidget extends StatefulWidget {
     this.initialCustomerRating,
     this.initialRelationshipBuild,
     this.initialRelationshipParams,
+    this.initialRelationshipChallenges,
   });
 
   @override
@@ -191,6 +200,7 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
   RelationshipParametersModel? relationshipParameterModel;
   Set<String> selectedRelationshipParameterIds = {};
   bool isLoadingRelationshipParams = false;
+  final TextEditingController relationshipChallengesController = TextEditingController();
 
   bool get _hasConnectingReasons {
     return connectingReasonsModel?.data != null &&
@@ -203,6 +213,20 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
       return selectedConnectingReason != null;
     }
     return true;
+  }
+
+  bool get _isNeedProspectParamSelected {
+    if (selectedProspectParameterIds.isEmpty) return false;
+    var items = prospectParametersModel?.data ?? [];
+    for (var item in items) {
+      if (item.parameterId != null && selectedProspectParameterIds.contains(item.parameterId)) {
+        final name = (item.parameterName ?? '').trim().toLowerCase();
+        if (name == 'need') {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   @override
@@ -221,6 +245,7 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
     sharedProspectPainPointController.dispose();
     customerSummaryController.dispose();
     customerChallengesController.dispose();
+    relationshipChallengesController.dispose();
     for (var ctrl in rejectionReasonControllers.values) {
       ctrl.dispose();
     }
@@ -288,6 +313,7 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
 
     data.relationshipBuild = relationshipBuild;
     data.relationshipParameterIds = selectedRelationshipParameterIds.toList();
+    data.relationshipChallenges = relationshipChallengesController.text;
 
     return data;
   }
@@ -343,9 +369,11 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
             await _fetchCallStatusReasons(selectedCallStatus!.callResultIdNew!);
             var initialIds = widget.initialCallStatusReasonId!.split(',');
             for (var id in initialIds) {
-              if (id.trim().isNotEmpty) {
-                selectedRejectionCategoryIds.add(id.trim());
-                rejectionReasonControllers[id.trim()] = TextEditingController();
+              String trimmedId = id.trim();
+              if (trimmedId.isNotEmpty) {
+                selectedRejectionCategoryIds.add(trimmedId);
+                String initialReasonText = widget.initialRejectionCategoryReasons?[trimmedId] ?? '';
+                rejectionReasonControllers[trimmedId] = TextEditingController(text: initialReasonText);
               }
             }
           }
@@ -385,10 +413,17 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
           for (var pId in widget.initialProspectParams!) {
             selectedProspectParameterIds.add(pId);
           }
-          // Restore shared purpose/pain-point from first param values if available
-          if (widget.initialProspectParamValues != null && widget.initialProspectParamValues!.isNotEmpty) {
+          if (widget.initialProspectPurpose != null && widget.initialProspectPurpose!.isNotEmpty) {
+            sharedProspectPurposeController.text = widget.initialProspectPurpose!;
+          } else if (widget.initialProspectParamValues != null && widget.initialProspectParamValues!.isNotEmpty) {
             final firstEntry = widget.initialProspectParamValues!.values.first;
             sharedProspectPurposeController.text = firstEntry['purpose'] ?? '';
+          }
+
+          if (widget.initialProspectPainPoint != null && widget.initialProspectPainPoint!.isNotEmpty) {
+            sharedProspectPainPointController.text = widget.initialProspectPainPoint!;
+          } else if (widget.initialProspectParamValues != null && widget.initialProspectParamValues!.isNotEmpty) {
+            final firstEntry = widget.initialProspectParamValues!.values.first;
             sharedProspectPainPointController.text = firstEntry['painPoint'] ?? '';
           }
         }
@@ -426,6 +461,8 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
         if (widget.initialRelationshipParams != null) {
           selectedRelationshipParameterIds = widget.initialRelationshipParams!.toSet();
         }
+      } else if (relationshipBuild == 'No' && widget.initialRelationshipChallenges != null) {
+        relationshipChallengesController.text = widget.initialRelationshipChallenges!;
       }
     }
 
@@ -676,6 +713,11 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
     productCustomizationParameterModel = null;
     selectedCustomizationParameterIds.clear();
     customizationChallengesController.clear();
+
+    relationshipBuild = null;
+    relationshipParameterModel = null;
+    selectedRelationshipParameterIds.clear();
+    relationshipChallengesController.clear();
   }
 
   List<CallResultNew> getFilteredCallStatusList() {
@@ -776,13 +818,15 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
         Common.toastMessaage('Please select at least one Prospect Parameter', Colors.red);
         return false;
       }
-      if (sharedProspectPurposeController.text.trim().isEmpty) {
-        Common.toastMessaage('Purpose * is required', Colors.red);
-        return false;
-      }
-      if (sharedProspectPainPointController.text.trim().isEmpty) {
-        Common.toastMessaage('Pain Point * is required', Colors.red);
-        return false;
+      if (_isNeedProspectParamSelected) {
+        if (sharedProspectPurposeController.text.trim().isEmpty) {
+          Common.toastMessaage('Purpose * is required', Colors.red);
+          return false;
+        }
+        if (sharedProspectPainPointController.text.trim().isEmpty) {
+          Common.toastMessaage('Pain Point * is required', Colors.red);
+          return false;
+        }
       }
     }
 
@@ -822,6 +866,9 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
     }
     if (relationshipBuild == 'Yes' && selectedRelationshipParameterIds.isEmpty) {
       Common.toastMessaage('Please select at least one Relationship Parameter', Colors.red);
+      return false;
+    } else if (relationshipBuild == 'No' && relationshipChallengesController.text.trim().isEmpty) {
+      Common.toastMessaage('Challenges Faced * is required', Colors.red);
       return false;
     }
 
@@ -1134,6 +1181,7 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
             setState(() {
               relationshipBuild = val;
               if (val == 'Yes') {
+                relationshipChallengesController.clear();
                 selectedRelationshipParameterIds.clear();
                 _fetchRelationshipParameters();
               } else {
@@ -1163,6 +1211,13 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
               });
               _notifyParent();
             },
+          ),
+        ] else if (relationshipBuild == 'No') ...[
+          const SizedBox(height: 10),
+          _buildTextAreaField(
+            label: 'Challenges Faced *',
+            controller: relationshipChallengesController,
+            hintText: 'Enter challenges faced',
           ),
         ],
         const SizedBox(height: 10),
@@ -1518,8 +1573,8 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
                           selectedProspectParameterIds.add(id);
                         } else {
                           selectedProspectParameterIds.remove(id);
-                          // Clear shared fields when nothing is checked
-                          if (selectedProspectParameterIds.isEmpty) {
+                          final labelName = label.trim().toLowerCase();
+                          if (labelName == 'need' || selectedProspectParameterIds.isEmpty) {
                             sharedProspectPurposeController.clear();
                             sharedProspectPainPointController.clear();
                           }
@@ -1530,8 +1585,8 @@ class LeadDynamicFormWidgetState extends State<LeadDynamicFormWidget> {
               controlAffinity: ListTileControlAffinity.leading,
             );
           }),
-          // Shared Purpose & Pain Point — shown once below all checkboxes when any are checked
-          if (anyChecked) ...[
+          // Shared Purpose & Pain Point — shown ONLY when 'Need' parameter checkbox is checked
+          if (_isNeedProspectParamSelected) ...[
             const Divider(),
             const SizedBox(height: 8),
             TextFormField(

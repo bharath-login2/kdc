@@ -995,108 +995,108 @@ class _AddFollowupState extends State<AddFollowup> {
                             const SizedBox(height: 15),
 
                             // Lead Sub Category (appears only when available)
-                            if (leadSubTypeList != null &&
-                                leadSubTypeList!.data!.isNotEmpty)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 15),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 4,
-                                        bottom: 4,
-                                      ),
-                                      child: Text(
-                                        'Lead Sub Category',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                    TextFormField(
-                                      controller: leadSubTypeVal,
-                                      onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              scrollable: true,
-                                              title: const Text(
-                                                'Lead Sub Category',
-                                              ),
-                                              content: ListView.builder(
-                                                shrinkWrap: true,
-                                                itemCount: leadSubTypeList!
-                                                    .data!
-                                                    .length,
-                                                itemBuilder: (context, subIndex) {
-                                                  return InkWell(
-                                                    onTap: () async {
-                                                      setState(() {
-                                                        leadSubType =
-                                                            leadSubTypeList!
-                                                                .data![subIndex]
-                                                                .leadSubCategory
-                                                                .toString();
-                                                        leadSubTypeId =
-                                                            leadSubTypeList!
-                                                                .data![subIndex]
-                                                                .leadSubCategoryId
-                                                                .toString();
-                                                        Navigator.pop(
-                                                          context,
-                                                          true,
-                                                        );
-                                                      });
-                                                    },
-                                                    child: SizedBox(
-                                                      height: 50,
-                                                      child: Text(
-                                                        leadSubTypeList!
-                                                            .data![subIndex]
-                                                            .leadSubCategory
-                                                            .toString(),
-                                                        style: const TextStyle(
-                                                          fontSize: 18,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                      maxLines: 1,
-                                      readOnly: true,
-                                      decoration: const InputDecoration(
-                                        contentPadding: EdgeInsets.only(
-                                          left: 10,
-                                          top: 12,
-                                          bottom: 12,
-                                        ),
-                                        // REMOVED: labelText and labelStyle
-                                        fillColor: Colors.white,
-                                        filled: true,
-                                        prefixIcon: Icon(
-                                          Icons.arrow_drop_down_circle_outlined,
-                                          color: Colors.grey,
-                                        ),
-                                        border: OutlineInputBorder(),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            // if (leadSubTypeList != null &&
+                            //     leadSubTypeList!.data!.isNotEmpty)
+                            //   Padding(
+                            //     padding: const EdgeInsets.only(bottom: 15),
+                            //     child: Column(
+                            //       crossAxisAlignment: CrossAxisAlignment.start,
+                            //       children: [
+                            //         const Padding(
+                            //           padding: EdgeInsets.only(
+                            //             left: 4,
+                            //             bottom: 4,
+                            //           ),
+                            //           child: Text(
+                            //             'Lead Sub Category',
+                            //             style: TextStyle(
+                            //               fontSize: 12,
+                            //               color: Colors.grey,
+                            //               fontWeight: FontWeight.w500,
+                            //             ),
+                            //           ),
+                            //         ),
+                            //         TextFormField(
+                            //           controller: leadSubTypeVal,
+                            //           onTap: () {
+                            //             showDialog(
+                            //               context: context,
+                            //               builder: (BuildContext context) {
+                            //                 return AlertDialog(
+                            //                   scrollable: true,
+                            //                   title: const Text(
+                            //                     'Lead Sub Category',
+                            //                   ),
+                            //                   content: ListView.builder(
+                            //                     shrinkWrap: true,
+                            //                     itemCount: leadSubTypeList!
+                            //                         .data!
+                            //                         .length,
+                            //                     itemBuilder: (context, subIndex) {
+                            //                       return InkWell(
+                            //                         onTap: () async {
+                            //                           setState(() {
+                            //                             leadSubType =
+                            //                                 leadSubTypeList!
+                            //                                     .data![subIndex]
+                            //                                     .leadSubCategory
+                            //                                     .toString();
+                            //                             leadSubTypeId =
+                            //                                 leadSubTypeList!
+                            //                                     .data![subIndex]
+                            //                                     .leadSubCategoryId
+                            //                                     .toString();
+                            //                             Navigator.pop(
+                            //                               context,
+                            //                               true,
+                            //                             );
+                            //                           });
+                            //                         },
+                            //                         child: SizedBox(
+                            //                           height: 50,
+                            //                           child: Text(
+                            //                             leadSubTypeList!
+                            //                                 .data![subIndex]
+                            //                                 .leadSubCategory
+                            //                                 .toString(),
+                            //                             style: const TextStyle(
+                            //                               fontSize: 18,
+                            //                             ),
+                            //                           ),
+                            //                         ),
+                            //                       );
+                            //                     },
+                            //                   ),
+                            //                 );
+                            //               },
+                            //             );
+                            //           },
+                            //           maxLines: 1,
+                            //           readOnly: true,
+                            //           decoration: const InputDecoration(
+                            //             contentPadding: EdgeInsets.only(
+                            //               left: 10,
+                            //               top: 12,
+                            //               bottom: 12,
+                            //             ),
+                            //             // REMOVED: labelText and labelStyle
+                            //             fillColor: Colors.white,
+                            //             filled: true,
+                            //             prefixIcon: Icon(
+                            //               Icons.arrow_drop_down_circle_outlined,
+                            //               color: Colors.grey,
+                            //             ),
+                            //             border: OutlineInputBorder(),
+                            //             focusedBorder: OutlineInputBorder(
+                            //               borderSide: BorderSide(
+                            //                 color: Colors.grey,
+                            //               ),
+                            //             ),
+                            //           ),
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   ),
 
                             // Job and Location in same row
                             // Row(
@@ -1528,6 +1528,9 @@ class _AddFollowupState extends State<AddFollowup> {
                                       'customer_summary': currentFormData.customerSummary,
                                       'customer_challenges': currentFormData.customerChallenges,
                                       'customer_rating': currentFormData.customerRating,
+                                      'relationship_build': currentFormData.relationshipBuild,
+                                      'relationship_parameters': jsonEncode(currentFormData.relationshipParameterIds),
+                                      'relationship_challenges': currentFormData.relationshipChallenges,
                                     };
 
                                     AddLeadFollowupModel? object1 =

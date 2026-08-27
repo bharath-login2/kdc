@@ -242,7 +242,7 @@ class HttpService {
     };
     try {
       var result = await _dio.get(
-        "${baseUrl}lead_dashboard",
+        "${baseUrl}lead_dashboard_new",
         queryParameters: params,
       );
       LeadDashboardModel model = LeadDashboardModel.fromJson(result.data);
@@ -367,13 +367,22 @@ class HttpService {
     leadType,
     branchId, {
     String? search,
+    String? callResultId,
   }) async {
     var params = {
       "token": token,
-      "fromDate": fromdate,
-      "toDate": todate,
+      "fromDate": fromdate != null ? fromdate.toString() : "",
+      "toDate": todate != null ? todate.toString() : "",
       "leadCategoryId": category,
-      "callResultId": status,
+      "callResultId": callResultId ??
+          (status == 'todayCreatedCount'
+              ? '1'
+              : (status == 'reassignedCount'
+                  ? '-5'
+                  : (status == 'prospectTodayCount'
+                      ? '6'
+                      : (status == 'missedLeads' ? '' : status)))),
+      "fromCount": status,
       "staffId": staff,
       "isCalled": isCalled,
       "priority": priority,
@@ -388,10 +397,15 @@ class HttpService {
 
     try {
       var result = await _dio.get(
-        "${baseUrl}view_lead_report",
+        "${baseUrl}view_lead_report_new",
         queryParameters: params,
       );
-      ViewLeadsModel model = ViewLeadsModel.fromJson(result.data);
+      print('view_lead_report_new:$result');
+      var responseData = result.data;
+      if (responseData is String) {
+        responseData = jsonDecode(responseData);
+      }
+      ViewLeadsModel model = ViewLeadsModel.fromJson(responseData);
       return model;
     } on Exception {
       return null;

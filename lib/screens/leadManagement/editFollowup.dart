@@ -444,6 +444,7 @@ class _EditFollowupState extends State<EditFollowup> {
                             initialReasonId: followupDetails?.data?.connectingReasonId,
                             initialCallStatusId: followupDetails?.data?.callResultId,
                             initialCallStatusReasonId: followupDetails?.data?.callStatusReasonId ?? followupDetails?.data?.callResponseId,
+                            initialRejectionCategoryReasons: followupDetails?.data?.callResultReasonMap,
                             initialTriedToReduce: followupDetails?.data?.triedToReduceRejection,
                             initialReduceMethods: followupDetails?.data?.reduceRejectionMethodIds is List
                                 ? (followupDetails!.data!.reduceRejectionMethodIds as List).map((e) => e.toString()).toList()
@@ -461,6 +462,8 @@ class _EditFollowupState extends State<EditFollowup> {
                             initialProspectParamValues: followupDetails?.data?.prospectParamValues is Map
                                 ? Map<String, Map<String, String>>.from(followupDetails!.data!.prospectParamValues)
                                 : null,
+                            initialProspectPurpose: followupDetails?.data?.prospectPurpose ?? followupDetails?.data?.purpose,
+                            initialProspectPainPoint: followupDetails?.data?.prospectPainPoint,
                             initialProspectChallenges: followupDetails?.data?.prospectChallenges,
                             initialProductCustomization: followupDetails?.data?.productCustomization,
                             initialCustomizationParams: followupDetails?.data?.customizationParameterIds is List
@@ -476,6 +479,7 @@ class _EditFollowupState extends State<EditFollowup> {
                              initialRelationshipParams: followupDetails?.data?.relationshipParameterIds is List
                                  ? (followupDetails!.data!.relationshipParameterIds as List).map((e) => e.toString()).toList()
                                  : null,
+                             initialRelationshipChallenges: followupDetails?.data?.relationshipChallenges,
                             onChanged: (formData) {
                               setState(() {
                                 currentFormData = formData;
@@ -953,6 +957,7 @@ class _EditFollowupState extends State<EditFollowup> {
                                      'call_lead_category': leadTypeId,
                                      'relationship_build': currentFormData.relationshipBuild,
                                      'relationship_parameters': jsonEncode(currentFormData.relationshipParameterIds),
+                                     'relationship_challenges': currentFormData.relationshipChallenges,
                                    };
 
                                    EditLeadFollowupModel object1 =

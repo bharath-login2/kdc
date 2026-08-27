@@ -60,6 +60,8 @@ class Data {
   String? prospectQualified;
   dynamic prospectParameterIds;
   dynamic prospectParamValues;
+  String? prospectPurpose;
+  String? prospectPainPoint;
   String? prospectChallenges;
   String? productCustomization;
   dynamic customizationParameterIds;
@@ -68,8 +70,10 @@ class Data {
   String? customerChallenges;
   String? customerRating;
   String? callStatusReasonId;
+  Map<String, String>? callResultReasonMap;
   String? relationshipBuild;
   dynamic relationshipParameterIds;
+  String? relationshipChallenges;
 
   Data({
     this.callDetailsId,
@@ -108,6 +112,8 @@ class Data {
     this.prospectQualified,
     this.prospectParameterIds,
     this.prospectParamValues,
+    this.prospectPurpose,
+    this.prospectPainPoint,
     this.prospectChallenges,
     this.productCustomization,
     this.customizationParameterIds,
@@ -116,8 +122,10 @@ class Data {
     this.customerChallenges,
     this.customerRating,
     this.callStatusReasonId,
+    this.callResultReasonMap,
     this.relationshipBuild,
     this.relationshipParameterIds,
+    this.relationshipChallenges,
   });
 
   static String? _normalizeYesNo(dynamic val) {
@@ -169,6 +177,8 @@ class Data {
     prospectQualified = _normalizeYesNo(json['prospect_qualified']);
     prospectParameterIds = json['prospect_parameter_ids'] ?? json['prospect_parameters'];
     prospectParamValues = json['prospect_param_values'];
+    prospectPurpose = json['prospect_purpose']?.toString();
+    prospectPainPoint = json['prospect_pain_point']?.toString();
     prospectChallenges = json['prospect_challenges']?.toString();
 
     productCustomization = _normalizeYesNo(json['product_customization']);
@@ -177,6 +187,7 @@ class Data {
 
     relationshipBuild = _normalizeYesNo(json['relationship_build']);
     relationshipParameterIds = json['relationship_parameter_ids'] ?? json['relationship_parameters'];
+    relationshipChallenges = (json['relationship_challenges'] ?? json['relationship_build_challenges'])?.toString();
 
     customerSummary = json['customer_summary']?.toString();
     customerChallenges = json['customer_challenges']?.toString();
@@ -185,7 +196,12 @@ class Data {
     if (json['call_status_reason_id'] != null) {
       callStatusReasonId = json['call_status_reason_id'].toString();
     } else if (json['call_result_reason'] is Map) {
-      callStatusReasonId = (json['call_result_reason'] as Map).keys.join(',');
+      callResultReasonMap = Map<String, String>.from(
+        (json['call_result_reason'] as Map).map(
+          (k, v) => MapEntry(k.toString(), v.toString()),
+        ),
+      );
+      callStatusReasonId = callResultReasonMap!.keys.join(',');
     } else if (json['call_result_reason'] is String) {
       callStatusReasonId = json['call_result_reason'];
     }

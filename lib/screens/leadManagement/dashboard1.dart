@@ -602,31 +602,44 @@ class _DashboardState extends State<Dashboard> {
                                                               width: 10,
                                                             ),
                                                             Row(
-  children: [
-    const Text('Transferred Leads'),
-
-    const SizedBox(width: 20),
-
-    (leadDashboard?.data?.transferLeads ?? 0) != 0
-        ? Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.red,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(4),
-              child: Text(
-                (leadDashboard?.data?.transferLeads ?? 0).toString(),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          )
-        : const Text('0'),
-  ],
-),
+                                                              children: [
+                                                                const Text(
+                                                                  'Transferred Leads',
+                                                                ),
+                                                                const SizedBox(
+                                                                  width: 20,
+                                                                ),
+                                                                leadDashboard!
+                                                                            .data!
+                                                                            .transferLeads !=
+                                                                        0
+                                                                    ? Container(
+                                                                        decoration: BoxDecoration(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(
+                                                                                5,
+                                                                              ),
+                                                                          color:
+                                                                              Colors.red,
+                                                                        ),
+                                                                        child: Center(
+                                                                          child: Padding(
+                                                                            padding: const EdgeInsets.all(
+                                                                              4,
+                                                                            ),
+                                                                            child: Text(
+                                                                              leadDashboard!.data!.transferLeads.toString(),
+                                                                              style: const TextStyle(
+                                                                                color: Colors.white,
+                                                                                fontWeight: FontWeight.bold,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      )
+                                                                    : const SizedBox(),
+                                                              ],
+                                                            ),
                                                           ],
                                                         ),
                                                       ),
@@ -965,10 +978,6 @@ class _DashboardState extends State<Dashboard> {
                                                             children: [
                                                               InkWell(
                                                                 onTap: () {
-                                                                  Common.saveSharedPref(
-                                                                    "statusWise",
-                                                                    'no',
-                                                                  );
                                                                   leadDashboard!
                                                                               .data!
                                                                               .createLead ==
@@ -1026,7 +1035,8 @@ class _DashboardState extends State<Dashboard> {
                                                                       Container(
                                                                         width:
                                                                             32,
-                                                                        height: 32,
+                                                                        height:
+                                                                            32,
                                                                         decoration: const BoxDecoration(
                                                                           color: Color(
                                                                             0xFFe7e7e7,
@@ -1304,11 +1314,10 @@ class _DashboardState extends State<Dashboard> {
                                                                                             height: 20,
                                                                                           ),
                                                                                           const Text(
-                                                                                            "Filter By Date Range",
+                                                                                            'Filter By Date Range',
                                                                                             style: TextStyle(
                                                                                               fontSize: 18,
                                                                                               fontWeight: FontWeight.w500,
-                                                                                              color: Colors.black,
                                                                                             ),
                                                                                           ),
                                                                                           const SizedBox(
@@ -1587,172 +1596,417 @@ class _DashboardState extends State<Dashboard> {
                                                                                       animation1,
                                                                                     ),
                                                                                 child: child,
-);
+                                                                              );
                                                                             },
                                                                       );
                                                                     },
                                                                     child: Container(
                                                                       width: 32,
-                                                                      height: 32,
+                                                                      height:
+                                                                          32,
                                                                       decoration: BoxDecoration(
-                                                                        color: Colors.white,
-                                                                        borderRadius: BorderRadius.circular(
-                                                                          5,
-                                                                        ),
+                                                                        color: Colors
+                                                                            .white,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(
+                                                                              5,
+                                                                            ),
                                                                       ),
-                                                                      child: const Icon(
-                                                                        Icons.filter_alt_outlined,
-                                                                        size: 20,
-                                                                        color: Colors.black,
+                                                                      child: Center(
+                                                                        child: Center(
+                                                                          child: Image.asset(
+                                                                            "assets/icons/calendar.png",
+                                                                            width:
+                                                                                32,
+                                                                          ),
+                                                                        ),
                                                                       ),
                                                                     ),
                                                                   ),
                                                                 ],
                                                               ),
                                                             ],
-                                                            ),
-                                                          const SizedBox(height: 12),
+                                                          ),
+
+                                                          // Replace the previous Row with this redesigned version
+                                                          // Place this after const SizedBox(height: 20) and before the New Leads row
+                                                          const SizedBox(
+                                                            height: 20,
+                                                          ),
+
+                                                          // Redesigned 3 metric boxes - Compact & Professional
                                                           Container(
-                                                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                                                            padding:
+                                                                const EdgeInsets.symmetric(
+                                                                  horizontal: 4,
+                                                                ),
                                                             child: Row(
                                                               children: [
-                                                                // Box 1 - Today total lead
+                                                                // Box 1 - Call Target & Achieved
                                                                 Expanded(
-                                                                  child: InkWell(
-                                                                    onTap: () {
-                                                                      Common.saveSharedPref("statusWise", 'no');
-                                                                      leadDashboard?.data?.viewLead == true
-                                                                          ? Navigator.push(
-                                                                              context,
-                                                                              MaterialPageRoute(
-                                                                                builder: (context) => ViewLeads(
-                                                                                  widget.token,
-                                                                                  leadDashboard!.data!.updateLead!,
-                                                                                  leadDashboard!.data!.deleteLead!,
-                                                                                  leadDashboard!.data!.cloudCall!,
-                                                                                  pageName: 'Today total',
-                                                                                  fromDate: fromdate.toString(),
-                                                                                  toDate: todate.toString(),
-                                                                                  status: 'dayCallCount',
-                                                                                ),
-                                                                              ),
-                                                                            )
-                                                                          : _dialogue(context, 'View Leads');
-                                                                    },
-                                                                    child: Container(
-                                                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                                                                      decoration: BoxDecoration(
-                                                                        color: const Color(0xFF3375E0),
-                                                                        borderRadius: BorderRadius.circular(10),
-                                                                      ),
-                                                                      child: Column(
-                                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          const Text(
-                                                                             'Today total',
-                                                                             style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white),
-                                                                           ),
-                                                                          const SizedBox(height: 4),
-                                                                          Text(
-                                                                            leadDashboard?.data?.dayCallCount?.toString() ?? '0',
-                                                                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                                                  child: Container(
+                                                                    padding: const EdgeInsets.symmetric(
+                                                                      vertical:
+                                                                          12,
+                                                                      horizontal:
+                                                                          10,
+                                                                    ),
+                                                                    decoration: BoxDecoration(
+                                                                      color:
+                                                                          const Color.fromARGB(
+                                                                            255,
+                                                                            200,
+                                                                            250,
+                                                                            225,
                                                                           ),
-                                                                        ],
-                                                                      ),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                            10,
+                                                                          ),
+                                                                      boxShadow: [
+                                                                        BoxShadow(
+                                                                          color: Colors.grey.withOpacity(
+                                                                            0.1,
+                                                                          ),
+                                                                          blurRadius:
+                                                                              4,
+                                                                          offset: const Offset(
+                                                                            0,
+                                                                            1,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    child: Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            Text(
+                                                                              'Call Target',
+                                                                              style: TextStyle(
+                                                                                fontSize: 10,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                color: Colors.grey.shade700,
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              4,
+                                                                        ),
+                                                                        Row(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.end,
+                                                                          children: [
+                                                                            Expanded(
+                                                                              child: Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Text(
+                                                                                    leadDashboard?.data?.callTarget?.toString() ??
+                                                                                        '0',
+                                                                                    style: const TextStyle(
+                                                                                      fontSize: 15,
+                                                                                      fontWeight: FontWeight.bold,
+                                                                                      color: Color(
+                                                                                        0xFF2191ce,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  const SizedBox(
+                                                                                    height: 6,
+                                                                                  ),
+                                                                                  Text(
+                                                                                    'Call Achieved',
+                                                                                    style: TextStyle(
+                                                                                      fontSize: 10,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      color: Colors.grey.shade700,
+                                                                                    ),
+                                                                                  ),
+                                                                                  Text(
+                                                                                    leadDashboard?.data?.callAchieved?.toString() ??
+                                                                                        '0',
+                                                                                    style: TextStyle(
+                                                                                      fontSize: 14,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      color: Colors.grey.shade800,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                            // Container(
+                                                                            //   width: 28,
+                                                                            //   height: 28,
+                                                                            //   decoration: BoxDecoration(
+                                                                            //     color:
+                                                                            //         const Color(
+                                                                            //           0xFF2191ce,
+                                                                            //         ).withOpacity(
+                                                                            //           0.08,
+                                                                            //         ),
+                                                                            //     borderRadius: BorderRadius.circular(
+                                                                            //       6,
+                                                                            //     ),
+                                                                            //   ),
+                                                                            //   child: const Icon(
+                                                                            //     Icons.call,
+                                                                            //     color: Color(
+                                                                            //       0xFF2191ce,
+                                                                            //     ),
+                                                                            //     size: 14,
+                                                                            //   ),
+                                                                            // ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                const SizedBox(width: 8),
-                                                                // Box 2 - Connected
+
+                                                                const SizedBox(
+                                                                  width: 8,
+                                                                ),
+
+                                                                // Box 2 - Target Point & Achieved
                                                                 Expanded(
-                                                                  child: InkWell(
-                                                                    onTap: () {
-                                                                      Common.saveSharedPref("statusWise", 'no');
-                                                                      leadDashboard?.data?.viewLead == true
-                                                                          ? Navigator.push(
-                                                                              context,
-                                                                              MaterialPageRoute(
-                                                                                builder: (context) => ViewLeads(
-                                                                                  widget.token,
-                                                                                  leadDashboard!.data!.updateLead!,
-                                                                                  leadDashboard!.data!.deleteLead!,
-                                                                                  leadDashboard!.data!.cloudCall!,
-                                                                                  pageName: 'Connected',
-                                                                                  fromDate: fromdate.toString(),
-                                                                                  toDate: todate.toString(),
-                                                                                  status: 'connectedCount',
-                                                                                ),
+                                                                  child: Container(
+                                                                    padding: const EdgeInsets.symmetric(
+                                                                      vertical:
+                                                                          12,
+                                                                      horizontal:
+                                                                          10,
+                                                                    ),
+                                                                    decoration: BoxDecoration(
+                                                                      color:
+                                                                          const Color.fromARGB(
+                                                                            255,
+                                                                            253,
+                                                                            237,
+                                                                            207,
+                                                                          ),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                            10,
+                                                                          ),
+                                                                      boxShadow: [
+                                                                        BoxShadow(
+                                                                          color: Colors.grey.withOpacity(
+                                                                            0.1,
+                                                                          ),
+                                                                          blurRadius:
+                                                                              4,
+                                                                          offset: const Offset(
+                                                                            0,
+                                                                            1,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    child: Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            Text(
+                                                                              'Target Point',
+                                                                              style: TextStyle(
+                                                                                fontSize: 10,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                color: Colors.grey.shade700,
                                                                               ),
-                                                                            )
-                                                                          : _dialogue(context, 'View Leads');
-                                                                    },
-                                                                    child: Container(
-                                                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                                                                      decoration: BoxDecoration(
-                                                                        color: const Color(0xFFFFB300),
-                                                                        borderRadius: BorderRadius.circular(10),
-                                                                      ),
-                                                                      child: Column(
-                                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          const Text(
-                                                                            'Connected',
-                                                                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white),
-                                                                          ),
-                                                                          const SizedBox(height: 4),
-                                                                          Text(
-                                                                            leadDashboard?.data?.connectedCount?.toString() ?? '0',
-                                                                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                                                          ),
-                                                                        ],
-                                                                      ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              4,
+                                                                        ),
+                                                                        Row(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.end,
+                                                                          children: [
+                                                                            Expanded(
+                                                                              child: Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Text(
+                                                                                    leadDashboard?.data?.targetPoints?.toString() ??
+                                                                                        '0',
+                                                                                    style: const TextStyle(
+                                                                                      fontSize: 15,
+                                                                                      fontWeight: FontWeight.bold,
+                                                                                      color: Color(
+                                                                                        0xFF34A853,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                  const SizedBox(
+                                                                                    height: 2,
+                                                                                  ),
+                                                                                  Text(
+                                                                                    'Achieved Points',
+                                                                                    style: TextStyle(
+                                                                                      fontSize: 10,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      color: Colors.grey.shade700,
+                                                                                    ),
+                                                                                  ),
+                                                                                  Text(
+                                                                                    leadDashboard?.data?.achievedPoints?.toString() ??
+                                                                                        '0',
+                                                                                    style: TextStyle(
+                                                                                      fontSize: 14,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      color: Colors.grey.shade800,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
                                                                     ),
                                                                   ),
                                                                 ),
-                                                                const SizedBox(width: 8),
-                                                                // Box 3 - Pending
+
+                                                                const SizedBox(
+                                                                  width: 8,
+                                                                ),
+
+                                                                // Box 3 - Pending Calls & Points
                                                                 Expanded(
-                                                                  child: InkWell(
-                                                                    onTap: () {
-                                                                      Common.saveSharedPref("statusWise", 'no');
-                                                                      leadDashboard?.data?.viewLead == true
-                                                                          ? Navigator.push(
-                                                                              context,
-                                                                              MaterialPageRoute(
-                                                                                builder: (context) => ViewLeads(
-                                                                                  widget.token,
-                                                                                  leadDashboard!.data!.updateLead!,
-                                                                                  leadDashboard!.data!.deleteLead!,
-                                                                                  leadDashboard!.data!.cloudCall!,
-                                                                                  pageName: 'Pending',
-                                                                                  fromDate: fromdate.toString(),
-                                                                                  toDate: todate.toString(),
-                                                                                  status: 'pendingCount',
-                                                                                ),
+                                                                  child: Container(
+                                                                    padding: const EdgeInsets.symmetric(
+                                                                      vertical:
+                                                                          12,
+                                                                      horizontal:
+                                                                          10,
+                                                                    ),
+                                                                    decoration: BoxDecoration(
+                                                                      color:
+                                                                          const Color.fromARGB(
+                                                                            255,
+                                                                            255,
+                                                                            182,
+                                                                            177,
+                                                                          ),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                            10,
+                                                                          ),
+                                                                      boxShadow: [
+                                                                        BoxShadow(
+                                                                          color: Colors.grey.withOpacity(
+                                                                            0.1,
+                                                                          ),
+                                                                          blurRadius:
+                                                                              4,
+                                                                          offset: const Offset(
+                                                                            0,
+                                                                            1,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    child: Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      mainAxisSize:
+                                                                          MainAxisSize
+                                                                              .min,
+                                                                      children: [
+                                                                        Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceBetween,
+                                                                          children: [
+                                                                            Text(
+                                                                              'Pending Calls',
+                                                                              style: TextStyle(
+                                                                                fontSize: 10,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                color: Colors.grey.shade700,
                                                                               ),
-                                                                            )
-                                                                          : _dialogue(context, 'View Leads');
-                                                                    },
-                                                                    child: Container(
-                                                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                                                                      decoration: BoxDecoration(
-                                                                        color: const Color(0xFFE65100),
-                                                                        borderRadius: BorderRadius.circular(10),
-                                                                      ),
-                                                                      child: Column(
-                                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          const Text(
-                                                                            'Pending',
-                                                                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white),
-                                                                          ),
-                                                                          const SizedBox(height: 4),
-                                                                          Text(
-                                                                            leadDashboard?.data?.pendingCount?.toString() ?? '0',
-                                                                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-                                                                          ),
-                                                                        ],
-                                                                      ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              4,
+                                                                        ),
+                                                                        Row(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.end,
+                                                                          children: [
+                                                                            Expanded(
+                                                                              child: Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        leadDashboard?.data?.pendingCalls?.toString() ??
+                                                                                            '0',
+                                                                                        //leadDashboard?.data?.callTarget?.toString() ?? '0',
+                                                                                        style: const TextStyle(
+                                                                                          fontSize: 15,
+                                                                                          fontWeight: FontWeight.bold,
+                                                                                          color: Color(
+                                                                                            0xFFEA4335,
+                                                                                          ),
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                  const SizedBox(
+                                                                                    height: 2,
+                                                                                  ),
+                                                                                  Text(
+                                                                                    'Pending Points',
+                                                                                    style: TextStyle(
+                                                                                      fontSize: 10,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      color: Colors.grey.shade700,
+                                                                                    ),
+                                                                                  ),
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        leadDashboard?.data?.pendingPoints?.toString() ??
+                                                                                            '0',
+                                                                                        style: TextStyle(
+                                                                                          fontSize: 14,
+                                                                                          fontWeight: FontWeight.w600,
+                                                                                          color: Colors.grey.shade800,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
                                                                     ),
                                                                   ),
                                                                 ),
@@ -1760,262 +2014,9 @@ class _DashboardState extends State<Dashboard> {
                                                             ),
                                                           ),
 
-                                                           const SizedBox(height: 12),
-
-                                                           // Horizontal Scrollable Pill Row for Cards 4-8
-                                                           Column(
-  children: [
-    // First Row
-    SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          _buildDashboardPill(
-            'Total Prospect',
-            leadDashboard?.data?.totalProspectCount ?? 0,
-            const Color(0xFFFFD54F),
-            Colors.black,
-            'totalProspectCount',
-          ),
-
-          _buildDashboardPill(
-            'Achieved/Closed',
-            leadDashboard?.data?.achievedCount ?? 0,
-            const Color(0xFFFFD54F),
-            Colors.black,
-            'achievedCount',
-          ),
-        ],
-      ),
-    ),
-
-    const SizedBox(height: 10),
-
-    // Second Row
-    SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          _buildDashboardPill(
-            'Today Above 1 Min',
-            "50/${leadDashboard?.data?.aboveOneMinCount ?? 0}",
-            const Color(0xFFFFEE58),
-            Colors.black,
-            'aboveOneMinCount',
-          ),
-
-          _buildDashboardPill(
-            'Today Relation Build',
-            "15/${leadDashboard?.data?.relationshipBuildCount ?? 0}",
-            const Color(0xFFFFEE58),
-            Colors.black,
-            'relationshipBuildCount',
-          ),
-
-          _buildDashboardPill(
-            'Today Prospect Build',
-            "10/${leadDashboard?.data?.todayProspectCount ?? 0}",
-            const Color(0xFFFFEE58),
-            Colors.black,
-            'totalProspectCount',
-          ),
-        ],
-      ),
-    ),
-  ],
-),
-
-                                                           const SizedBox(height: 20),
-                                                          // Row: Total Missed Leads & Today Re-call Lead Cards
-                                                          Row(
-                                                            children: [
-                                                              // Total Missed Leads Card
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  Common.saveSharedPref(
-                                                                    "statusWise",
-                                                                    'no',
-                                                                  );
-                                                                  leadDashboard?.data?.viewLead == true
-                                                                      ? Navigator.push(
-                                                                          context,
-                                                                          MaterialPageRoute(
-                                                                            builder: (context) => ViewLeads(
-                                                                              widget.token,
-                                                                              leadDashboard!.data!.updateLead!,
-                                                                              leadDashboard!.data!.deleteLead!,
-                                                                              leadDashboard!.data!.cloudCall!,
-                                                                              pageName: 'Total Missed Leads',
-                                                                              fromDate: DateTime(
-                                                                                 DateTime.now().year,
-                                                                                 DateTime.now().month - 3,
-                                                                                 DateTime.now().day,
-                                                                               ).toString(),
-                                                                               toDate: todate.toString(),
-                                                                              status: 'missedLeads',
-                                                                              callResultId: '',
-
-                                                                            ),
-                                                                          ),
-                                                                        )
-                                                                      : _dialogue(
-                                                                          context,
-                                                                          'View Leads',
-                                                                        );
-                                                                },
-                                                                child: Container(
-                                                                  width: MediaQuery.of(context).size.width * 0.42,
-                                                                  height: MediaQuery.of(context).size.height * 0.15,
-                                                                  decoration: BoxDecoration(
-                                                                    color: const Color(0xFFFFEBEE),
-                                                                    borderRadius: BorderRadius.circular(10),
-                                                                  ),
-                                                                  child: Column(
-                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                    children: [
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-                                                                        child: Row(
-                                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                          children: const [
-                                                                            Text(
-                                                                              "Total Missed Leads",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: 13,
-                                                                                color: Colors.black,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      const SizedBox(height: 10),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 10),
-                                                                        child: Text(
-                                                                          leadDashboard?.data?.missedLeads?.toString() ?? '0',
-                                                                          style: const TextStyle(
-                                                                            fontWeight: FontWeight.bold,
-                                                                            color: Colors.black,
-                                                                            fontSize: 20,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 10, right: 10, bottom: 8),
-                                                                        child: Row(
-                                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                          children: const [
-                                                                            Text(
-                                                                              "View Leads",
-                                                                              style: TextStyle(
-                                                                                fontSize: 12,
-                                                                                color: Colors.black,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(width: 15),
-                                                              // Today Re-call Lead Card
-                                                              InkWell(
-                                                                onTap: () {
-                                                                  Common.saveSharedPref(
-                                                                    "statusWise",
-                                                                    'no',
-                                                                  );
-                                                                  leadDashboard?.data?.viewLead == true
-                                                                      ? Navigator.push(
-                                                                          context,
-                                                                          MaterialPageRoute(
-                                                                            builder: (context) => ViewLeads(
-                                                                              widget.token,
-                                                                              leadDashboard!.data!.updateLead!,
-                                                                              leadDashboard!.data!.deleteLead!,
-                                                                              leadDashboard!.data!.cloudCall!,
-                                                                               pageName: 'Today Re-call Lead',
-                                                                               fromDate: DateTime(
-                                                                                 DateTime.now().year,
-                                                                                 DateTime.now().month - 3,
-                                                                                 DateTime.now().day,
-                                                                               ).toString(),
-                                                                               toDate: todate.toString(),
-                                                                               status: 'demandTorecallTodayCount',
-                                                                                callResultId: '8',
-                                                                            ),
-                                                                          ),
-                                                                        )
-                                                                      : _dialogue(
-                                                                          context,
-                                                                          'View Leads',
-                                                                        );
-                                                                },
-                                                                child: Container(
-                                                                  width: MediaQuery.of(context).size.width * 0.42,
-                                                                  height: MediaQuery.of(context).size.height * 0.15,
-                                                                  decoration: BoxDecoration(
-                                                                    color: const Color(0xFFF3E5F5),
-                                                                    borderRadius: BorderRadius.circular(10),
-                                                                  ),
-                                                                  child: Column(
-                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                                    children: [
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-                                                                        child: Row(
-                                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                          children: const [
-                                                                            Text(
-                                                                              "Today Re-call Lead",
-                                                                              style: TextStyle(
-                                                                                fontWeight: FontWeight.w500,
-                                                                                fontSize: 13,
-                                                                                color: Colors.black,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                      const SizedBox(height: 10),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 10),
-                                                                        child: Text(
-                                                                          "${leadDashboard?.data?.demandTorecallTodayCount ?? 0}/${leadDashboard?.data?.demandTorecallCalledTodayCount ?? 0}",
-                                                                          style: const TextStyle(
-                                                                            fontWeight: FontWeight.bold,
-                                                                            color: Colors.black,
-                                                                            fontSize: 20,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(left: 10, right: 10, bottom: 8),
-                                                                        child: Row(
-                                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                          children: const [
-                                                                            Text(
-                                                                              "View Leads",
-                                                                              style: TextStyle(
-                                                                                fontSize: 12,
-                                                                                color: Colors.black,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ],
+                                                          const SizedBox(
+                                                            height: 20,
                                                           ),
-                                                          const SizedBox(height: 15),
                                                           Row(
                                                             children: [
                                                               InkWell(
@@ -2039,11 +2040,10 @@ class _DashboardState extends State<Dashboard> {
                                                                                   leadDashboard!.data!.updateLead!,
                                                                                   leadDashboard!.data!.deleteLead!,
                                                                                   leadDashboard!.data!.cloudCall!,
-                                                                                  pageName: 'New Leads',
+                                                                                  pageName: 'Todays Leads',
                                                                                   fromDate: fromdate.toString(),
                                                                                   toDate: todate.toString(),
-                                                                                  status: 'todayCreatedCount',
-                                                                                  callResultId: '1',
+                                                                                  status: '-5',
                                                                                 ),
                                                                           ),
                                                                         )
@@ -2094,7 +2094,8 @@ class _DashboardState extends State<Dashboard> {
                                                                               MainAxisAlignment.spaceBetween,
                                                                           children: [
                                                                             const Text(
-                                                                              "New Lead",
+                                                                              // "New Leads",
+                                                                              "Today's Leads",
                                                                               style: TextStyle(
                                                                                 fontWeight: FontWeight.w500,
                                                                                 fontSize: 13,
@@ -2113,24 +2114,24 @@ class _DashboardState extends State<Dashboard> {
                                                                                 ),
                                                                                 message: 'The combined count of new leads \n and  unattended leads',
                                                                                 key: _toolTipKey,
-                                                                                // child: Container(
-                                                                                //   width: 20,
-                                                                                //   height: 20,
-                                                                                //   decoration: const BoxDecoration(
-                                                                                //     shape: BoxShape.circle,
-                                                                                //     color: Colors.white,
-                                                                                //   ),
-                                                                                //   child: Center(
-                                                                                //     child: Text(
-                                                                                //       '?',
-                                                                                //       style: TextStyle(
-                                                                                //         fontSize: 13,
-                                                                                //         fontWeight: FontWeight.bold,
-                                                                                //         color: Colors.grey.shade700,
-                                                                                //       ),
-                                                                                //     ),
-                                                                                //   ),
-                                                                                // ),
+                                                                                child: Container(
+                                                                                  width: 20,
+                                                                                  height: 20,
+                                                                                  decoration: const BoxDecoration(
+                                                                                    shape: BoxShape.circle,
+                                                                                    color: Colors.white,
+                                                                                  ),
+                                                                                  child: Center(
+                                                                                    child: Text(
+                                                                                      '?',
+                                                                                      style: TextStyle(
+                                                                                        fontSize: 13,
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        color: Colors.grey.shade700,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                           ],
@@ -2148,7 +2149,7 @@ class _DashboardState extends State<Dashboard> {
                                                                         child: Text(
                                                                           leadDashboard!
                                                                               .data!
-                                                                              .todayCreatedCount
+                                                                              .newLeads
                                                                               .toString(),
                                                                           style: const TextStyle(
                                                                             fontWeight:
@@ -2181,580 +2182,579 @@ class _DashboardState extends State<Dashboard> {
                                                                               ),
                                                                             ),
 
-                                                                            // InkWell(
-                                                                            //   onTap: () async {
-                                                                            //     Common.showProgressDialog(
-                                                                            //       context,
-                                                                            //       "Loading..",
-                                                                            //     );
+                                                                            InkWell(
+                                                                              onTap: () async {
+                                                                                Common.showProgressDialog(
+                                                                                  context,
+                                                                                  "Loading..",
+                                                                                );
 
-                                                                            //     LeadProgressbarModel
-                                                                            //     object1 = await HttpService.leadProgressbar(
-                                                                            //       widget.token,
-                                                                            //       fromdate,
-                                                                            //       todate,
-                                                                            //       '1',
-                                                                            //     );
-                                                                            //     if (object1.status ==
-                                                                            //         true) {
-                                                                            //       if (context.mounted) {
-                                                                            //         Navigator.pop(
-                                                                            //           context,
-                                                                            //         );
-                                                                            //         showGeneralDialog(
-                                                                            //           barrierLabel: "showGeneralDialog",
-                                                                            //           barrierDismissible: true,
-                                                                            //           barrierColor: Colors.black.withOpacity(
-                                                                            //             0.6,
-                                                                            //           ),
-                                                                            //           transitionDuration: const Duration(
-                                                                            //             milliseconds: 400,
-                                                                            //           ),
-                                                                            //           context: context,
-                                                                            //           pageBuilder:
-                                                                            //               (
-                                                                            //                 context,
-                                                                            //                 _,
-                                                                            //                 __,
-                                                                            //               ) {
-                                                                            //                 return Align(
-                                                                            //                   alignment: Alignment.bottomCenter,
-                                                                            //                   child: IntrinsicHeight(
-                                                                            //                     child: SingleChildScrollView(
-                                                                            //                       child: Container(
-                                                                            //                         width: double.maxFinite,
-                                                                            //                         clipBehavior: Clip.antiAlias,
-                                                                            //                         padding: const EdgeInsets.all(
-                                                                            //                           16,
-                                                                            //                         ),
-                                                                            //                         decoration: const BoxDecoration(
-                                                                            //                           color: Colors.white,
-                                                                            //                           borderRadius: BorderRadius.only(
-                                                                            //                             topLeft: Radius.circular(
-                                                                            //                               16,
-                                                                            //                             ),
-                                                                            //                             topRight: Radius.circular(
-                                                                            //                               16,
-                                                                            //                             ),
-                                                                            //                           ),
-                                                                            //                         ),
-                                                                            //                         child: Material(
-                                                                            //                           child: Column(
-                                                                            //                             children: [
-                                                                            //                               const SizedBox(
-                                                                            //                                 height: 15,
-                                                                            //                               ),
-                                                                            //                               Row(
-                                                                            //                                 mainAxisAlignment: MainAxisAlignment.end,
-                                                                            //                                 children: [
-                                                                            //                                   InkWell(
-                                                                            //                                     onTap: () => {
-                                                                            //                                       Navigator.pop(
-                                                                            //                                         context,
-                                                                            //                                       ),
-                                                                            //                                     },
-                                                                            //                                     child: Container(
-                                                                            //                                       width: 25,
-                                                                            //                                       height: 25,
-                                                                            //                                       decoration: BoxDecoration(
-                                                                            //                                         shape: BoxShape.circle,
-                                                                            //                                         color: Colors.white,
-                                                                            //                                         border: Border.all(),
-                                                                            //                                       ),
-                                                                            //                                       child: const Center(
-                                                                            //                                         child: Icon(
-                                                                            //                                           Icons.close,
-                                                                            //                                           color: Colors.black,
-                                                                            //                                           size: 15,
-                                                                            //                                         ),
-                                                                            //                                       ),
-                                                                            //                                     ),
-                                                                            //                                   ),
-                                                                            //                                 ],
-                                                                            //                               ),
-                                                                            //                               const Text(
-                                                                            //                                 'New Leads',
-                                                                            //                                 style: TextStyle(
-                                                                            //                                   fontSize: 18,
-                                                                            //                                   fontWeight: FontWeight.w500,
-                                                                            //                                 ),
-                                                                            //                               ),
-                                                                            //                               const SizedBox(
-                                                                            //                                 height: 10,
-                                                                            //                               ),
-                                                                            //                               Text(
-                                                                            //                                 object1.data!.totalCount.toString(),
-                                                                            //                                 style: TextStyle(
-                                                                            //                                   fontSize: 18,
-                                                                            //                                   fontWeight: FontWeight.w500,
-                                                                            //                                   color: Colors.green.shade900,
-                                                                            //                                 ),
-                                                                            //                               ),
-                                                                            //                               object1.data!.staffLeads!.isNotEmpty
-                                                                            //                                   ? const Padding(
-                                                                            //                                       padding: EdgeInsets.only(
-                                                                            //                                         bottom: 20,
-                                                                            //                                       ),
-                                                                            //                                       child: Row(
-                                                                            //                                         children: [
-                                                                            //                                           Text(
-                                                                            //                                             'Staff Wise Lead',
-                                                                            //                                             style: TextStyle(
-                                                                            //                                               fontSize: 16,
-                                                                            //                                               fontWeight: FontWeight.w500,
-                                                                            //                                               color: Colors.black,
-                                                                            //                                             ),
-                                                                            //                                           ),
-                                                                            //                                         ],
-                                                                            //                                       ),
-                                                                            //                                     )
-                                                                            //                                   : const SizedBox(),
-                                                                            //                               object1.data!.staffLeads!.isNotEmpty
-                                                                            //                                   ? SizedBox(
-                                                                            //                                       height:
-                                                                            //                                           60 *
-                                                                            //                                           double.parse(
-                                                                            //                                             object1.data!.staffLeads!.length.toString(),
-                                                                            //                                           ),
-                                                                            //                                       // 70% height
-                                                                            //                                       child: MediaQuery.removePadding(
-                                                                            //                                         context: context,
-                                                                            //                                         removeTop: true,
-                                                                            //                                         child: ListView.builder(
-                                                                            //                                           shrinkWrap: true,
-                                                                            //                                           itemCount: object1.data!.staffLeads!.length,
-                                                                            //                                           physics: const NeverScrollableScrollPhysics(),
-                                                                            //                                           itemBuilder:
-                                                                            //                                               (
-                                                                            //                                                 context,
-                                                                            //                                                 i,
-                                                                            //                                               ) {
-                                                                            //                                                 return Column(
-                                                                            //                                                   children: [
-                                                                            //                                                     Padding(
-                                                                            //                                                       padding: const EdgeInsets.only(
-                                                                            //                                                         left: 15,
-                                                                            //                                                         right: 15,
-                                                                            //                                                       ),
-                                                                            //                                                       child: Row(
-                                                                            //                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            //                                                         children: [
-                                                                            //                                                           Text(
-                                                                            //                                                             object1.data!.staffLeads![i].staffName.toString(),
-                                                                            //                                                             style: const TextStyle(
-                                                                            //                                                               fontSize: 14,
-                                                                            //                                                               fontWeight: FontWeight.w500,
-                                                                            //                                                               color: Colors.black,
-                                                                            //                                                             ),
-                                                                            //                                                           ),
-                                                                            //                                                           Text(
-                                                                            //                                                             'Count : ${object1.data!.staffLeads![i].staffCount}',
-                                                                            //                                                             style: const TextStyle(
-                                                                            //                                                               fontSize: 14,
-                                                                            //                                                               fontWeight: FontWeight.w500,
-                                                                            //                                                               color: Colors.black,
-                                                                            //                                                             ),
-                                                                            //                                                           ),
-                                                                            //                                                         ],
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                     Padding(
-                                                                            //                                                       padding: const EdgeInsets.only(
-                                                                            //                                                         left: 15,
-                                                                            //                                                         right: 15,
-                                                                            //                                                         top: 5,
-                                                                            //                                                       ),
-                                                                            //                                                       child: InkWell(
-                                                                            //                                                         onTap: () {
-                                                                            //                                                           Navigator.push(
-                                                                            //                                                             context,
-                                                                            //                                                             MaterialPageRoute(
-                                                                            //                                                               builder:
-                                                                            //                                                                   (
-                                                                            //                                                                     context,
-                                                                            //                                                                   ) => ViewLeads(
-                                                                            //                                                                     widget.token,
-                                                                            //                                                                     leadDashboard!.data!.updateLead!,
-                                                                            //                                                                     leadDashboard!.data!.deleteLead!,
-                                                                            //                                                                     leadDashboard!.data!.cloudCall!,
-                                                                            //                                                                     pageName: 'New Leads',
-                                                                            //                                                                     fromDate: DateTime(
-                                                                            //                                                                       DateTime.now().year,
-                                                                            //                                                                       DateTime.now().month -
-                                                                            //                                                                           3,
-                                                                            //                                                                       DateTime.now().day,
-                                                                            //                                                                     ).toString(),
-                                                                            //                                                                     toDate: todate.toString(),
-                                                                            //                                                                     status: '1',
-                                                                            //                                                                     staff: object1.data!.staffLeads![i].staffId,
-                                                                            //                                                                   ),
-                                                                            //                                                             ),
-                                                                            //                                                           );
-                                                                            //                                                         },
-                                                                            //                                                         child: LinearPercentIndicator(
-                                                                            //                                                           width:
-                                                                            //                                                               MediaQuery.of(
-                                                                            //                                                                 context,
-                                                                            //                                                               ).size.width *
-                                                                            //                                                               0.82,
-                                                                            //                                                           animation: true,
-                                                                            //                                                           lineHeight: 15.0,
-                                                                            //                                                           animationDuration: 2500,
-                                                                            //                                                           percent: double.parse(
-                                                                            //                                                             object1.data!.staffLeads![i].staffPercentage.toString(),
-                                                                            //                                                           ),
-                                                                            //                                                           progressColor:
-                                                                            //                                                               object1.data!.staffLeads!.length >
-                                                                            //                                                                   _colors.length
-                                                                            //                                                               ? Colors.red
-                                                                            //                                                               : _colors[i],
-                                                                            //                                                         ),
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                     const SizedBox(
-                                                                            //                                                       height: 15,
-                                                                            //                                                     ),
-                                                                            //                                                   ],
-                                                                            //                                                 );
-                                                                            //                                               },
-                                                                            //                                         ),
-                                                                            //                                       ),
-                                                                            //                                     )
-                                                                            //                                   : const SizedBox(),
-                                                                            //                               object1.data!.categoryLeads!.isNotEmpty
-                                                                            //                                   ? const Padding(
-                                                                            //                                       padding: EdgeInsets.only(
-                                                                            //                                         bottom: 20,
-                                                                            //                                       ),
-                                                                            //                                       child: Row(
-                                                                            //                                         children: [
-                                                                            //                                           Text(
-                                                                            //                                             'Category Wise Lead',
-                                                                            //                                             style: TextStyle(
-                                                                            //                                               fontSize: 16,
-                                                                            //                                               fontWeight: FontWeight.w500,
-                                                                            //                                               color: Colors.black,
-                                                                            //                                             ),
-                                                                            //                                           ),
-                                                                            //                                         ],
-                                                                            //                                       ),
-                                                                            //                                     )
-                                                                            //                                   : const SizedBox(),
-                                                                            //                               object1.data!.categoryLeads!.isNotEmpty
-                                                                            //                                   ? SizedBox(
-                                                                            //                                       height:
-                                                                            //                                           60 *
-                                                                            //                                           double.parse(
-                                                                            //                                             object1.data!.categoryLeads!.length.toString(),
-                                                                            //                                           ),
-                                                                            //                                       // 70% height
-                                                                            //                                       child: MediaQuery.removePadding(
-                                                                            //                                         context: context,
-                                                                            //                                         removeTop: true,
-                                                                            //                                         child: ListView.builder(
-                                                                            //                                           shrinkWrap: true,
-                                                                            //                                           physics: const NeverScrollableScrollPhysics(),
-                                                                            //                                           itemCount: object1.data!.categoryLeads!.length,
-                                                                            //                                           itemBuilder:
-                                                                            //                                               (
-                                                                            //                                                 context,
-                                                                            //                                                 i,
-                                                                            //                                               ) {
-                                                                            //                                                 return Column(
-                                                                            //                                                   children: [
-                                                                            //                                                     Padding(
-                                                                            //                                                       padding: const EdgeInsets.only(
-                                                                            //                                                         left: 15,
-                                                                            //                                                         right: 15,
-                                                                            //                                                       ),
-                                                                            //                                                       child: Row(
-                                                                            //                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            //                                                         children: [
-                                                                            //                                                           Text(
-                                                                            //                                                             object1.data!.categoryLeads![i].categoryName.toString(),
-                                                                            //                                                             style: const TextStyle(
-                                                                            //                                                               fontSize: 14,
-                                                                            //                                                               fontWeight: FontWeight.w500,
-                                                                            //                                                               color: Colors.black,
-                                                                            //                                                             ),
-                                                                            //                                                           ),
-                                                                            //                                                           Text(
-                                                                            //                                                             'Count : ${object1.data!.categoryLeads![i].categoryCount}',
-                                                                            //                                                             style: const TextStyle(
-                                                                            //                                                               fontSize: 14,
-                                                                            //                                                               fontWeight: FontWeight.w500,
-                                                                            //                                                               color: Colors.black,
-                                                                            //                                                             ),
-                                                                            //                                                           ),
-                                                                            //                                                         ],
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                     Padding(
-                                                                            //                                                       padding: const EdgeInsets.only(
-                                                                            //                                                         left: 15,
-                                                                            //                                                         right: 15,
-                                                                            //                                                         top: 5,
-                                                                            //                                                       ),
-                                                                            //                                                       child: InkWell(
-                                                                            //                                                         onTap: () {
-                                                                            //                                                           Navigator.push(
-                                                                            //                                                             context,
-                                                                            //                                                             MaterialPageRoute(
-                                                                            //                                                               builder:
-                                                                            //                                                                   (
-                                                                            //                                                                     context,
-                                                                            //                                                                   ) => ViewLeads(
-                                                                            //                                                                     widget.token,
-                                                                            //                                                                     leadDashboard!.data!.updateLead!,
-                                                                            //                                                                     leadDashboard!.data!.deleteLead!,
-                                                                            //                                                                     leadDashboard!.data!.cloudCall!,
-                                                                            //                                                                     pageName: 'New Leads',
-                                                                            //                                                                     fromDate: DateTime(
-                                                                            //                                                                       DateTime.now().year,
-                                                                            //                                                                       DateTime.now().month -
-                                                                            //                                                                           3,
-                                                                            //                                                                       DateTime.now().day,
-                                                                            //                                                                     ).toString(),
-                                                                            //                                                                     toDate: todate.toString(),
-                                                                            //                                                                     status: '1',
-                                                                            //                                                                     category: object1.data!.categoryLeads![i].categoryId.toString(),
-                                                                            //                                                                   ),
-                                                                            //                                                             ),
-                                                                            //                                                           );
-                                                                            //                                                         },
-                                                                            //                                                         child: LinearPercentIndicator(
-                                                                            //                                                           width:
-                                                                            //                                                               MediaQuery.of(
-                                                                            //                                                                 context,
-                                                                            //                                                               ).size.width *
-                                                                            //                                                               0.82,
-                                                                            //                                                           animation: true,
-                                                                            //                                                           lineHeight: 15.0,
-                                                                            //                                                           animationDuration: 2500,
-                                                                            //                                                           percent: double.parse(
-                                                                            //                                                             object1.data!.categoryLeads![i].categoryPercentage.toString(),
-                                                                            //                                                           ),
-                                                                            //                                                           progressColor:
-                                                                            //                                                               object1.data!.categoryLeads!.length >
-                                                                            //                                                                   _colors.length
-                                                                            //                                                               ? Colors.red
-                                                                            //                                                               : _colors[i],
-                                                                            //                                                         ),
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                     const SizedBox(
-                                                                            //                                                       height: 15,
-                                                                            //                                                     ),
-                                                                            //                                                   ],
-                                                                            //                                                 );
-                                                                            //                                               },
-                                                                            //                                         ),
-                                                                            //                                       ),
-                                                                            //                                     )
-                                                                            //                                   : const SizedBox(),
-                                                                            //                               object1.data!.missedLeads!.isNotEmpty
-                                                                            //                                   ? const Padding(
-                                                                            //                                       padding: EdgeInsets.only(
-                                                                            //                                         bottom: 20,
-                                                                            //                                       ),
-                                                                            //                                       child: Row(
-                                                                            //                                         children: [
-                                                                            //                                           Text(
-                                                                            //                                             'Missed Leads',
-                                                                            //                                             style: TextStyle(
-                                                                            //                                               fontSize: 16,
-                                                                            //                                               fontWeight: FontWeight.w500,
-                                                                            //                                               color: Colors.black,
-                                                                            //                                             ),
-                                                                            //                                           ),
-                                                                            //                                         ],
-                                                                            //                                       ),
-                                                                            //                                     )
-                                                                            //                                   : const SizedBox(),
-                                                                            //                               object1.data!.missedLeads!.isNotEmpty
-                                                                            //                                   ? SizedBox(
-                                                                            //                                       height:
-                                                                            //                                           60 *
-                                                                            //                                           double.parse(
-                                                                            //                                             object1.data!.missedLeads!.length.toString(),
-                                                                            //                                           ),
-                                                                            //                                       // 70% height
-                                                                            //                                       child: MediaQuery.removePadding(
-                                                                            //                                         context: context,
-                                                                            //                                         removeTop: true,
-                                                                            //                                         child: ListView.builder(
-                                                                            //                                           shrinkWrap: true,
-                                                                            //                                           physics: const NeverScrollableScrollPhysics(),
-                                                                            //                                           itemCount: object1.data!.missedLeads!.length,
-                                                                            //                                           itemBuilder:
-                                                                            //                                               (
-                                                                            //                                                 context,
-                                                                            //                                                 i,
-                                                                            //                                               ) {
-                                                                            //                                                 return Column(
-                                                                            //                                                   children: [
-                                                                            //                                                     Padding(
-                                                                            //                                                       padding: const EdgeInsets.only(
-                                                                            //                                                         left: 15,
-                                                                            //                                                         right: 15,
-                                                                            //                                                       ),
-                                                                            //                                                       child: Row(
-                                                                            //                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            //                                                         children: [
-                                                                            //                                                           Text(
-                                                                            //                                                             object1.data!.missedLeads![i].missedstaffName.toString(),
-                                                                            //                                                             style: const TextStyle(
-                                                                            //                                                               fontSize: 14,
-                                                                            //                                                               fontWeight: FontWeight.w500,
-                                                                            //                                                               color: Colors.black,
-                                                                            //                                                             ),
-                                                                            //                                                           ),
-                                                                            //                                                           Text(
-                                                                            //                                                             'Count : ${object1.data!.missedLeads![i].missedstaffCount}',
-                                                                            //                                                             style: const TextStyle(
-                                                                            //                                                               fontSize: 14,
-                                                                            //                                                               fontWeight: FontWeight.w500,
-                                                                            //                                                               color: Colors.black,
-                                                                            //                                                             ),
-                                                                            //                                                           ),
-                                                                            //                                                         ],
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                     Padding(
-                                                                            //                                                       padding: const EdgeInsets.only(
-                                                                            //                                                         left: 15,
-                                                                            //                                                         right: 15,
-                                                                            //                                                         top: 5,
-                                                                            //                                                       ),
-                                                                            //                                                       child: InkWell(
-                                                                            //                                                         onTap: () {
-                                                                            //                                                           Navigator.push(
-                                                                            //                                                             context,
-                                                                            //                                                             MaterialPageRoute(
-                                                                            //                                                               builder:
-                                                                            //                                                                   (
-                                                                            //                                                                     context,
-                                                                            //                                                                   ) => ViewLeads(
-                                                                            //                                                                     widget.token,
-                                                                            //                                                                     leadDashboard!.data!.updateLead!,
-                                                                            //                                                                     leadDashboard!.data!.deleteLead!,
-                                                                            //                                                                     leadDashboard!.data!.cloudCall!,
-                                                                            //                                                                     pageName: 'New Leads',
-                                                                            //                                                                     fromDate: DateTime(
-                                                                            //                                                                       DateTime.now().year,
-                                                                            //                                                                       DateTime.now().month -
-                                                                            //                                                                           3,
-                                                                            //                                                                       DateTime.now().day,
-                                                                            //                                                                     ).toString(),
-                                                                            //                                                                     toDate: DateTime(
-                                                                            //                                                                       DateTime.now().year,
-                                                                            //                                                                       DateTime.now().month,
-                                                                            //                                                                       DateTime.now().day -
-                                                                            //                                                                           1,
-                                                                            //                                                                     ).toString(),
-                                                                            //                                                                     status: '1',
-                                                                            //                                                                     staff: object1.data!.missedLeads![i].missedstaffId.toString(),
-                                                                            //                                                                   ),
-                                                                            //                                                             ),
-                                                                            //                                                           );
-                                                                            //                                                         },
-                                                                            //                                                         child: LinearPercentIndicator(
-                                                                            //                                                           width:
-                                                                            //                                                               MediaQuery.of(
-                                                                            //                                                                 context,
-                                                                            //                                                               ).size.width *
-                                                                            //                                                               0.82,
-                                                                            //                                                           animation: true,
-                                                                            //                                                           lineHeight: 15.0,
-                                                                            //                                                           animationDuration: 2500,
-                                                                            //                                                           percent: double.parse(
-                                                                            //                                                             object1.data!.missedLeads![i].missedstaffPercentage.toString(),
-                                                                            //                                                           ),
-                                                                            //                                                           progressColor:
-                                                                            //                                                               object1.data!.missedLeads!.length >
-                                                                            //                                                                   _colors.length
-                                                                            //                                                               ? Colors.red
-                                                                            //                                                               : _colors[i],
-                                                                            //                                                         ),
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                     const SizedBox(
-                                                                            //                                                       height: 15,
-                                                                            //                                                     ),
-                                                                            //                                                   ],
-                                                                            //                                                 );
-                                                                            //                                               },
-                                                                            //                                         ),
-                                                                            //                                       ),
-                                                                            //                                     )
-                                                                            //                                   : const SizedBox(),
-                                                                            //                             ],
-                                                                            //                           ),
-                                                                            //                         ),
-                                                                            //                       ),
-                                                                            //                     ),
-                                                                            //                   ),
-                                                                            //                 );
-                                                                            //               },
-                                                                            //           transitionBuilder:
-                                                                            //               (
-                                                                            //                 _,
-                                                                            //                 animation1,
-                                                                            //                 __,
-                                                                            //                 child,
-                                                                            //               ) {
-                                                                            //                 return SlideTransition(
-                                                                            //                   position:
-                                                                            //                       Tween(
-                                                                            //                         begin: const Offset(
-                                                                            //                           0,
-                                                                            //                           1,
-                                                                            //                         ),
-                                                                            //                         end: const Offset(
-                                                                            //                           0,
-                                                                            //                           0,
-                                                                            //                         ),
-                                                                            //                       ).animate(
-                                                                            //                         animation1,
-                                                                            //                       ),
-                                                                            //                   child: child,
-                                                                            //                 );
-                                                                            //               },
-                                                                            //         );
-                                                                            //       }
-                                                                            //     }
-                                                                            //   },
-                                                                            //   child: Container(
-                                                                            //     width: 30,
-                                                                            //     height: 30,
-                                                                            //     decoration: BoxDecoration(
-                                                                            //       boxShadow: [
-                                                                            //         BoxShadow(
-                                                                            //           color: Colors.grey.shade500,
-                                                                            //           offset: const Offset(
-                                                                            //             0,
-                                                                            //             2.0,
-                                                                            //           ),
-                                                                            //         ),
-                                                                            //       ],
-                                                                            //       color: Colors.white,
-                                                                            //       borderRadius: BorderRadius.circular(
-                                                                            //         5,
-                                                                            //       ),
-                                                                            //     ),
-                                                                            //     child: Padding(
-                                                                            //       padding: const EdgeInsets.all(
-                                                                            //         4,
-                                                                            //       ),
-                                                                            //       child: Center(
-                                                                            //         child: Image.asset(
-                                                                            //           "assets/icons/lineSegment.png",
-                                                                            //         ),
-                                                                            //       ),
-                                                                            //     ),
-                                                                            //   ),
-                                                                            // ),
-                                                                          
+                                                                                LeadProgressbarModel
+                                                                                object1 = await HttpService.leadProgressbar(
+                                                                                  widget.token,
+                                                                                  fromdate,
+                                                                                  todate,
+                                                                                  '1',
+                                                                                );
+                                                                                if (object1.status ==
+                                                                                    true) {
+                                                                                  if (context.mounted) {
+                                                                                    Navigator.pop(
+                                                                                      context,
+                                                                                    );
+                                                                                    showGeneralDialog(
+                                                                                      barrierLabel: "showGeneralDialog",
+                                                                                      barrierDismissible: true,
+                                                                                      barrierColor: Colors.black.withOpacity(
+                                                                                        0.6,
+                                                                                      ),
+                                                                                      transitionDuration: const Duration(
+                                                                                        milliseconds: 400,
+                                                                                      ),
+                                                                                      context: context,
+                                                                                      pageBuilder:
+                                                                                          (
+                                                                                            context,
+                                                                                            _,
+                                                                                            __,
+                                                                                          ) {
+                                                                                            return Align(
+                                                                                              alignment: Alignment.bottomCenter,
+                                                                                              child: IntrinsicHeight(
+                                                                                                child: SingleChildScrollView(
+                                                                                                  child: Container(
+                                                                                                    width: double.maxFinite,
+                                                                                                    clipBehavior: Clip.antiAlias,
+                                                                                                    padding: const EdgeInsets.all(
+                                                                                                      16,
+                                                                                                    ),
+                                                                                                    decoration: const BoxDecoration(
+                                                                                                      color: Colors.white,
+                                                                                                      borderRadius: BorderRadius.only(
+                                                                                                        topLeft: Radius.circular(
+                                                                                                          16,
+                                                                                                        ),
+                                                                                                        topRight: Radius.circular(
+                                                                                                          16,
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    child: Material(
+                                                                                                      child: Column(
+                                                                                                        children: [
+                                                                                                          const SizedBox(
+                                                                                                            height: 15,
+                                                                                                          ),
+                                                                                                          Row(
+                                                                                                            mainAxisAlignment: MainAxisAlignment.end,
+                                                                                                            children: [
+                                                                                                              InkWell(
+                                                                                                                onTap: () => {
+                                                                                                                  Navigator.pop(
+                                                                                                                    context,
+                                                                                                                  ),
+                                                                                                                },
+                                                                                                                child: Container(
+                                                                                                                  width: 25,
+                                                                                                                  height: 25,
+                                                                                                                  decoration: BoxDecoration(
+                                                                                                                    shape: BoxShape.circle,
+                                                                                                                    color: Colors.white,
+                                                                                                                    border: Border.all(),
+                                                                                                                  ),
+                                                                                                                  child: const Center(
+                                                                                                                    child: Icon(
+                                                                                                                      Icons.close,
+                                                                                                                      color: Colors.black,
+                                                                                                                      size: 15,
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            ],
+                                                                                                          ),
+                                                                                                          const Text(
+                                                                                                            'New Leads',
+                                                                                                            style: TextStyle(
+                                                                                                              fontSize: 18,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                          const SizedBox(
+                                                                                                            height: 10,
+                                                                                                          ),
+                                                                                                          Text(
+                                                                                                            object1.data!.totalCount.toString(),
+                                                                                                            style: TextStyle(
+                                                                                                              fontSize: 18,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              color: Colors.green.shade900,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                          object1.data!.staffLeads!.isNotEmpty
+                                                                                                              ? const Padding(
+                                                                                                                  padding: EdgeInsets.only(
+                                                                                                                    bottom: 20,
+                                                                                                                  ),
+                                                                                                                  child: Row(
+                                                                                                                    children: [
+                                                                                                                      Text(
+                                                                                                                        'Staff Wise Lead',
+                                                                                                                        style: TextStyle(
+                                                                                                                          fontSize: 16,
+                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                          color: Colors.black,
+                                                                                                                        ),
+                                                                                                                      ),
+                                                                                                                    ],
+                                                                                                                  ),
+                                                                                                                )
+                                                                                                              : const SizedBox(),
+                                                                                                          object1.data!.staffLeads!.isNotEmpty
+                                                                                                              ? SizedBox(
+                                                                                                                  height:
+                                                                                                                      60 *
+                                                                                                                      double.parse(
+                                                                                                                        object1.data!.staffLeads!.length.toString(),
+                                                                                                                      ),
+                                                                                                                  // 70% height
+                                                                                                                  child: MediaQuery.removePadding(
+                                                                                                                    context: context,
+                                                                                                                    removeTop: true,
+                                                                                                                    child: ListView.builder(
+                                                                                                                      shrinkWrap: true,
+                                                                                                                      itemCount: object1.data!.staffLeads!.length,
+                                                                                                                      physics: const NeverScrollableScrollPhysics(),
+                                                                                                                      itemBuilder:
+                                                                                                                          (
+                                                                                                                            context,
+                                                                                                                            i,
+                                                                                                                          ) {
+                                                                                                                            return Column(
+                                                                                                                              children: [
+                                                                                                                                Padding(
+                                                                                                                                  padding: const EdgeInsets.only(
+                                                                                                                                    left: 15,
+                                                                                                                                    right: 15,
+                                                                                                                                  ),
+                                                                                                                                  child: Row(
+                                                                                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                                                                    children: [
+                                                                                                                                      Text(
+                                                                                                                                        object1.data!.staffLeads![i].staffName.toString(),
+                                                                                                                                        style: const TextStyle(
+                                                                                                                                          fontSize: 14,
+                                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                                          color: Colors.black,
+                                                                                                                                        ),
+                                                                                                                                      ),
+                                                                                                                                      Text(
+                                                                                                                                        'Count : ${object1.data!.staffLeads![i].staffCount}',
+                                                                                                                                        style: const TextStyle(
+                                                                                                                                          fontSize: 14,
+                                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                                          color: Colors.black,
+                                                                                                                                        ),
+                                                                                                                                      ),
+                                                                                                                                    ],
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                                Padding(
+                                                                                                                                  padding: const EdgeInsets.only(
+                                                                                                                                    left: 15,
+                                                                                                                                    right: 15,
+                                                                                                                                    top: 5,
+                                                                                                                                  ),
+                                                                                                                                  child: InkWell(
+                                                                                                                                    onTap: () {
+                                                                                                                                      Navigator.push(
+                                                                                                                                        context,
+                                                                                                                                        MaterialPageRoute(
+                                                                                                                                          builder:
+                                                                                                                                              (
+                                                                                                                                                context,
+                                                                                                                                              ) => ViewLeads(
+                                                                                                                                                widget.token,
+                                                                                                                                                leadDashboard!.data!.updateLead!,
+                                                                                                                                                leadDashboard!.data!.deleteLead!,
+                                                                                                                                                leadDashboard!.data!.cloudCall!,
+                                                                                                                                                pageName: 'New Leads',
+                                                                                                                                                fromDate: DateTime(
+                                                                                                                                                  DateTime.now().year,
+                                                                                                                                                  DateTime.now().month -
+                                                                                                                                                      3,
+                                                                                                                                                  DateTime.now().day,
+                                                                                                                                                ).toString(),
+                                                                                                                                                toDate: todate.toString(),
+                                                                                                                                                status: '1',
+                                                                                                                                                staff: object1.data!.staffLeads![i].staffId,
+                                                                                                                                              ),
+                                                                                                                                        ),
+                                                                                                                                      );
+                                                                                                                                    },
+                                                                                                                                    child: LinearPercentIndicator(
+                                                                                                                                      width:
+                                                                                                                                          MediaQuery.of(
+                                                                                                                                            context,
+                                                                                                                                          ).size.width *
+                                                                                                                                          0.82,
+                                                                                                                                      animation: true,
+                                                                                                                                      lineHeight: 15.0,
+                                                                                                                                      animationDuration: 2500,
+                                                                                                                                      percent: double.parse(
+                                                                                                                                        object1.data!.staffLeads![i].staffPercentage.toString(),
+                                                                                                                                      ),
+                                                                                                                                      progressColor:
+                                                                                                                                          object1.data!.staffLeads!.length >
+                                                                                                                                              _colors.length
+                                                                                                                                          ? Colors.red
+                                                                                                                                          : _colors[i],
+                                                                                                                                    ),
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                                const SizedBox(
+                                                                                                                                  height: 15,
+                                                                                                                                ),
+                                                                                                                              ],
+                                                                                                                            );
+                                                                                                                          },
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                )
+                                                                                                              : const SizedBox(),
+                                                                                                          object1.data!.categoryLeads!.isNotEmpty
+                                                                                                              ? const Padding(
+                                                                                                                  padding: EdgeInsets.only(
+                                                                                                                    bottom: 20,
+                                                                                                                  ),
+                                                                                                                  child: Row(
+                                                                                                                    children: [
+                                                                                                                      Text(
+                                                                                                                        'Category Wise Lead',
+                                                                                                                        style: TextStyle(
+                                                                                                                          fontSize: 16,
+                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                          color: Colors.black,
+                                                                                                                        ),
+                                                                                                                      ),
+                                                                                                                    ],
+                                                                                                                  ),
+                                                                                                                )
+                                                                                                              : const SizedBox(),
+                                                                                                          object1.data!.categoryLeads!.isNotEmpty
+                                                                                                              ? SizedBox(
+                                                                                                                  height:
+                                                                                                                      60 *
+                                                                                                                      double.parse(
+                                                                                                                        object1.data!.categoryLeads!.length.toString(),
+                                                                                                                      ),
+                                                                                                                  // 70% height
+                                                                                                                  child: MediaQuery.removePadding(
+                                                                                                                    context: context,
+                                                                                                                    removeTop: true,
+                                                                                                                    child: ListView.builder(
+                                                                                                                      shrinkWrap: true,
+                                                                                                                      physics: const NeverScrollableScrollPhysics(),
+                                                                                                                      itemCount: object1.data!.categoryLeads!.length,
+                                                                                                                      itemBuilder:
+                                                                                                                          (
+                                                                                                                            context,
+                                                                                                                            i,
+                                                                                                                          ) {
+                                                                                                                            return Column(
+                                                                                                                              children: [
+                                                                                                                                Padding(
+                                                                                                                                  padding: const EdgeInsets.only(
+                                                                                                                                    left: 15,
+                                                                                                                                    right: 15,
+                                                                                                                                  ),
+                                                                                                                                  child: Row(
+                                                                                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                                                                    children: [
+                                                                                                                                      Text(
+                                                                                                                                        object1.data!.categoryLeads![i].categoryName.toString(),
+                                                                                                                                        style: const TextStyle(
+                                                                                                                                          fontSize: 14,
+                                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                                          color: Colors.black,
+                                                                                                                                        ),
+                                                                                                                                      ),
+                                                                                                                                      Text(
+                                                                                                                                        'Count : ${object1.data!.categoryLeads![i].categoryCount}',
+                                                                                                                                        style: const TextStyle(
+                                                                                                                                          fontSize: 14,
+                                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                                          color: Colors.black,
+                                                                                                                                        ),
+                                                                                                                                      ),
+                                                                                                                                    ],
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                                Padding(
+                                                                                                                                  padding: const EdgeInsets.only(
+                                                                                                                                    left: 15,
+                                                                                                                                    right: 15,
+                                                                                                                                    top: 5,
+                                                                                                                                  ),
+                                                                                                                                  child: InkWell(
+                                                                                                                                    onTap: () {
+                                                                                                                                      Navigator.push(
+                                                                                                                                        context,
+                                                                                                                                        MaterialPageRoute(
+                                                                                                                                          builder:
+                                                                                                                                              (
+                                                                                                                                                context,
+                                                                                                                                              ) => ViewLeads(
+                                                                                                                                                widget.token,
+                                                                                                                                                leadDashboard!.data!.updateLead!,
+                                                                                                                                                leadDashboard!.data!.deleteLead!,
+                                                                                                                                                leadDashboard!.data!.cloudCall!,
+                                                                                                                                                pageName: 'New Leads',
+                                                                                                                                                fromDate: DateTime(
+                                                                                                                                                  DateTime.now().year,
+                                                                                                                                                  DateTime.now().month -
+                                                                                                                                                      3,
+                                                                                                                                                  DateTime.now().day,
+                                                                                                                                                ).toString(),
+                                                                                                                                                toDate: todate.toString(),
+                                                                                                                                                status: '1',
+                                                                                                                                                category: object1.data!.categoryLeads![i].categoryId.toString(),
+                                                                                                                                              ),
+                                                                                                                                        ),
+                                                                                                                                      );
+                                                                                                                                    },
+                                                                                                                                    child: LinearPercentIndicator(
+                                                                                                                                      width:
+                                                                                                                                          MediaQuery.of(
+                                                                                                                                            context,
+                                                                                                                                          ).size.width *
+                                                                                                                                          0.82,
+                                                                                                                                      animation: true,
+                                                                                                                                      lineHeight: 15.0,
+                                                                                                                                      animationDuration: 2500,
+                                                                                                                                      percent: double.parse(
+                                                                                                                                        object1.data!.categoryLeads![i].categoryPercentage.toString(),
+                                                                                                                                      ),
+                                                                                                                                      progressColor:
+                                                                                                                                          object1.data!.categoryLeads!.length >
+                                                                                                                                              _colors.length
+                                                                                                                                          ? Colors.red
+                                                                                                                                          : _colors[i],
+                                                                                                                                    ),
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                                const SizedBox(
+                                                                                                                                  height: 15,
+                                                                                                                                ),
+                                                                                                                              ],
+                                                                                                                            );
+                                                                                                                          },
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                )
+                                                                                                              : const SizedBox(),
+                                                                                                          object1.data!.missedLeads!.isNotEmpty
+                                                                                                              ? const Padding(
+                                                                                                                  padding: EdgeInsets.only(
+                                                                                                                    bottom: 20,
+                                                                                                                  ),
+                                                                                                                  child: Row(
+                                                                                                                    children: [
+                                                                                                                      Text(
+                                                                                                                        'Missed Leads',
+                                                                                                                        style: TextStyle(
+                                                                                                                          fontSize: 16,
+                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                          color: Colors.black,
+                                                                                                                        ),
+                                                                                                                      ),
+                                                                                                                    ],
+                                                                                                                  ),
+                                                                                                                )
+                                                                                                              : const SizedBox(),
+                                                                                                          object1.data!.missedLeads!.isNotEmpty
+                                                                                                              ? SizedBox(
+                                                                                                                  height:
+                                                                                                                      60 *
+                                                                                                                      double.parse(
+                                                                                                                        object1.data!.missedLeads!.length.toString(),
+                                                                                                                      ),
+                                                                                                                  // 70% height
+                                                                                                                  child: MediaQuery.removePadding(
+                                                                                                                    context: context,
+                                                                                                                    removeTop: true,
+                                                                                                                    child: ListView.builder(
+                                                                                                                      shrinkWrap: true,
+                                                                                                                      physics: const NeverScrollableScrollPhysics(),
+                                                                                                                      itemCount: object1.data!.missedLeads!.length,
+                                                                                                                      itemBuilder:
+                                                                                                                          (
+                                                                                                                            context,
+                                                                                                                            i,
+                                                                                                                          ) {
+                                                                                                                            return Column(
+                                                                                                                              children: [
+                                                                                                                                Padding(
+                                                                                                                                  padding: const EdgeInsets.only(
+                                                                                                                                    left: 15,
+                                                                                                                                    right: 15,
+                                                                                                                                  ),
+                                                                                                                                  child: Row(
+                                                                                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                                                                    children: [
+                                                                                                                                      Text(
+                                                                                                                                        object1.data!.missedLeads![i].missedstaffName.toString(),
+                                                                                                                                        style: const TextStyle(
+                                                                                                                                          fontSize: 14,
+                                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                                          color: Colors.black,
+                                                                                                                                        ),
+                                                                                                                                      ),
+                                                                                                                                      Text(
+                                                                                                                                        'Count : ${object1.data!.missedLeads![i].missedstaffCount}',
+                                                                                                                                        style: const TextStyle(
+                                                                                                                                          fontSize: 14,
+                                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                                          color: Colors.black,
+                                                                                                                                        ),
+                                                                                                                                      ),
+                                                                                                                                    ],
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                                Padding(
+                                                                                                                                  padding: const EdgeInsets.only(
+                                                                                                                                    left: 15,
+                                                                                                                                    right: 15,
+                                                                                                                                    top: 5,
+                                                                                                                                  ),
+                                                                                                                                  child: InkWell(
+                                                                                                                                    onTap: () {
+                                                                                                                                      Navigator.push(
+                                                                                                                                        context,
+                                                                                                                                        MaterialPageRoute(
+                                                                                                                                          builder:
+                                                                                                                                              (
+                                                                                                                                                context,
+                                                                                                                                              ) => ViewLeads(
+                                                                                                                                                widget.token,
+                                                                                                                                                leadDashboard!.data!.updateLead!,
+                                                                                                                                                leadDashboard!.data!.deleteLead!,
+                                                                                                                                                leadDashboard!.data!.cloudCall!,
+                                                                                                                                                pageName: 'New Leads',
+                                                                                                                                                fromDate: DateTime(
+                                                                                                                                                  DateTime.now().year,
+                                                                                                                                                  DateTime.now().month -
+                                                                                                                                                      3,
+                                                                                                                                                  DateTime.now().day,
+                                                                                                                                                ).toString(),
+                                                                                                                                                toDate: DateTime(
+                                                                                                                                                  DateTime.now().year,
+                                                                                                                                                  DateTime.now().month,
+                                                                                                                                                  DateTime.now().day -
+                                                                                                                                                      1,
+                                                                                                                                                ).toString(),
+                                                                                                                                                status: '1',
+                                                                                                                                                staff: object1.data!.missedLeads![i].missedstaffId.toString(),
+                                                                                                                                              ),
+                                                                                                                                        ),
+                                                                                                                                      );
+                                                                                                                                    },
+                                                                                                                                    child: LinearPercentIndicator(
+                                                                                                                                      width:
+                                                                                                                                          MediaQuery.of(
+                                                                                                                                            context,
+                                                                                                                                          ).size.width *
+                                                                                                                                          0.82,
+                                                                                                                                      animation: true,
+                                                                                                                                      lineHeight: 15.0,
+                                                                                                                                      animationDuration: 2500,
+                                                                                                                                      percent: double.parse(
+                                                                                                                                        object1.data!.missedLeads![i].missedstaffPercentage.toString(),
+                                                                                                                                      ),
+                                                                                                                                      progressColor:
+                                                                                                                                          object1.data!.missedLeads!.length >
+                                                                                                                                              _colors.length
+                                                                                                                                          ? Colors.red
+                                                                                                                                          : _colors[i],
+                                                                                                                                    ),
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                                const SizedBox(
+                                                                                                                                  height: 15,
+                                                                                                                                ),
+                                                                                                                              ],
+                                                                                                                            );
+                                                                                                                          },
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                )
+                                                                                                              : const SizedBox(),
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                            );
+                                                                                          },
+                                                                                      transitionBuilder:
+                                                                                          (
+                                                                                            _,
+                                                                                            animation1,
+                                                                                            __,
+                                                                                            child,
+                                                                                          ) {
+                                                                                            return SlideTransition(
+                                                                                              position:
+                                                                                                  Tween(
+                                                                                                    begin: const Offset(
+                                                                                                      0,
+                                                                                                      1,
+                                                                                                    ),
+                                                                                                    end: const Offset(
+                                                                                                      0,
+                                                                                                      0,
+                                                                                                    ),
+                                                                                                  ).animate(
+                                                                                                    animation1,
+                                                                                                  ),
+                                                                                              child: child,
+                                                                                            );
+                                                                                          },
+                                                                                    );
+                                                                                  }
+                                                                                }
+                                                                              },
+                                                                              child: Container(
+                                                                                width: 30,
+                                                                                height: 30,
+                                                                                decoration: BoxDecoration(
+                                                                                  boxShadow: [
+                                                                                    BoxShadow(
+                                                                                      color: Colors.grey.shade500,
+                                                                                      offset: const Offset(
+                                                                                        0,
+                                                                                        2.0,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                  color: Colors.white,
+                                                                                  borderRadius: BorderRadius.circular(
+                                                                                    5,
+                                                                                  ),
+                                                                                ),
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(
+                                                                                    4,
+                                                                                  ),
+                                                                                  child: Center(
+                                                                                    child: Image.asset(
+                                                                                      "assets/icons/lineSegment.png",
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
                                                                           ],
                                                                         ),
                                                                       ),
@@ -2790,17 +2790,15 @@ class _DashboardState extends State<Dashboard> {
                                                                                   leadDashboard!.data!.updateLead!,
                                                                                   leadDashboard!.data!.deleteLead!,
                                                                                   leadDashboard!.data!.cloudCall!,
-                                                                                  pageName: 'Re-Assigned Leads',
+                                                                                  pageName: 'Active Leads',
                                                                                   fromDate: DateTime(
                                                                                     DateTime.now().year,
-
                                                                                     DateTime.now().month -
                                                                                         3,
                                                                                     DateTime.now().day,
                                                                                   ).toString(),
                                                                                   toDate: todate.toString(),
-                                                                                  status: 'reassignedCount',
-                                                                                  callResultId: '-5',
+                                                                                  status: '2',
                                                                                 ),
                                                                           ),
                                                                         )
@@ -2851,7 +2849,7 @@ class _DashboardState extends State<Dashboard> {
                                                                               MainAxisAlignment.spaceBetween,
                                                                           children: [
                                                                             const Text(
-                                                                              "Re-assigned Lead",
+                                                                              "Active Leads",
                                                                               style: TextStyle(
                                                                                 fontWeight: FontWeight.w500,
                                                                                 fontSize: 13,
@@ -2870,24 +2868,24 @@ class _DashboardState extends State<Dashboard> {
                                                                                 ),
                                                                                 message: 'The current count of leads \n assigned for today including \n missed follow up leads',
                                                                                 key: _toolTipKey1,
-                                                                                // child: Container(
-                                                                                //   width: 20,
-                                                                                //   height: 20,
-                                                                                //   decoration: const BoxDecoration(
-                                                                                //     shape: BoxShape.circle,
-                                                                                //     color: Colors.white,
-                                                                                //   ),
-                                                                                //   child: Center(
-                                                                                //     child: Text(
-                                                                                //       '?',
-                                                                                //       style: TextStyle(
-                                                                                //         fontSize: 13,
-                                                                                //         fontWeight: FontWeight.bold,
-                                                                                //         color: Colors.grey.shade700,
-                                                                                //       ),
-                                                                                //     ),
-                                                                                //   ),
-                                                                                // ),
+                                                                                child: Container(
+                                                                                  width: 20,
+                                                                                  height: 20,
+                                                                                  decoration: const BoxDecoration(
+                                                                                    shape: BoxShape.circle,
+                                                                                    color: Colors.white,
+                                                                                  ),
+                                                                                  child: Center(
+                                                                                    child: Text(
+                                                                                      '?',
+                                                                                      style: TextStyle(
+                                                                                        fontSize: 13,
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        color: Colors.grey.shade700,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                           ],
@@ -2903,7 +2901,10 @@ class _DashboardState extends State<Dashboard> {
                                                                               10,
                                                                         ),
                                                                         child: Text(
-                                                                          "${leadDashboard?.data?.reassignedCount ?? 0}/${leadDashboard?.data?.reassignedCalledCount ?? 0}",
+                                                                          leadDashboard!
+                                                                              .data!
+                                                                              .followupLeads
+                                                                              .toString(),
                                                                           style: const TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.bold,
@@ -2934,582 +2935,578 @@ class _DashboardState extends State<Dashboard> {
                                                                                 color: Colors.black,
                                                                               ),
                                                                             ),
-                                                                            // InkWell(
-                                                                            //   onTap: () async {
-                                                                            //     Common.showProgressDialog(
-                                                                            //       context,
-                                                                            //       "Loading..",
-                                                                            //     );
-                                                                            //     LeadProgressbarModel
-                                                                            //     object1 = await HttpService.leadProgressbar(
-                                                                            //       widget.token,
-                                                                            //       fromdate,
-                                                                            //       todate,
-                                                                            //       '2',
-                                                                            //     );
-                                                                            //     if (object1.status ==
-                                                                            //         true) {
-                                                                            //       if (context.mounted) {
-                                                                            //         Navigator.pop(
-                                                                            //           context,
-                                                                            //         );
-                                                                            //         showGeneralDialog(
-                                                                            //           barrierLabel: "showGeneralDialog",
-                                                                            //           barrierDismissible: true,
-                                                                            //           barrierColor: Colors.black.withOpacity(
-                                                                            //             0.6,
-                                                                            //           ),
-                                                                            //           transitionDuration: const Duration(
-                                                                            //             milliseconds: 400,
-                                                                            //           ),
-                                                                            //           context: context,
-                                                                            //           pageBuilder:
-                                                                            //               (
-                                                                            //                 context,
-                                                                            //                 _,
-                                                                            //                 __,
-                                                                            //               ) {
-                                                                            //                 return Align(
-                                                                            //                   alignment: Alignment.bottomCenter,
-                                                                            //                   child: IntrinsicHeight(
-                                                                            //                     child: SingleChildScrollView(
-                                                                            //                       child: Container(
-                                                                            //                         width: double.maxFinite,
-                                                                            //                         clipBehavior: Clip.antiAlias,
-                                                                            //                         padding: const EdgeInsets.all(
-                                                                            //                           16,
-                                                                            //                         ),
-                                                                            //                         decoration: const BoxDecoration(
-                                                                            //                           color: Colors.white,
-                                                                            //                           borderRadius: BorderRadius.only(
-                                                                            //                             topLeft: Radius.circular(
-                                                                            //                               16,
-                                                                            //                             ),
-                                                                            //                             topRight: Radius.circular(
-                                                                            //                               16,
-                                                                            //                             ),
-                                                                            //                           ),
-                                                                            //                         ),
-                                                                            //                         child: Material(
-                                                                            //                           child: Column(
-                                                                            //                             children: [
-                                                                            //                               const SizedBox(
-                                                                            //                                 height: 15,
-                                                                            //                               ),
-                                                                            //                               Row(
-                                                                            //                                 mainAxisAlignment: MainAxisAlignment.end,
-                                                                            //                                 children: [
-                                                                            //                                   InkWell(
-                                                                            //                                     onTap: () => {
-                                                                            //                                       Navigator.pop(
-                                                                            //                                         context,
-                                                                            //                                       ),
-                                                                            //                                     },
-                                                                            //                                     child: Container(
-                                                                            //                                       width: 25,
-                                                                            //                                       height: 25,
-                                                                            //                                       decoration: BoxDecoration(
-                                                                            //                                         shape: BoxShape.circle,
-                                                                            //                                         color: Colors.white,
-                                                                            //                                         border: Border.all(),
-                                                                            //                                       ),
-                                                                            //                                       child: const Center(
-                                                                            //                                         child: Icon(
-                                                                            //                                           Icons.close,
-                                                                            //                                           color: Colors.black,
-                                                                            //                                           size: 15,
-                                                                            //                                         ),
-                                                                            //                                       ),
-                                                                            //                                     ),
-                                                                            //                                   ),
-                                                                            //                                 ],
-                                                                            //                               ),
-                                                                            //                               const Text(
-                                                                            //                                 'Active Leads',
-                                                                            //                                 style: TextStyle(
-                                                                            //                                   fontSize: 18,
-                                                                            //                                   fontWeight: FontWeight.w500,
-                                                                            //                                 ),
-                                                                            //                               ),
-                                                                            //                               const SizedBox(
-                                                                            //                                 height: 10,
-                                                                            //                               ),
-                                                                            //                               Text(
-                                                                            //                                 object1.data!.totalCount.toString(),
-                                                                            //                                 style: TextStyle(
-                                                                            //                                   fontSize: 18,
-                                                                            //                                   fontWeight: FontWeight.w500,
-                                                                            //                                   color: Colors.green.shade900,
-                                                                            //                                 ),
-                                                                            //                               ),
-                                                                            //                               object1.data!.staffLeads!.isNotEmpty
-                                                                            //                                   ? const Padding(
-                                                                            //                                       padding: EdgeInsets.only(
-                                                                            //                                         bottom: 20,
-                                                                            //                                       ),
-                                                                            //                                       child: Row(
-                                                                            //                                         children: [
-                                                                            //                                           Text(
-                                                                            //                                             'Staff Wise Lead',
-                                                                            //                                             style: TextStyle(
-                                                                            //                                               fontSize: 16,
-                                                                            //                                               fontWeight: FontWeight.w500,
-                                                                            //                                               color: Colors.black,
-                                                                            //                                             ),
-                                                                            //                                           ),
-                                                                            //                                         ],
-                                                                            //                                       ),
-                                                                            //                                     )
-                                                                            //                                   : const SizedBox(),
-                                                                            //                               object1.data!.staffLeads!.isNotEmpty
-                                                                            //                                   ? SizedBox(
-                                                                            //                                       height:
-                                                                            //                                           60 *
-                                                                            //                                           double.parse(
-                                                                            //                                             object1.data!.staffLeads!.length.toString(),
-                                                                            //                                           ),
-                                                                            //                                       // 70% height
-                                                                            //                                       child: MediaQuery.removePadding(
-                                                                            //                                         context: context,
-                                                                            //                                         removeTop: true,
-                                                                            //                                         child: ListView.builder(
-                                                                            //                                           shrinkWrap: true,
-                                                                            //                                           physics: const NeverScrollableScrollPhysics(),
-                                                                            //                                           itemCount: object1.data!.staffLeads!.length,
-                                                                            //                                           itemBuilder:
-                                                                            //                                               (
-                                                                            //                                                 context,
-                                                                            //                                                 i,
-                                                                            //                                               ) {
-                                                                            //                                                 return Column(
-                                                                            //                                                   children: [
-                                                                            //                                                     Padding(
-                                                                            //                                                       padding: const EdgeInsets.only(
-                                                                            //                                                         left: 15,
-                                                                            //                                                         right: 15,
-                                                                            //                                                       ),
-                                                                            //                                                       child: Row(
-                                                                            //                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            //                                                         children: [
-                                                                            //                                                           Text(
-                                                                            //                                                             object1.data!.staffLeads![i].staffName.toString(),
-                                                                            //                                                             style: const TextStyle(
-                                                                            //                                                               fontSize: 14,
-                                                                            //                                                               fontWeight: FontWeight.w500,
-                                                                            //                                                               color: Colors.black,
-                                                                            //                                                             ),
-                                                                            //                                                           ),
-                                                                            //                                                           Text(
-                                                                            //                                                             'Count : ${object1.data!.staffLeads![i].staffCount}',
-                                                                            //                                                             style: const TextStyle(
-                                                                            //                                                               fontSize: 14,
-                                                                            //                                                               fontWeight: FontWeight.w500,
-                                                                            //                                                               color: Colors.black,
-                                                                            //                                                             ),
-                                                                            //                                                           ),
-                                                                            //                                                         ],
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                     Padding(
-                                                                            //                                                       padding: const EdgeInsets.only(
-                                                                            //                                                         left: 15,
-                                                                            //                                                         right: 15,
-                                                                            //                                                         top: 5,
-                                                                            //                                                       ),
-                                                                            //                                                       child: InkWell(
-                                                                            //                                                         onTap: () {
-                                                                            //                                                           Navigator.push(
-                                                                            //                                                             context,
-                                                                            //                                                             MaterialPageRoute(
-                                                                            //                                                               builder:
-                                                                            //                                                                   (
-                                                                            //                                                                     context,
-                                                                            //                                                                   ) => ViewLeads(
-                                                                            //                                                                     widget.token,
-                                                                            //                                                                     leadDashboard!.data!.updateLead!,
-                                                                            //                                                                     leadDashboard!.data!.deleteLead!,
-                                                                            //                                                                     leadDashboard!.data!.cloudCall!,
-                                                                            //                                                                     pageName: 'Re-Assigned Leads',
-                                                                            //                                                                     fromDate: DateTime(
-                                                                            //                                                                       DateTime.now().year,
-                                                                            //                                                                       DateTime.now().month -
-                                                                            //                                                                           3,
-                                                                            //                                                                       DateTime.now().day,
-                                                                            //                                                                     ).toString(),
-                                                                            //                                                                     toDate: todate.toString(),
-                                                                            //                                                                     status: 'reassignedCount',
-                                                                            //                                                                     callResultId: '-5',
-                                                                            //                                                                     staff: object1.data!.staffLeads![i].staffId.toString(),
-                                                                            //                                                                   ),
-                                                                            //                                                             ),
-                                                                            //                                                           );
-                                                                            //                                                         },
-                                                                            //                                                         child: LinearPercentIndicator(
-                                                                            //                                                           width:
-                                                                            //                                                               MediaQuery.of(
-                                                                            //                                                                 context,
-                                                                            //                                                               ).size.width *
-                                                                            //                                                               0.82,
-                                                                            //                                                           animation: true,
-                                                                            //                                                           lineHeight: 15.0,
-                                                                            //                                                           animationDuration: 2500,
-                                                                            //                                                           percent: double.parse(
-                                                                            //                                                             object1.data!.staffLeads![i].staffPercentage.toString(),
-                                                                            //                                                           ),
-                                                                            //                                                           progressColor:
-                                                                            //                                                               object1.data!.staffLeads!.length >
-                                                                            //                                                                   _colors.length
-                                                                            //                                                               ? Colors.red
-                                                                            //                                                               : _colors[i],
-                                                                            //                                                         ),
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                     const SizedBox(
-                                                                            //                                                       height: 15,
-                                                                            //                                                     ),
-                                                                            //                                                   ],
-                                                                            //                                                 );
-                                                                            //                                               },
-                                                                            //                                         ),
-                                                                            //                                       ),
-                                                                            //                                     )
-                                                                            //                                   : const SizedBox(),
-                                                                            //                               object1.data!.categoryLeads!.isNotEmpty
-                                                                            //                                   ? const Padding(
-                                                                            //                                       padding: EdgeInsets.only(
-                                                                            //                                         bottom: 20,
-                                                                            //                                       ),
-                                                                            //                                       child: Row(
-                                                                            //                                         children: [
-                                                                            //                                           Text(
-                                                                            //                                             'Category Wise Lead',
-                                                                            //                                             style: TextStyle(
-                                                                            //                                               fontSize: 16,
-                                                                            //                                               fontWeight: FontWeight.w500,
-                                                                            //                                               color: Colors.black,
-                                                                            //                                             ),
-                                                                            //                                           ),
-                                                                            //                                         ],
-                                                                            //                                       ),
-                                                                            //                                     )
-                                                                            //                                   : const SizedBox(),
-                                                                            //                               object1.data!.categoryLeads!.isNotEmpty
-                                                                            //                                   ? SizedBox(
-                                                                            //                                       height:
-                                                                            //                                           60 *
-                                                                            //                                           double.parse(
-                                                                            //                                             object1.data!.categoryLeads!.length.toString(),
-                                                                            //                                           ),
-                                                                            //                                       // 70% height
-                                                                            //                                       child: MediaQuery.removePadding(
-                                                                            //                                         context: context,
-                                                                            //                                         removeTop: true,
-                                                                            //                                         child: ListView.builder(
-                                                                            //                                           shrinkWrap: true,
-                                                                            //                                           physics: const NeverScrollableScrollPhysics(),
-                                                                            //                                           itemCount: object1.data!.categoryLeads!.length,
-                                                                            //                                           itemBuilder:
-                                                                            //                                               (
-                                                                            //                                                 context,
-                                                                            //                                                 i,
-                                                                            //                                               ) {
-                                                                            //                                                 return Column(
-                                                                            //                                                   children: [
-                                                                            //                                                     Padding(
-                                                                            //                                                       padding: const EdgeInsets.only(
-                                                                            //                                                         left: 15,
-                                                                            //                                                         right: 15,
-                                                                            //                                                       ),
-                                                                            //                                                       child: Row(
-                                                                            //                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            //                                                         children: [
-                                                                            //                                                           Text(
-                                                                            //                                                             object1.data!.categoryLeads![i].categoryName.toString(),
-                                                                            //                                                             style: const TextStyle(
-                                                                            //                                                               fontSize: 14,
-                                                                            //                                                               fontWeight: FontWeight.w500,
-                                                                            //                                                               color: Colors.black,
-                                                                            //                                                             ),
-                                                                            //                                                           ),
-                                                                            //                                                           Text(
-                                                                            //                                                             'Count : ${object1.data!.categoryLeads![i].categoryCount}',
-                                                                            //                                                             style: const TextStyle(
-                                                                            //                                                               fontSize: 14,
-                                                                            //                                                               fontWeight: FontWeight.w500,
-                                                                            //                                                               color: Colors.black,
-                                                                            //                                                             ),
-                                                                            //                                                           ),
-                                                                            //                                                         ],
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                     Padding(
-                                                                            //                                                       padding: const EdgeInsets.only(
-                                                                            //                                                         left: 15,
-                                                                            //                                                         right: 15,
-                                                                            //                                                         top: 5,
-                                                                            //                                                       ),
-                                                                            //                                                       child: InkWell(
-                                                                            //                                                         onTap: () {
-                                                                            //                                                           Navigator.push(
-                                                                            //                                                             context,
-                                                                            //                                                             MaterialPageRoute(
-                                                                            //                                                               builder:
-                                                                            //                                                                   (
-                                                                            //                                                                     context,
-                                                                            //                                                                   ) => ViewLeads(
-                                                                            //                                                                     widget.token,
-                                                                            //                                                                     leadDashboard!.data!.updateLead!,
-                                                                            //                                                                     leadDashboard!.data!.deleteLead!,
-                                                                            //                                                                     leadDashboard!.data!.cloudCall!,
-                                                                            //                                                                     pageName: 'Re-assigned Leads',
-                                                                            //                                                                     fromDate: DateTime(
-                                                                            //                                                                       DateTime.now().year,
-                                                                            //                                                                       DateTime.now().month -
-                                                                            //                                                                           3,
-                                                                            //                                                                       DateTime.now().day,
-                                                                            //                                                                     ).toString(),
-                                                                            //                                                                     toDate: todate.toString(),
-                                                                            //                                                                     status: 'reassignedCount',
-                                                                            //                                                                     callResultId: '-5',
-                                                                            //                                                                     category: object1.data!.categoryLeads![i].categoryId.toString(),
-                                                                            //                                                                   ),
-                                                                            //                                                             ),
-                                                                            //                                                           );
-                                                                            //                                                         },
-                                                                            //                                                         child: LinearPercentIndicator(
-                                                                            //                                                           width:
-                                                                            //                                                               MediaQuery.of(
-                                                                            //                                                                 context,
-                                                                            //                                                               ).size.width *
-                                                                            //                                                               0.82,
-                                                                            //                                                           animation: true,
-                                                                            //                                                           lineHeight: 15.0,
-                                                                            //                                                           animationDuration: 2500,
-                                                                            //                                                           percent: double.parse(
-                                                                            //                                                             object1.data!.categoryLeads![i].categoryPercentage.toString(),
-                                                                            //                                                           ),
-                                                                            //                                                           progressColor:
-                                                                            //                                                               object1.data!.categoryLeads!.length >
-                                                                            //                                                                   _colors.length
-                                                                            //                                                               ? Colors.red
-                                                                            //                                                               : _colors[i],
-                                                                            //                                                         ),
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                     const SizedBox(
-                                                                            //                                                       height: 15,
-                                                                            //                                                     ),
-                                                                            //                                                   ],
-                                                                            //                                                 );
-                                                                            //                                               },
-                                                                            //                                         ),
-                                                                            //                                       ),
-                                                                            //                                     )
-                                                                            //                                   : const SizedBox(),
-                                                                            //                               object1.data!.missedLeads!.isNotEmpty
-                                                                            //                                   ? const Padding(
-                                                                            //                                       padding: EdgeInsets.only(
-                                                                            //                                         bottom: 20,
-                                                                            //                                       ),
-                                                                            //                                       child: Row(
-                                                                            //                                         children: [
-                                                                            //                                           Text(
-                                                                            //                                             'Missed Leads',
-                                                                            //                                             style: TextStyle(
-                                                                            //                                               fontSize: 16,
-                                                                            //                                               fontWeight: FontWeight.w500,
-                                                                            //                                               color: Colors.black,
-                                                                            //                                             ),
-                                                                            //                                           ),
-                                                                            //                                         ],
-                                                                            //                                       ),
-                                                                            //                                     )
-                                                                            //                                   : const SizedBox(),
-                                                                            //                               object1.data!.missedLeads!.isNotEmpty
-                                                                            //                                   ? SizedBox(
-                                                                            //                                       height:
-                                                                            //                                           60 *
-                                                                            //                                           double.parse(
-                                                                            //                                             object1.data!.missedLeads!.length.toString(),
-                                                                            //                                           ),
-                                                                            //                                       // 70% height
-                                                                            //                                       child: MediaQuery.removePadding(
-                                                                            //                                         context: context,
-                                                                            //                                         removeTop: true,
-                                                                            //                                         child: ListView.builder(
-                                                                            //                                           shrinkWrap: true,
-                                                                            //                                           physics: const NeverScrollableScrollPhysics(),
-                                                                            //                                           itemCount: object1.data!.missedLeads!.length,
-                                                                            //                                           itemBuilder:
-                                                                            //                                               (
-                                                                            //                                                 context,
-                                                                            //                                                 i,
-                                                                            //                                               ) {
-                                                                            //                                                 return Column(
-                                                                            //                                                   children: [
-                                                                            //                                                     Padding(
-                                                                            //                                                       padding: const EdgeInsets.only(
-                                                                            //                                                         left: 15,
-                                                                            //                                                         right: 15,
-                                                                            //                                                       ),
-                                                                            //                                                       child: Row(
-                                                                            //                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            //                                                         children: [
-                                                                            //                                                           Text(
-                                                                            //                                                             object1.data!.missedLeads![i].missedstaffName.toString(),
-                                                                            //                                                             style: const TextStyle(
-                                                                            //                                                               fontSize: 14,
-                                                                            //                                                               fontWeight: FontWeight.w500,
-                                                                            //                                                               color: Colors.black,
-                                                                            //                                                             ),
-                                                                            //                                                           ),
-                                                                            //                                                           Text(
-                                                                            //                                                             'Count : ${object1.data!.missedLeads![i].missedstaffCount}',
-                                                                            //                                                             style: const TextStyle(
-                                                                            //                                                               fontSize: 14,
-                                                                            //                                                               fontWeight: FontWeight.w500,
-                                                                            //                                                               color: Colors.black,
-                                                                            //                                                             ),
-                                                                            //                                                           ),
-                                                                            //                                                         ],
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                     Padding(
-                                                                            //                                                       padding: const EdgeInsets.only(
-                                                                            //                                                         left: 15,
-                                                                            //                                                         right: 15,
-                                                                            //                                                         top: 5,
-                                                                            //                                                       ),
-                                                                            //                                                       child: InkWell(
-                                                                            //                                                         onTap: () {
-                                                                            //                                                           Navigator.push(
-                                                                            //                                                             context,
-                                                                            //                                                             MaterialPageRoute(
-                                                                            //                                                               builder:
-                                                                            //                                                                   (
-                                                                            //                                                                     context,
-                                                                            //                                                                   ) => ViewLeads(
-                                                                            //                                                                     widget.token,
-                                                                            //                                                                     leadDashboard!.data!.updateLead!,
-                                                                            //                                                                     leadDashboard!.data!.deleteLead!,
-                                                                            //                                                                     leadDashboard!.data!.cloudCall!,
-                                                                            //                                                                     pageName: 'Re-assigned Leads',
-                                                                            //                                                                     fromDate: DateTime(
-                                                                            //                                                                       DateTime.now().year,
-                                                                            //                                                                       DateTime.now().month -
-                                                                            //                                                                           3,
-                                                                            //                                                                       DateTime.now().day,
-                                                                            //                                                                     ).toString(),
-                                                                            //                                                                     toDate: DateTime(
-                                                                            //                                                                       DateTime.now().year,
-                                                                            //                                                                       DateTime.now().month,
-                                                                            //                                                                       DateTime.now().day -
-                                                                            //                                                                           1,
-                                                                            //                                                                     ).toString(),
-                                                                            //                                                                     status: 'reassignedCount',
-                                                                            //                                                                     callResultId: '-5',
-                                                                            //                                                                     staff: object1.data!.missedLeads![i].missedstaffId.toString(),
-                                                                            //                                                                   ),
-                                                                            //                                                             ),
-                                                                            //                                                           );
-                                                                            //                                                         },
-                                                                            //                                                         child: LinearPercentIndicator(
-                                                                            //                                                           width:
-                                                                            //                                                               MediaQuery.of(
-                                                                            //                                                                 context,
-                                                                            //                                                               ).size.width *
-                                                                            //                                                               0.82,
-                                                                            //                                                           animation: true,
-                                                                            //                                                           lineHeight: 15.0,
-                                                                            //                                                           animationDuration: 2500,
-                                                                            //                                                           percent: double.parse(
-                                                                            //                                                             object1.data!.missedLeads![i].missedstaffPercentage.toString(),
-                                                                            //                                                           ),
-                                                                            //                                                           progressColor:
-                                                                            //                                                               object1.data!.missedLeads!.length >
-                                                                            //                                                                   _colors.length
-                                                                            //                                                               ? Colors.red
-                                                                            //                                                               : _colors[i],
-                                                                            //                                                         ),
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                     const SizedBox(
-                                                                            //                                                       height: 15,
-                                                                            //                                                     ),
-                                                                            //                                                   ],
-                                                                            //                                                 );
-                                                                            //                                               },
-                                                                            //                                         ),
-                                                                            //                                       ),
-                                                                            //                                     )
-                                                                            //                                   : const SizedBox(),
-                                                                            //                             ],
-                                                                            //                           ),
-                                                                            //                         ),
-                                                                            //                       ),
-                                                                            //                     ),
-                                                                            //                   ),
-                                                                            //                 );
-                                                                            //               },
-                                                                            //           transitionBuilder:
-                                                                            //               (
-                                                                            //                 _,
-                                                                            //                 animation1,
-                                                                            //                 __,
-                                                                            //                 child,
-                                                                            //               ) {
-                                                                            //                 return SlideTransition(
-                                                                            //                   position:
-                                                                            //                       Tween(
-                                                                            //                         begin: const Offset(
-                                                                            //                           0,
-                                                                            //                           1,
-                                                                            //                         ),
-                                                                            //                         end: const Offset(
-                                                                            //                           0,
-                                                                            //                           0,
-                                                                            //                         ),
-                                                                            //                       ).animate(
-                                                                            //                         animation1,
-                                                                            //                       ),
-                                                                            //                   child: child,
-                                                                            //                 );
-                                                                            //               },
-                                                                            //         );
-                                                                            //       }
-                                                                            //     }
-                                                                            //   },
-                                                                            //   child: Container(
-                                                                            //     width: 30,
-                                                                            //     height: 30,
-                                                                            //     decoration: BoxDecoration(
-                                                                            //       boxShadow: [
-                                                                            //         BoxShadow(
-                                                                            //           color: Colors.grey.shade500,
-                                                                            //           offset: const Offset(
-                                                                            //             0,
-                                                                            //             2.0,
-                                                                            //           ),
-                                                                            //         ),
-                                                                            //       ],
-                                                                            //       color: Colors.white,
-                                                                            //       borderRadius: BorderRadius.circular(
-                                                                            //         5,
-                                                                            //       ),
-                                                                            //     ),
-                                                                            //     child: Padding(
-                                                                            //       padding: const EdgeInsets.all(
-                                                                            //         4,
-                                                                            //       ),
-                                                                            //       child: Center(
-                                                                            //         child: Image.asset(
-                                                                            //           "assets/icons/lineSegment.png",
-                                                                            //         ),
-                                                                            //       ),
-                                                                            //     ),
-                                                                            //   ),
-                                                                            // ),
-                                                                          
+                                                                            InkWell(
+                                                                              onTap: () async {
+                                                                                Common.showProgressDialog(
+                                                                                  context,
+                                                                                  "Loading..",
+                                                                                );
+                                                                                LeadProgressbarModel
+                                                                                object1 = await HttpService.leadProgressbar(
+                                                                                  widget.token,
+                                                                                  fromdate,
+                                                                                  todate,
+                                                                                  '2',
+                                                                                );
+                                                                                if (object1.status ==
+                                                                                    true) {
+                                                                                  if (context.mounted) {
+                                                                                    Navigator.pop(
+                                                                                      context,
+                                                                                    );
+                                                                                    showGeneralDialog(
+                                                                                      barrierLabel: "showGeneralDialog",
+                                                                                      barrierDismissible: true,
+                                                                                      barrierColor: Colors.black.withOpacity(
+                                                                                        0.6,
+                                                                                      ),
+                                                                                      transitionDuration: const Duration(
+                                                                                        milliseconds: 400,
+                                                                                      ),
+                                                                                      context: context,
+                                                                                      pageBuilder:
+                                                                                          (
+                                                                                            context,
+                                                                                            _,
+                                                                                            __,
+                                                                                          ) {
+                                                                                            return Align(
+                                                                                              alignment: Alignment.bottomCenter,
+                                                                                              child: IntrinsicHeight(
+                                                                                                child: SingleChildScrollView(
+                                                                                                  child: Container(
+                                                                                                    width: double.maxFinite,
+                                                                                                    clipBehavior: Clip.antiAlias,
+                                                                                                    padding: const EdgeInsets.all(
+                                                                                                      16,
+                                                                                                    ),
+                                                                                                    decoration: const BoxDecoration(
+                                                                                                      color: Colors.white,
+                                                                                                      borderRadius: BorderRadius.only(
+                                                                                                        topLeft: Radius.circular(
+                                                                                                          16,
+                                                                                                        ),
+                                                                                                        topRight: Radius.circular(
+                                                                                                          16,
+                                                                                                        ),
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                    child: Material(
+                                                                                                      child: Column(
+                                                                                                        children: [
+                                                                                                          const SizedBox(
+                                                                                                            height: 15,
+                                                                                                          ),
+                                                                                                          Row(
+                                                                                                            mainAxisAlignment: MainAxisAlignment.end,
+                                                                                                            children: [
+                                                                                                              InkWell(
+                                                                                                                onTap: () => {
+                                                                                                                  Navigator.pop(
+                                                                                                                    context,
+                                                                                                                  ),
+                                                                                                                },
+                                                                                                                child: Container(
+                                                                                                                  width: 25,
+                                                                                                                  height: 25,
+                                                                                                                  decoration: BoxDecoration(
+                                                                                                                    shape: BoxShape.circle,
+                                                                                                                    color: Colors.white,
+                                                                                                                    border: Border.all(),
+                                                                                                                  ),
+                                                                                                                  child: const Center(
+                                                                                                                    child: Icon(
+                                                                                                                      Icons.close,
+                                                                                                                      color: Colors.black,
+                                                                                                                      size: 15,
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            ],
+                                                                                                          ),
+                                                                                                          const Text(
+                                                                                                            'Active Leads',
+                                                                                                            style: TextStyle(
+                                                                                                              fontSize: 18,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                          const SizedBox(
+                                                                                                            height: 10,
+                                                                                                          ),
+                                                                                                          Text(
+                                                                                                            object1.data!.totalCount.toString(),
+                                                                                                            style: TextStyle(
+                                                                                                              fontSize: 18,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                              color: Colors.green.shade900,
+                                                                                                            ),
+                                                                                                          ),
+                                                                                                          object1.data!.staffLeads!.isNotEmpty
+                                                                                                              ? const Padding(
+                                                                                                                  padding: EdgeInsets.only(
+                                                                                                                    bottom: 20,
+                                                                                                                  ),
+                                                                                                                  child: Row(
+                                                                                                                    children: [
+                                                                                                                      Text(
+                                                                                                                        'Staff Wise Lead',
+                                                                                                                        style: TextStyle(
+                                                                                                                          fontSize: 16,
+                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                          color: Colors.black,
+                                                                                                                        ),
+                                                                                                                      ),
+                                                                                                                    ],
+                                                                                                                  ),
+                                                                                                                )
+                                                                                                              : const SizedBox(),
+                                                                                                          object1.data!.staffLeads!.isNotEmpty
+                                                                                                              ? SizedBox(
+                                                                                                                  height:
+                                                                                                                      60 *
+                                                                                                                      double.parse(
+                                                                                                                        object1.data!.staffLeads!.length.toString(),
+                                                                                                                      ),
+                                                                                                                  // 70% height
+                                                                                                                  child: MediaQuery.removePadding(
+                                                                                                                    context: context,
+                                                                                                                    removeTop: true,
+                                                                                                                    child: ListView.builder(
+                                                                                                                      shrinkWrap: true,
+                                                                                                                      physics: const NeverScrollableScrollPhysics(),
+                                                                                                                      itemCount: object1.data!.staffLeads!.length,
+                                                                                                                      itemBuilder:
+                                                                                                                          (
+                                                                                                                            context,
+                                                                                                                            i,
+                                                                                                                          ) {
+                                                                                                                            return Column(
+                                                                                                                              children: [
+                                                                                                                                Padding(
+                                                                                                                                  padding: const EdgeInsets.only(
+                                                                                                                                    left: 15,
+                                                                                                                                    right: 15,
+                                                                                                                                  ),
+                                                                                                                                  child: Row(
+                                                                                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                                                                    children: [
+                                                                                                                                      Text(
+                                                                                                                                        object1.data!.staffLeads![i].staffName.toString(),
+                                                                                                                                        style: const TextStyle(
+                                                                                                                                          fontSize: 14,
+                                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                                          color: Colors.black,
+                                                                                                                                        ),
+                                                                                                                                      ),
+                                                                                                                                      Text(
+                                                                                                                                        'Count : ${object1.data!.staffLeads![i].staffCount}',
+                                                                                                                                        style: const TextStyle(
+                                                                                                                                          fontSize: 14,
+                                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                                          color: Colors.black,
+                                                                                                                                        ),
+                                                                                                                                      ),
+                                                                                                                                    ],
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                                Padding(
+                                                                                                                                  padding: const EdgeInsets.only(
+                                                                                                                                    left: 15,
+                                                                                                                                    right: 15,
+                                                                                                                                    top: 5,
+                                                                                                                                  ),
+                                                                                                                                  child: InkWell(
+                                                                                                                                    onTap: () {
+                                                                                                                                      Navigator.push(
+                                                                                                                                        context,
+                                                                                                                                        MaterialPageRoute(
+                                                                                                                                          builder:
+                                                                                                                                              (
+                                                                                                                                                context,
+                                                                                                                                              ) => ViewLeads(
+                                                                                                                                                widget.token,
+                                                                                                                                                leadDashboard!.data!.updateLead!,
+                                                                                                                                                leadDashboard!.data!.deleteLead!,
+                                                                                                                                                leadDashboard!.data!.cloudCall!,
+                                                                                                                                                pageName: 'Active Leads',
+                                                                                                                                                fromDate: DateTime(
+                                                                                                                                                  DateTime.now().year,
+                                                                                                                                                  DateTime.now().month -
+                                                                                                                                                      3,
+                                                                                                                                                  DateTime.now().day,
+                                                                                                                                                ).toString(),
+                                                                                                                                                toDate: todate.toString(),
+                                                                                                                                                status: '2',
+                                                                                                                                                staff: object1.data!.staffLeads![i].staffId.toString(),
+                                                                                                                                              ),
+                                                                                                                                        ),
+                                                                                                                                      );
+                                                                                                                                    },
+                                                                                                                                    child: LinearPercentIndicator(
+                                                                                                                                      width:
+                                                                                                                                          MediaQuery.of(
+                                                                                                                                            context,
+                                                                                                                                          ).size.width *
+                                                                                                                                          0.82,
+                                                                                                                                      animation: true,
+                                                                                                                                      lineHeight: 15.0,
+                                                                                                                                      animationDuration: 2500,
+                                                                                                                                      percent: double.parse(
+                                                                                                                                        object1.data!.staffLeads![i].staffPercentage.toString(),
+                                                                                                                                      ),
+                                                                                                                                      progressColor:
+                                                                                                                                          object1.data!.staffLeads!.length >
+                                                                                                                                              _colors.length
+                                                                                                                                          ? Colors.red
+                                                                                                                                          : _colors[i],
+                                                                                                                                    ),
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                                const SizedBox(
+                                                                                                                                  height: 15,
+                                                                                                                                ),
+                                                                                                                              ],
+                                                                                                                            );
+                                                                                                                          },
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                )
+                                                                                                              : const SizedBox(),
+                                                                                                          object1.data!.categoryLeads!.isNotEmpty
+                                                                                                              ? const Padding(
+                                                                                                                  padding: EdgeInsets.only(
+                                                                                                                    bottom: 20,
+                                                                                                                  ),
+                                                                                                                  child: Row(
+                                                                                                                    children: [
+                                                                                                                      Text(
+                                                                                                                        'Category Wise Lead',
+                                                                                                                        style: TextStyle(
+                                                                                                                          fontSize: 16,
+                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                          color: Colors.black,
+                                                                                                                        ),
+                                                                                                                      ),
+                                                                                                                    ],
+                                                                                                                  ),
+                                                                                                                )
+                                                                                                              : const SizedBox(),
+                                                                                                          object1.data!.categoryLeads!.isNotEmpty
+                                                                                                              ? SizedBox(
+                                                                                                                  height:
+                                                                                                                      60 *
+                                                                                                                      double.parse(
+                                                                                                                        object1.data!.categoryLeads!.length.toString(),
+                                                                                                                      ),
+                                                                                                                  // 70% height
+                                                                                                                  child: MediaQuery.removePadding(
+                                                                                                                    context: context,
+                                                                                                                    removeTop: true,
+                                                                                                                    child: ListView.builder(
+                                                                                                                      shrinkWrap: true,
+                                                                                                                      physics: const NeverScrollableScrollPhysics(),
+                                                                                                                      itemCount: object1.data!.categoryLeads!.length,
+                                                                                                                      itemBuilder:
+                                                                                                                          (
+                                                                                                                            context,
+                                                                                                                            i,
+                                                                                                                          ) {
+                                                                                                                            return Column(
+                                                                                                                              children: [
+                                                                                                                                Padding(
+                                                                                                                                  padding: const EdgeInsets.only(
+                                                                                                                                    left: 15,
+                                                                                                                                    right: 15,
+                                                                                                                                  ),
+                                                                                                                                  child: Row(
+                                                                                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                                                                    children: [
+                                                                                                                                      Text(
+                                                                                                                                        object1.data!.categoryLeads![i].categoryName.toString(),
+                                                                                                                                        style: const TextStyle(
+                                                                                                                                          fontSize: 14,
+                                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                                          color: Colors.black,
+                                                                                                                                        ),
+                                                                                                                                      ),
+                                                                                                                                      Text(
+                                                                                                                                        'Count : ${object1.data!.categoryLeads![i].categoryCount}',
+                                                                                                                                        style: const TextStyle(
+                                                                                                                                          fontSize: 14,
+                                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                                          color: Colors.black,
+                                                                                                                                        ),
+                                                                                                                                      ),
+                                                                                                                                    ],
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                                Padding(
+                                                                                                                                  padding: const EdgeInsets.only(
+                                                                                                                                    left: 15,
+                                                                                                                                    right: 15,
+                                                                                                                                    top: 5,
+                                                                                                                                  ),
+                                                                                                                                  child: InkWell(
+                                                                                                                                    onTap: () {
+                                                                                                                                      Navigator.push(
+                                                                                                                                        context,
+                                                                                                                                        MaterialPageRoute(
+                                                                                                                                          builder:
+                                                                                                                                              (
+                                                                                                                                                context,
+                                                                                                                                              ) => ViewLeads(
+                                                                                                                                                widget.token,
+                                                                                                                                                leadDashboard!.data!.updateLead!,
+                                                                                                                                                leadDashboard!.data!.deleteLead!,
+                                                                                                                                                leadDashboard!.data!.cloudCall!,
+                                                                                                                                                pageName: 'Active Leads',
+                                                                                                                                                fromDate: DateTime(
+                                                                                                                                                  DateTime.now().year,
+                                                                                                                                                  DateTime.now().month -
+                                                                                                                                                      3,
+                                                                                                                                                  DateTime.now().day,
+                                                                                                                                                ).toString(),
+                                                                                                                                                toDate: todate.toString(),
+                                                                                                                                                status: '2',
+                                                                                                                                                category: object1.data!.categoryLeads![i].categoryId.toString(),
+                                                                                                                                              ),
+                                                                                                                                        ),
+                                                                                                                                      );
+                                                                                                                                    },
+                                                                                                                                    child: LinearPercentIndicator(
+                                                                                                                                      width:
+                                                                                                                                          MediaQuery.of(
+                                                                                                                                            context,
+                                                                                                                                          ).size.width *
+                                                                                                                                          0.82,
+                                                                                                                                      animation: true,
+                                                                                                                                      lineHeight: 15.0,
+                                                                                                                                      animationDuration: 2500,
+                                                                                                                                      percent: double.parse(
+                                                                                                                                        object1.data!.categoryLeads![i].categoryPercentage.toString(),
+                                                                                                                                      ),
+                                                                                                                                      progressColor:
+                                                                                                                                          object1.data!.categoryLeads!.length >
+                                                                                                                                              _colors.length
+                                                                                                                                          ? Colors.red
+                                                                                                                                          : _colors[i],
+                                                                                                                                    ),
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                                const SizedBox(
+                                                                                                                                  height: 15,
+                                                                                                                                ),
+                                                                                                                              ],
+                                                                                                                            );
+                                                                                                                          },
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                )
+                                                                                                              : const SizedBox(),
+                                                                                                          object1.data!.missedLeads!.isNotEmpty
+                                                                                                              ? const Padding(
+                                                                                                                  padding: EdgeInsets.only(
+                                                                                                                    bottom: 20,
+                                                                                                                  ),
+                                                                                                                  child: Row(
+                                                                                                                    children: [
+                                                                                                                      Text(
+                                                                                                                        'Missed Leads',
+                                                                                                                        style: TextStyle(
+                                                                                                                          fontSize: 16,
+                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                          color: Colors.black,
+                                                                                                                        ),
+                                                                                                                      ),
+                                                                                                                    ],
+                                                                                                                  ),
+                                                                                                                )
+                                                                                                              : const SizedBox(),
+                                                                                                          object1.data!.missedLeads!.isNotEmpty
+                                                                                                              ? SizedBox(
+                                                                                                                  height:
+                                                                                                                      60 *
+                                                                                                                      double.parse(
+                                                                                                                        object1.data!.missedLeads!.length.toString(),
+                                                                                                                      ),
+                                                                                                                  // 70% height
+                                                                                                                  child: MediaQuery.removePadding(
+                                                                                                                    context: context,
+                                                                                                                    removeTop: true,
+                                                                                                                    child: ListView.builder(
+                                                                                                                      shrinkWrap: true,
+                                                                                                                      physics: const NeverScrollableScrollPhysics(),
+                                                                                                                      itemCount: object1.data!.missedLeads!.length,
+                                                                                                                      itemBuilder:
+                                                                                                                          (
+                                                                                                                            context,
+                                                                                                                            i,
+                                                                                                                          ) {
+                                                                                                                            return Column(
+                                                                                                                              children: [
+                                                                                                                                Padding(
+                                                                                                                                  padding: const EdgeInsets.only(
+                                                                                                                                    left: 15,
+                                                                                                                                    right: 15,
+                                                                                                                                  ),
+                                                                                                                                  child: Row(
+                                                                                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                                                                    children: [
+                                                                                                                                      Text(
+                                                                                                                                        object1.data!.missedLeads![i].missedstaffName.toString(),
+                                                                                                                                        style: const TextStyle(
+                                                                                                                                          fontSize: 14,
+                                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                                          color: Colors.black,
+                                                                                                                                        ),
+                                                                                                                                      ),
+                                                                                                                                      Text(
+                                                                                                                                        'Count : ${object1.data!.missedLeads![i].missedstaffCount}',
+                                                                                                                                        style: const TextStyle(
+                                                                                                                                          fontSize: 14,
+                                                                                                                                          fontWeight: FontWeight.w500,
+                                                                                                                                          color: Colors.black,
+                                                                                                                                        ),
+                                                                                                                                      ),
+                                                                                                                                    ],
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                                Padding(
+                                                                                                                                  padding: const EdgeInsets.only(
+                                                                                                                                    left: 15,
+                                                                                                                                    right: 15,
+                                                                                                                                    top: 5,
+                                                                                                                                  ),
+                                                                                                                                  child: InkWell(
+                                                                                                                                    onTap: () {
+                                                                                                                                      Navigator.push(
+                                                                                                                                        context,
+                                                                                                                                        MaterialPageRoute(
+                                                                                                                                          builder:
+                                                                                                                                              (
+                                                                                                                                                context,
+                                                                                                                                              ) => ViewLeads(
+                                                                                                                                                widget.token,
+                                                                                                                                                leadDashboard!.data!.updateLead!,
+                                                                                                                                                leadDashboard!.data!.deleteLead!,
+                                                                                                                                                leadDashboard!.data!.cloudCall!,
+                                                                                                                                                pageName: 'Active Leads',
+                                                                                                                                                fromDate: DateTime(
+                                                                                                                                                  DateTime.now().year,
+                                                                                                                                                  DateTime.now().month -
+                                                                                                                                                      3,
+                                                                                                                                                  DateTime.now().day,
+                                                                                                                                                ).toString(),
+                                                                                                                                                toDate: DateTime(
+                                                                                                                                                  DateTime.now().year,
+                                                                                                                                                  DateTime.now().month,
+                                                                                                                                                  DateTime.now().day -
+                                                                                                                                                      1,
+                                                                                                                                                ).toString(),
+                                                                                                                                                status: '2',
+                                                                                                                                                staff: object1.data!.missedLeads![i].missedstaffId.toString(),
+                                                                                                                                              ),
+                                                                                                                                        ),
+                                                                                                                                      );
+                                                                                                                                    },
+                                                                                                                                    child: LinearPercentIndicator(
+                                                                                                                                      width:
+                                                                                                                                          MediaQuery.of(
+                                                                                                                                            context,
+                                                                                                                                          ).size.width *
+                                                                                                                                          0.82,
+                                                                                                                                      animation: true,
+                                                                                                                                      lineHeight: 15.0,
+                                                                                                                                      animationDuration: 2500,
+                                                                                                                                      percent: double.parse(
+                                                                                                                                        object1.data!.missedLeads![i].missedstaffPercentage.toString(),
+                                                                                                                                      ),
+                                                                                                                                      progressColor:
+                                                                                                                                          object1.data!.missedLeads!.length >
+                                                                                                                                              _colors.length
+                                                                                                                                          ? Colors.red
+                                                                                                                                          : _colors[i],
+                                                                                                                                    ),
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                                const SizedBox(
+                                                                                                                                  height: 15,
+                                                                                                                                ),
+                                                                                                                              ],
+                                                                                                                            );
+                                                                                                                          },
+                                                                                                                    ),
+                                                                                                                  ),
+                                                                                                                )
+                                                                                                              : const SizedBox(),
+                                                                                                        ],
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                            );
+                                                                                          },
+                                                                                      transitionBuilder:
+                                                                                          (
+                                                                                            _,
+                                                                                            animation1,
+                                                                                            __,
+                                                                                            child,
+                                                                                          ) {
+                                                                                            return SlideTransition(
+                                                                                              position:
+                                                                                                  Tween(
+                                                                                                    begin: const Offset(
+                                                                                                      0,
+                                                                                                      1,
+                                                                                                    ),
+                                                                                                    end: const Offset(
+                                                                                                      0,
+                                                                                                      0,
+                                                                                                    ),
+                                                                                                  ).animate(
+                                                                                                    animation1,
+                                                                                                  ),
+                                                                                              child: child,
+                                                                                            );
+                                                                                          },
+                                                                                    );
+                                                                                  }
+                                                                                }
+                                                                              },
+                                                                              child: Container(
+                                                                                width: 30,
+                                                                                height: 30,
+                                                                                decoration: BoxDecoration(
+                                                                                  boxShadow: [
+                                                                                    BoxShadow(
+                                                                                      color: Colors.grey.shade500,
+                                                                                      offset: const Offset(
+                                                                                        0,
+                                                                                        2.0,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                  color: Colors.white,
+                                                                                  borderRadius: BorderRadius.circular(
+                                                                                    5,
+                                                                                  ),
+                                                                                ),
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(
+                                                                                    4,
+                                                                                  ),
+                                                                                  child: Center(
+                                                                                    child: Image.asset(
+                                                                                      "assets/icons/lineSegment.png",
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
                                                                           ],
                                                                         ),
                                                                       ),
@@ -3549,11 +3546,10 @@ class _DashboardState extends State<Dashboard> {
                                                                                   leadDashboard!.data!.updateLead!,
                                                                                   leadDashboard!.data!.deleteLead!,
                                                                                   leadDashboard!.data!.cloudCall!,
-                                                                                  pageName: 'Prospect',
+                                                                                  pageName: 'Closed Leads',
                                                                                   fromDate: fromdate.toString(),
                                                                                   toDate: todate.toString(),
-                                                                                  status: 'prospectTodayCount',
-                                                                                   callResultId: '6',
+                                                                                  status: '4',
                                                                                 ),
                                                                           ),
                                                                         )
@@ -3604,7 +3600,7 @@ class _DashboardState extends State<Dashboard> {
                                                                               MainAxisAlignment.spaceBetween,
                                                                           children: [
                                                                             const Text(
-                                                                              "Prospect",
+                                                                              "Closed Leads",
                                                                               style: TextStyle(
                                                                                 fontWeight: FontWeight.w500,
                                                                                 fontSize: 13,
@@ -3623,24 +3619,24 @@ class _DashboardState extends State<Dashboard> {
                                                                                 ),
                                                                                 message: 'Closed leads can be filtered \n using a specific date range to \n determine the count of closed \n leads within that period',
                                                                                 key: _toolTipKey2,
-                                                                                // child: Container(
-                                                                                //   width: 20,
-                                                                                //   height: 20,
-                                                                                //   decoration: const BoxDecoration(
-                                                                                //     shape: BoxShape.circle,
-                                                                                //     color: Colors.white,
-                                                                                //   ),
-                                                                                //   child: Center(
-                                                                                //     child: Text(
-                                                                                //       '?',
-                                                                                //       style: TextStyle(
-                                                                                //         fontSize: 13,
-                                                                                //         fontWeight: FontWeight.bold,
-                                                                                //         color: Colors.grey.shade700,
-                                                                                //       ),
-                                                                                //     ),
-                                                                                //   ),
-                                                                                // ),
+                                                                                child: Container(
+                                                                                  width: 20,
+                                                                                  height: 20,
+                                                                                  decoration: const BoxDecoration(
+                                                                                    shape: BoxShape.circle,
+                                                                                    color: Colors.white,
+                                                                                  ),
+                                                                                  child: Center(
+                                                                                    child: Text(
+                                                                                      '?',
+                                                                                      style: TextStyle(
+                                                                                        fontSize: 13,
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        color: Colors.grey.shade700,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                           ],
@@ -3656,7 +3652,10 @@ class _DashboardState extends State<Dashboard> {
                                                                               10,
                                                                         ),
                                                                         child: Text(
-                                                                          "${leadDashboard?.data?.prospectTodayCount ?? 0}/${leadDashboard?.data?.prospectTodayCalledCount ?? 0}",
+                                                                          leadDashboard!
+                                                                              .data!
+                                                                              .closedLeads
+                                                                              .toString(),
                                                                           style: const TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.bold,
@@ -3687,431 +3686,428 @@ class _DashboardState extends State<Dashboard> {
                                                                                 color: Colors.black,
                                                                               ),
                                                                             ),
-                                                                            // InkWell(
-                                                                            //   onTap: () async {
-                                                                            //     Common.showProgressDialog(
-                                                                            //       context,
-                                                                            //       "Loading..",
-                                                                            //     );
-                                                                            //     LeadProgressbarModel
-                                                                            //     object1 = await HttpService.leadProgressbar(
-                                                                            //       widget.token,
-                                                                            //       fromdate,
-                                                                            //       todate,
-                                                                            //       'fromCount',
-                                                                            //     );
-                                                                            //     if (object1.status ==
-                                                                            //         true) {
-                                                                            //       if (context.mounted) {
-                                                                            //         Navigator.pop(
-                                                                            //           context,
-                                                                            //         );
-                                                                            //         showGeneralDialog(
-                                                                            //           barrierLabel: "showGeneralDialog",
-                                                                            //           barrierDismissible: true,
-                                                                            //           barrierColor: Colors.black.withOpacity(
-                                                                            //             0.6,
-                                                                            //           ),
-                                                                            //           transitionDuration: const Duration(
-                                                                            //             milliseconds: 400,
-                                                                            //           ),
-                                                                            //           context: context,
-                                                                            //           pageBuilder:
-                                                                            //               (
-                                                                            //                 context,
-                                                                            //                 _,
-                                                                            //                 __,
-                                                                            //               ) {
-                                                                            //                 return Align(
-                                                                            //                   alignment: Alignment.bottomCenter,
-                                                                            //                   child: IntrinsicHeight(
-                                                                            //                     child: Container(
-                                                                            //                       width: double.maxFinite,
-                                                                            //                       clipBehavior: Clip.antiAlias,
-                                                                            //                       padding: const EdgeInsets.all(
-                                                                            //                         16,
-                                                                            //                       ),
-                                                                            //                       decoration: const BoxDecoration(
-                                                                            //                         color: Colors.white,
-                                                                            //                         borderRadius: BorderRadius.only(
-                                                                            //                           topLeft: Radius.circular(
-                                                                            //                             16,
-                                                                            //                           ),
-                                                                            //                           topRight: Radius.circular(
-                                                                            //                             16,
-                                                                            //                           ),
-                                                                            //                         ),
-                                                                            //                       ),
-                                                                            //                       child: Material(
-                                                                            //                         child: Column(
-                                                                            //                           children: [
-                                                                            //                             const SizedBox(
-                                                                            //                               height: 15,
-                                                                            //                             ),
-                                                                            //                             Row(
-                                                                            //                               mainAxisAlignment: MainAxisAlignment.end,
-                                                                            //                               children: [
-                                                                            //                                 InkWell(
-                                                                            //                                   onTap: () => {
-                                                                            //                                     Navigator.pop(
-                                                                            //                                       context,
-                                                                            //                                     ),
-                                                                            //                                   },
-                                                                            //                                   child: Container(
-                                                                            //                                     width: 25,
-                                                                            //                                     height: 25,
-                                                                            //                                     decoration: BoxDecoration(
-                                                                            //                                       shape: BoxShape.circle,
-                                                                            //                                       color: Colors.white,
-                                                                            //                                       border: Border.all(),
-                                                                            //                                     ),
-                                                                            //                                     child: const Center(
-                                                                            //                                       child: Icon(
-                                                                            //                                         Icons.close,
-                                                                            //                                         color: Colors.black,
-                                                                            //                                         size: 15,
-                                                                            //                                       ),
-                                                                            //                                     ),
-                                                                            //                                   ),
-                                                                            //                                 ),
-                                                                            //                               ],
-                                                                            //                             ),
-                                                                            //                             const Text(
-                                                                            //                               'Prospectus Leads',
-                                                                            //                               style: TextStyle(
-                                                                            //                                 fontSize: 18,
-                                                                            //                                 fontWeight: FontWeight.w500,
-                                                                            //                               ),
-                                                                            //                             ),
-                                                                            //                             const SizedBox(
-                                                                            //                               height: 10,
-                                                                            //                             ),
-                                                                            //                             Text(
-                                                                            //                               object1.data!.totalCount.toString(),
-                                                                            //                               style: TextStyle(
-                                                                            //                                 fontSize: 18,
-                                                                            //                                 fontWeight: FontWeight.w500,
-                                                                            //                                 color: Colors.green.shade900,
-                                                                            //                               ),
-                                                                            //                             ),
-                                                                            //                             object1.data!.staffLeads!.isNotEmpty
-                                                                            //                                 ? const Padding(
-                                                                            //                                     padding: EdgeInsets.only(
-                                                                            //                                       bottom: 20,
-                                                                            //                                     ),
-                                                                            //                                     child: Row(
-                                                                            //                                       children: [
-                                                                            //                                         Text(
-                                                                            //                                           'Staff Wise Lead',
-                                                                            //                                           style: TextStyle(
-                                                                            //                                             fontSize: 16,
-                                                                            //                                             fontWeight: FontWeight.w500,
-                                                                            //                                             color: Colors.black,
-                                                                            //                                           ),
-                                                                            //                                         ),
-                                                                            //                                       ],
-                                                                            //                                     ),
-                                                                            //                                   )
-                                                                            //                                 : const SizedBox(),
-                                                                            //                             object1.data!.staffLeads!.isNotEmpty
-                                                                            //                                 ? SizedBox(
-                                                                            //                                     height:
-                                                                            //                                         60 *
-                                                                            //                                         double.parse(
-                                                                            //                                           object1.data!.staffLeads!.length.toString(),
-                                                                            //                                         ),
-                                                                            //                                     // 70% height
-                                                                            //                                     child: MediaQuery.removePadding(
-                                                                            //                                       context: context,
-                                                                            //                                       removeTop: true,
-                                                                            //                                       child: ListView.builder(
-                                                                            //                                         shrinkWrap: true,
-                                                                            //                                         itemCount: object1.data!.staffLeads!.length,
-                                                                            //                                         itemBuilder:
-                                                                            //                                             (
-                                                                            //                                               context,
-                                                                            //                                               i,
-                                                                            //                                             ) {
-                                                                            //                                               return Column(
-                                                                            //                                                 children: [
-                                                                            //                                                   Padding(
-                                                                            //                                                     padding: const EdgeInsets.only(
-                                                                            //                                                       left: 15,
-                                                                            //                                                       right: 15,
-                                                                            //                                                     ),
-                                                                            //                                                     child: Row(
-                                                                            //                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            //                                                       children: [
-                                                                            //                                                         Text(
-                                                                            //                                                           object1.data!.staffLeads![i].staffName.toString(),
-                                                                            //                                                           style: const TextStyle(
-                                                                            //                                                             fontSize: 14,
-                                                                            //                                                             fontWeight: FontWeight.w500,
-                                                                            //                                                             color: Colors.black,
-                                                                            //                                                           ),
-                                                                            //                                                         ),
-                                                                            //                                                         Text(
-                                                                            //                                                           'Count : ${object1.data!.staffLeads![i].staffCount}',
-                                                                            //                                                           style: const TextStyle(
-                                                                            //                                                             fontSize: 14,
-                                                                            //                                                             fontWeight: FontWeight.w500,
-                                                                            //                                                             color: Colors.black,
-                                                                            //                                                           ),
-                                                                            //                                                         ),
-                                                                            //                                                       ],
-                                                                            //                                                     ),
-                                                                            //                                                   ),
-                                                                            //                                                   Padding(
-                                                                            //                                                     padding: const EdgeInsets.only(
-                                                                            //                                                       left: 15,
-                                                                            //                                                       right: 15,
-                                                                            //                                                       top: 5,
-                                                                            //                                                     ),
-                                                                            //                                                     child: InkWell(
-                                                                            //                                                       onTap: () {
-                                                                            //                                                         Navigator.push(
-                                                                            //                                                           context,
-                                                                            //                                                           MaterialPageRoute(
-                                                                            //                                                             builder:
-                                                                            //                                                                 (
-                                                                            //                                                                   context,
-                                                                            //                                                                 ) => ViewLeads(
-                                                                            //                                                                   widget.token,
-                                                                            //                                                                   leadDashboard!.data!.updateLead!,
-                                                                            //                                                                   leadDashboard!.data!.deleteLead!,
-                                                                            //                                                                   leadDashboard!.data!.cloudCall!,
-                                                                            //                                                                   pageName: 'Prospectus',
-                                                                            //                                                                   fromDate: fromdate.toString(),
-                                                                            //                                                                   toDate: todate.toString(),
-                                                                            //                                                                   status: 'prospectTodayCount',
-                                                                            //        callResultId: '6',
-                                                                            //                                                                   staff: object1.data!.staffLeads![i].staffId.toString(),
-                                                                            //                                                                 ),
-                                                                            //                                                           ),
-                                                                            //                                                         );
-                                                                            //                                                       },
-                                                                            //                                                       child: LinearPercentIndicator(
-                                                                            //                                                         width:
-                                                                            //                                                             MediaQuery.of(
-                                                                            //                                                               context,
-                                                                            //                                                             ).size.width *
-                                                                            //                                                             0.82,
-                                                                            //                                                         animation: true,
-                                                                            //                                                         lineHeight: 15.0,
-                                                                            //                                                         animationDuration: 2500,
-                                                                            //                                                         percent: double.parse(
-                                                                            //                                                           object1.data!.staffLeads![i].staffPercentage.toString(),
-                                                                            //                                                         ),
-                                                                            //                                                         progressColor:
-                                                                            //                                                             object1.data!.staffLeads!.length >
-                                                                            //                                                                 _colors.length
-                                                                            //                                                             ? Colors.red
-                                                                            //                                                             : _colors[i],
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                   ),
-                                                                            //                                                   const SizedBox(
-                                                                            //                                                     height: 15,
-                                                                            //                                                   ),
-                                                                            //                                                 ],
-                                                                            //                                               );
-                                                                            //                                             },
-                                                                            //                                       ),
-                                                                            //                                     ),
-                                                                            //                                   )
-                                                                            //                                 : const SizedBox(),
-                                                                            //                             object1.data!.categoryLeads!.isNotEmpty
-                                                                            //                                 ? const Padding(
-                                                                            //                                     padding: EdgeInsets.only(
-                                                                            //                                       bottom: 20,
-                                                                            //                                     ),
-                                                                            //                                     child: Row(
-                                                                            //                                       children: [
-                                                                            //                                         Text(
-                                                                            //                                           'Category Wise Lead',
-                                                                            //                                           style: TextStyle(
-                                                                            //                                             fontSize: 16,
-                                                                            //                                             fontWeight: FontWeight.w500,
-                                                                            //                                             color: Colors.black,
-                                                                            //                                           ),
-                                                                            //                                         ),
-                                                                            //                                       ],
-                                                                            //                                     ),
-                                                                            //                                   )
-                                                                            //                                 : const SizedBox(),
-                                                                            //                             object1.data!.categoryLeads!.isNotEmpty
-                                                                            //                                 ? SizedBox(
-                                                                            //                                     height:
-                                                                            //                                         60 *
-                                                                            //                                         double.parse(
-                                                                            //                                           object1.data!.categoryLeads!.length.toString(),
-                                                                            //                                         ),
-                                                                            //                                     // 70% height
-                                                                            //                                     child: MediaQuery.removePadding(
-                                                                            //                                       context: context,
-                                                                            //                                       removeTop: true,
-                                                                            //                                       child: ListView.builder(
-                                                                            //                                         shrinkWrap: true,
-                                                                            //                                         itemCount: object1.data!.categoryLeads!.length,
-                                                                            //                                         itemBuilder:
-                                                                            //                                             (
-                                                                            //                                               context,
-                                                                            //                                               i,
-                                                                            //                                             ) {
-                                                                            //                                               return Column(
-                                                                            //                                                 children: [
-                                                                            //                                                   Padding(
-                                                                            //                                                     padding: const EdgeInsets.only(
-                                                                            //                                                       left: 15,
-                                                                            //                                                       right: 15,
-                                                                            //                                                     ),
-                                                                            //                                                     child: Row(
-                                                                            //                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            //                                                       children: [
-                                                                            //                                                         Text(
-                                                                            //                                                           object1.data!.categoryLeads![i].categoryName.toString(),
-                                                                            //                                                           style: const TextStyle(
-                                                                            //                                                             fontSize: 14,
-                                                                            //                                                             fontWeight: FontWeight.w500,
-                                                                            //                                                             color: Colors.black,
-                                                                            //                                                           ),
-                                                                            //                                                         ),
-                                                                            //                                                         Text(
-                                                                            //                                                           'Count : ${object1.data!.categoryLeads![i].categoryCount}',
-                                                                            //                                                           style: const TextStyle(
-                                                                            //                                                             fontSize: 14,
-                                                                            //                                                             fontWeight: FontWeight.w500,
-                                                                            //                                                             color: Colors.black,
-                                                                            //                                                           ),
-                                                                            //                                                         ),
-                                                                            //                                                       ],
-                                                                            //                                                     ),
-                                                                            //                                                   ),
-                                                                            //                                                   Padding(
-                                                                            //                                                     padding: const EdgeInsets.only(
-                                                                            //                                                       left: 15,
-                                                                            //                                                       right: 15,
-                                                                            //                                                       top: 5,
-                                                                            //                                                     ),
-                                                                            //                                                     child: InkWell(
-                                                                            //                                                       onTap: () {
-                                                                            //                                                         Navigator.push(
-                                                                            //                                                           context,
-                                                                            //                                                           MaterialPageRoute(
-                                                                            //                                                             builder:
-                                                                            //                                                                 (
-                                                                            //                                                                   context,
-                                                                            //                                                                 ) => ViewLeads(
-                                                                            //                                                                   widget.token,
-                                                                            //                                                                   leadDashboard!.data!.updateLead!,
-                                                                            //                                                                   leadDashboard!.data!.deleteLead!,
-                                                                            //                                                                   leadDashboard!.data!.cloudCall!,
-                                                                            //                                                                   pageName: 'Prospectus',
-                                                                            //                                                                   fromDate: fromdate.toString(),
-                                                                            //                                                                   toDate: todate.toString(),
-                                                                            //                                                                   status: 'prospectTodayCount',
-                                                                            //        callResultId: '6',
-                                                                            //                                                                   category: object1.data!.categoryLeads![i].categoryId.toString(),
-                                                                            //                                                                 ),
-                                                                            //                                                           ),
-                                                                            //                                                         );
-                                                                            //                                                       },
-                                                                            //                                                       child: LinearPercentIndicator(
-                                                                            //                                                         width:
-                                                                            //                                                             MediaQuery.of(
-                                                                            //                                                               context,
-                                                                            //                                                             ).size.width *
-                                                                            //                                                             0.82,
-                                                                            //                                                         animation: true,
-                                                                            //                                                         lineHeight: 15.0,
-                                                                            //                                                         animationDuration: 2500,
-                                                                            //                                                         percent: double.parse(
-                                                                            //                                                           object1.data!.categoryLeads![i].categoryPercentage.toString(),
-                                                                            //                                                         ),
-                                                                            //                                                         progressColor:
-                                                                            //                                                             object1.data!.categoryLeads!.length >
-                                                                            //                                                                 _colors.length
-                                                                            //                                                             ? Colors.red
-                                                                            //                                                             : _colors[i],
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                   ),
-                                                                            //                                                   const SizedBox(
-                                                                            //                                                     height: 15,
-                                                                            //                                                   ),
-                                                                            //                                                 ],
-                                                                            //                                               );
-                                                                            //                                             },
-                                                                            //                                       ),
-                                                                            //                                     ),
-                                                                            //                                   )
-                                                                            //                                 : const SizedBox(),
-                                                                            //                           ],
-                                                                            //                         ),
-                                                                            //                       ),
-                                                                            //                     ),
-                                                                            //                   ),
-                                                                            //                 );
-                                                                            //               },
-                                                                            //           transitionBuilder:
-                                                                            //               (
-                                                                            //                 _,
-                                                                            //                 animation1,
-                                                                            //                 __,
-                                                                            //                 child,
-                                                                            //               ) {
-                                                                            //                 return SlideTransition(
-                                                                            //                   position:
-                                                                            //                       Tween(
-                                                                            //                         begin: const Offset(
-                                                                            //                           0,
-                                                                            //                           1,
-                                                                            //                         ),
-                                                                            //                         end: const Offset(
-                                                                            //                           0,
-                                                                            //                           0,
-                                                                            //                         ),
-                                                                            //                       ).animate(
-                                                                            //                         animation1,
-                                                                            //                       ),
-                                                                            //                   child: child,
-                                                                            //                 );
-                                                                            //               },
-                                                                            //         );
-                                                                            //       }
-                                                                            //     }
-                                                                            //   },
-                                                                            //   child: Container(
-                                                                            //     width: 30,
-                                                                            //     height: 30,
-                                                                            //     decoration: BoxDecoration(
-                                                                            //       boxShadow: [
-                                                                            //         BoxShadow(
-                                                                            //           color: Colors.grey.shade500,
-                                                                            //           offset: const Offset(
-                                                                            //             0,
-                                                                            //             2.0,
-                                                                            //           ),
-                                                                            //         ),
-                                                                            //       ],
-                                                                            //       color: Colors.white,
-                                                                            //       borderRadius: BorderRadius.circular(
-                                                                            //         5,
-                                                                            //       ),
-                                                                            //     ),
-                                                                            //     child: Padding(
-                                                                            //       padding: const EdgeInsets.all(
-                                                                            //         4,
-                                                                            //       ),
-                                                                            //       child: Center(
-                                                                            //         child: Image.asset(
-                                                                            //           "assets/icons/lineSegment.png",
-                                                                            //         ),
-                                                                            //       ),
-                                                                            //     ),
-                                                                            //   ),
-                                                                            // ),
-                                                                          
+                                                                            InkWell(
+                                                                              onTap: () async {
+                                                                                Common.showProgressDialog(
+                                                                                  context,
+                                                                                  "Loading..",
+                                                                                );
+                                                                                LeadProgressbarModel
+                                                                                object1 = await HttpService.leadProgressbar(
+                                                                                  widget.token,
+                                                                                  fromdate,
+                                                                                  todate,
+                                                                                  '4',
+                                                                                );
+                                                                                if (object1.status ==
+                                                                                    true) {
+                                                                                  if (context.mounted) {
+                                                                                    Navigator.pop(
+                                                                                      context,
+                                                                                    );
+                                                                                    showGeneralDialog(
+                                                                                      barrierLabel: "showGeneralDialog",
+                                                                                      barrierDismissible: true,
+                                                                                      barrierColor: Colors.black.withOpacity(
+                                                                                        0.6,
+                                                                                      ),
+                                                                                      transitionDuration: const Duration(
+                                                                                        milliseconds: 400,
+                                                                                      ),
+                                                                                      context: context,
+                                                                                      pageBuilder:
+                                                                                          (
+                                                                                            context,
+                                                                                            _,
+                                                                                            __,
+                                                                                          ) {
+                                                                                            return Align(
+                                                                                              alignment: Alignment.bottomCenter,
+                                                                                              child: IntrinsicHeight(
+                                                                                                child: Container(
+                                                                                                  width: double.maxFinite,
+                                                                                                  clipBehavior: Clip.antiAlias,
+                                                                                                  padding: const EdgeInsets.all(
+                                                                                                    16,
+                                                                                                  ),
+                                                                                                  decoration: const BoxDecoration(
+                                                                                                    color: Colors.white,
+                                                                                                    borderRadius: BorderRadius.only(
+                                                                                                      topLeft: Radius.circular(
+                                                                                                        16,
+                                                                                                      ),
+                                                                                                      topRight: Radius.circular(
+                                                                                                        16,
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                  child: Material(
+                                                                                                    child: Column(
+                                                                                                      children: [
+                                                                                                        const SizedBox(
+                                                                                                          height: 15,
+                                                                                                        ),
+                                                                                                        Row(
+                                                                                                          mainAxisAlignment: MainAxisAlignment.end,
+                                                                                                          children: [
+                                                                                                            InkWell(
+                                                                                                              onTap: () => {
+                                                                                                                Navigator.pop(
+                                                                                                                  context,
+                                                                                                                ),
+                                                                                                              },
+                                                                                                              child: Container(
+                                                                                                                width: 25,
+                                                                                                                height: 25,
+                                                                                                                decoration: BoxDecoration(
+                                                                                                                  shape: BoxShape.circle,
+                                                                                                                  color: Colors.white,
+                                                                                                                  border: Border.all(),
+                                                                                                                ),
+                                                                                                                child: const Center(
+                                                                                                                  child: Icon(
+                                                                                                                    Icons.close,
+                                                                                                                    color: Colors.black,
+                                                                                                                    size: 15,
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            ),
+                                                                                                          ],
+                                                                                                        ),
+                                                                                                        const Text(
+                                                                                                          'Closed Leads',
+                                                                                                          style: TextStyle(
+                                                                                                            fontSize: 18,
+                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                        const SizedBox(
+                                                                                                          height: 10,
+                                                                                                        ),
+                                                                                                        Text(
+                                                                                                          object1.data!.totalCount.toString(),
+                                                                                                          style: TextStyle(
+                                                                                                            fontSize: 18,
+                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                            color: Colors.green.shade900,
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                        object1.data!.staffLeads!.isNotEmpty
+                                                                                                            ? const Padding(
+                                                                                                                padding: EdgeInsets.only(
+                                                                                                                  bottom: 20,
+                                                                                                                ),
+                                                                                                                child: Row(
+                                                                                                                  children: [
+                                                                                                                    Text(
+                                                                                                                      'Staff Wise Lead',
+                                                                                                                      style: TextStyle(
+                                                                                                                        fontSize: 16,
+                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                        color: Colors.black,
+                                                                                                                      ),
+                                                                                                                    ),
+                                                                                                                  ],
+                                                                                                                ),
+                                                                                                              )
+                                                                                                            : const SizedBox(),
+                                                                                                        object1.data!.staffLeads!.isNotEmpty
+                                                                                                            ? SizedBox(
+                                                                                                                height:
+                                                                                                                    60 *
+                                                                                                                    double.parse(
+                                                                                                                      object1.data!.staffLeads!.length.toString(),
+                                                                                                                    ),
+                                                                                                                // 70% height
+                                                                                                                child: MediaQuery.removePadding(
+                                                                                                                  context: context,
+                                                                                                                  removeTop: true,
+                                                                                                                  child: ListView.builder(
+                                                                                                                    shrinkWrap: true,
+                                                                                                                    itemCount: object1.data!.staffLeads!.length,
+                                                                                                                    itemBuilder:
+                                                                                                                        (
+                                                                                                                          context,
+                                                                                                                          i,
+                                                                                                                        ) {
+                                                                                                                          return Column(
+                                                                                                                            children: [
+                                                                                                                              Padding(
+                                                                                                                                padding: const EdgeInsets.only(
+                                                                                                                                  left: 15,
+                                                                                                                                  right: 15,
+                                                                                                                                ),
+                                                                                                                                child: Row(
+                                                                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                                                                  children: [
+                                                                                                                                    Text(
+                                                                                                                                      object1.data!.staffLeads![i].staffName.toString(),
+                                                                                                                                      style: const TextStyle(
+                                                                                                                                        fontSize: 14,
+                                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                                        color: Colors.black,
+                                                                                                                                      ),
+                                                                                                                                    ),
+                                                                                                                                    Text(
+                                                                                                                                      'Count : ${object1.data!.staffLeads![i].staffCount}',
+                                                                                                                                      style: const TextStyle(
+                                                                                                                                        fontSize: 14,
+                                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                                        color: Colors.black,
+                                                                                                                                      ),
+                                                                                                                                    ),
+                                                                                                                                  ],
+                                                                                                                                ),
+                                                                                                                              ),
+                                                                                                                              Padding(
+                                                                                                                                padding: const EdgeInsets.only(
+                                                                                                                                  left: 15,
+                                                                                                                                  right: 15,
+                                                                                                                                  top: 5,
+                                                                                                                                ),
+                                                                                                                                child: InkWell(
+                                                                                                                                  onTap: () {
+                                                                                                                                    Navigator.push(
+                                                                                                                                      context,
+                                                                                                                                      MaterialPageRoute(
+                                                                                                                                        builder:
+                                                                                                                                            (
+                                                                                                                                              context,
+                                                                                                                                            ) => ViewLeads(
+                                                                                                                                              widget.token,
+                                                                                                                                              leadDashboard!.data!.updateLead!,
+                                                                                                                                              leadDashboard!.data!.deleteLead!,
+                                                                                                                                              leadDashboard!.data!.cloudCall!,
+                                                                                                                                              pageName: 'Closed Leads',
+                                                                                                                                              fromDate: fromdate.toString(),
+                                                                                                                                              toDate: todate.toString(),
+                                                                                                                                              status: '4',
+                                                                                                                                              staff: object1.data!.staffLeads![i].staffId.toString(),
+                                                                                                                                            ),
+                                                                                                                                      ),
+                                                                                                                                    );
+                                                                                                                                  },
+                                                                                                                                  child: LinearPercentIndicator(
+                                                                                                                                    width:
+                                                                                                                                        MediaQuery.of(
+                                                                                                                                          context,
+                                                                                                                                        ).size.width *
+                                                                                                                                        0.82,
+                                                                                                                                    animation: true,
+                                                                                                                                    lineHeight: 15.0,
+                                                                                                                                    animationDuration: 2500,
+                                                                                                                                    percent: double.parse(
+                                                                                                                                      object1.data!.staffLeads![i].staffPercentage.toString(),
+                                                                                                                                    ),
+                                                                                                                                    progressColor:
+                                                                                                                                        object1.data!.staffLeads!.length >
+                                                                                                                                            _colors.length
+                                                                                                                                        ? Colors.red
+                                                                                                                                        : _colors[i],
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                              ),
+                                                                                                                              const SizedBox(
+                                                                                                                                height: 15,
+                                                                                                                              ),
+                                                                                                                            ],
+                                                                                                                          );
+                                                                                                                        },
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              )
+                                                                                                            : const SizedBox(),
+                                                                                                        object1.data!.categoryLeads!.isNotEmpty
+                                                                                                            ? const Padding(
+                                                                                                                padding: EdgeInsets.only(
+                                                                                                                  bottom: 20,
+                                                                                                                ),
+                                                                                                                child: Row(
+                                                                                                                  children: [
+                                                                                                                    Text(
+                                                                                                                      'Category Wise Lead',
+                                                                                                                      style: TextStyle(
+                                                                                                                        fontSize: 16,
+                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                        color: Colors.black,
+                                                                                                                      ),
+                                                                                                                    ),
+                                                                                                                  ],
+                                                                                                                ),
+                                                                                                              )
+                                                                                                            : const SizedBox(),
+                                                                                                        object1.data!.categoryLeads!.isNotEmpty
+                                                                                                            ? SizedBox(
+                                                                                                                height:
+                                                                                                                    60 *
+                                                                                                                    double.parse(
+                                                                                                                      object1.data!.categoryLeads!.length.toString(),
+                                                                                                                    ),
+                                                                                                                // 70% height
+                                                                                                                child: MediaQuery.removePadding(
+                                                                                                                  context: context,
+                                                                                                                  removeTop: true,
+                                                                                                                  child: ListView.builder(
+                                                                                                                    shrinkWrap: true,
+                                                                                                                    itemCount: object1.data!.categoryLeads!.length,
+                                                                                                                    itemBuilder:
+                                                                                                                        (
+                                                                                                                          context,
+                                                                                                                          i,
+                                                                                                                        ) {
+                                                                                                                          return Column(
+                                                                                                                            children: [
+                                                                                                                              Padding(
+                                                                                                                                padding: const EdgeInsets.only(
+                                                                                                                                  left: 15,
+                                                                                                                                  right: 15,
+                                                                                                                                ),
+                                                                                                                                child: Row(
+                                                                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                                                                  children: [
+                                                                                                                                    Text(
+                                                                                                                                      object1.data!.categoryLeads![i].categoryName.toString(),
+                                                                                                                                      style: const TextStyle(
+                                                                                                                                        fontSize: 14,
+                                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                                        color: Colors.black,
+                                                                                                                                      ),
+                                                                                                                                    ),
+                                                                                                                                    Text(
+                                                                                                                                      'Count : ${object1.data!.categoryLeads![i].categoryCount}',
+                                                                                                                                      style: const TextStyle(
+                                                                                                                                        fontSize: 14,
+                                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                                        color: Colors.black,
+                                                                                                                                      ),
+                                                                                                                                    ),
+                                                                                                                                  ],
+                                                                                                                                ),
+                                                                                                                              ),
+                                                                                                                              Padding(
+                                                                                                                                padding: const EdgeInsets.only(
+                                                                                                                                  left: 15,
+                                                                                                                                  right: 15,
+                                                                                                                                  top: 5,
+                                                                                                                                ),
+                                                                                                                                child: InkWell(
+                                                                                                                                  onTap: () {
+                                                                                                                                    Navigator.push(
+                                                                                                                                      context,
+                                                                                                                                      MaterialPageRoute(
+                                                                                                                                        builder:
+                                                                                                                                            (
+                                                                                                                                              context,
+                                                                                                                                            ) => ViewLeads(
+                                                                                                                                              widget.token,
+                                                                                                                                              leadDashboard!.data!.updateLead!,
+                                                                                                                                              leadDashboard!.data!.deleteLead!,
+                                                                                                                                              leadDashboard!.data!.cloudCall!,
+                                                                                                                                              pageName: 'Closed Leads',
+                                                                                                                                              fromDate: fromdate.toString(),
+                                                                                                                                              toDate: todate.toString(),
+                                                                                                                                              status: '4',
+                                                                                                                                              category: object1.data!.categoryLeads![i].categoryId.toString(),
+                                                                                                                                            ),
+                                                                                                                                      ),
+                                                                                                                                    );
+                                                                                                                                  },
+                                                                                                                                  child: LinearPercentIndicator(
+                                                                                                                                    width:
+                                                                                                                                        MediaQuery.of(
+                                                                                                                                          context,
+                                                                                                                                        ).size.width *
+                                                                                                                                        0.82,
+                                                                                                                                    animation: true,
+                                                                                                                                    lineHeight: 15.0,
+                                                                                                                                    animationDuration: 2500,
+                                                                                                                                    percent: double.parse(
+                                                                                                                                      object1.data!.categoryLeads![i].categoryPercentage.toString(),
+                                                                                                                                    ),
+                                                                                                                                    progressColor:
+                                                                                                                                        object1.data!.categoryLeads!.length >
+                                                                                                                                            _colors.length
+                                                                                                                                        ? Colors.red
+                                                                                                                                        : _colors[i],
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                              ),
+                                                                                                                              const SizedBox(
+                                                                                                                                height: 15,
+                                                                                                                              ),
+                                                                                                                            ],
+                                                                                                                          );
+                                                                                                                        },
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              )
+                                                                                                            : const SizedBox(),
+                                                                                                      ],
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                            );
+                                                                                          },
+                                                                                      transitionBuilder:
+                                                                                          (
+                                                                                            _,
+                                                                                            animation1,
+                                                                                            __,
+                                                                                            child,
+                                                                                          ) {
+                                                                                            return SlideTransition(
+                                                                                              position:
+                                                                                                  Tween(
+                                                                                                    begin: const Offset(
+                                                                                                      0,
+                                                                                                      1,
+                                                                                                    ),
+                                                                                                    end: const Offset(
+                                                                                                      0,
+                                                                                                      0,
+                                                                                                    ),
+                                                                                                  ).animate(
+                                                                                                    animation1,
+                                                                                                  ),
+                                                                                              child: child,
+                                                                                            );
+                                                                                          },
+                                                                                    );
+                                                                                  }
+                                                                                }
+                                                                              },
+                                                                              child: Container(
+                                                                                width: 30,
+                                                                                height: 30,
+                                                                                decoration: BoxDecoration(
+                                                                                  boxShadow: [
+                                                                                    BoxShadow(
+                                                                                      color: Colors.grey.shade500,
+                                                                                      offset: const Offset(
+                                                                                        0,
+                                                                                        2.0,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                  color: Colors.white,
+                                                                                  borderRadius: BorderRadius.circular(
+                                                                                    5,
+                                                                                  ),
+                                                                                ),
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(
+                                                                                    4,
+                                                                                  ),
+                                                                                  child: Center(
+                                                                                    child: Image.asset(
+                                                                                      "assets/icons/lineSegment.png",
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
                                                                           ],
                                                                         ),
                                                                       ),
@@ -4147,11 +4143,10 @@ class _DashboardState extends State<Dashboard> {
                                                                                   leadDashboard!.data!.updateLead!,
                                                                                   leadDashboard!.data!.deleteLead!,
                                                                                   leadDashboard!.data!.cloudCall!,
-                                                                                  pageName: 'Follow Up',
+                                                                                  pageName: 'Total Called',
                                                                                   fromDate: fromdate.toString(),
                                                                                   toDate: todate.toString(),
-                                                                                  status: 'followupTodayCount',
-                                                                                  callResultId: '2',
+                                                                                  status: '-1',
                                                                                 ),
                                                                           ),
                                                                         )
@@ -4202,9 +4197,10 @@ class _DashboardState extends State<Dashboard> {
                                                                               MainAxisAlignment.spaceBetween,
                                                                           children: [
                                                                             const Text(
-                                                                              "Follow Up",
+                                                                              "Total Called",
                                                                               style: TextStyle(
-                                                                                fontSize: 12,
+                                                                                fontWeight: FontWeight.w500,
+                                                                                fontSize: 13,
                                                                                 color: Colors.black,
                                                                               ),
                                                                             ),
@@ -4220,24 +4216,24 @@ class _DashboardState extends State<Dashboard> {
                                                                                 ),
                                                                                 message: 'Total called can be filtered \n using a specific date range to \n determine the count of total leads \n within that period',
                                                                                 key: _toolTipKey3,
-                                                                                // child: Container(
-                                                                                //   width: 20,
-                                                                                //   height: 20,
-                                                                                //   decoration: const BoxDecoration(
-                                                                                //     shape: BoxShape.circle,
-                                                                                //     color: Colors.white,
-                                                                                //   ),
-                                                                                //   child: Center(
-                                                                                //     child: Text(
-                                                                                //       '?',
-                                                                                //       style: TextStyle(
-                                                                                //         fontSize: 13,
-                                                                                //         fontWeight: FontWeight.bold,
-                                                                                //         color: Colors.grey.shade700,
-                                                                                //       ),
-                                                                                //     ),
-                                                                                //   ),
-                                                                                // ),
+                                                                                child: Container(
+                                                                                  width: 20,
+                                                                                  height: 20,
+                                                                                  decoration: const BoxDecoration(
+                                                                                    shape: BoxShape.circle,
+                                                                                    color: Colors.white,
+                                                                                  ),
+                                                                                  child: Center(
+                                                                                    child: Text(
+                                                                                      '?',
+                                                                                      style: TextStyle(
+                                                                                        fontSize: 13,
+                                                                                        fontWeight: FontWeight.bold,
+                                                                                        color: Colors.grey.shade700,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
                                                                               ),
                                                                             ),
                                                                           ],
@@ -4253,7 +4249,10 @@ class _DashboardState extends State<Dashboard> {
                                                                               10,
                                                                         ),
                                                                         child: Text(
-                                                                          "${leadDashboard?.data?.followupTodayCount ?? 0}/${leadDashboard?.data?.followupTodayCalledCount ?? 0}",
+                                                                          leadDashboard!
+                                                                              .data!
+                                                                              .totalCalled
+                                                                              .toString(),
                                                                           style: const TextStyle(
                                                                             fontWeight:
                                                                                 FontWeight.bold,
@@ -4284,555 +4283,555 @@ class _DashboardState extends State<Dashboard> {
                                                                                 color: Colors.black,
                                                                               ),
                                                                             ),
-                                                                            // InkWell(
-                                                                            //   onTap: () async {
-                                                                            //     Common.showProgressDialog(
-                                                                            //       context,
-                                                                            //       "Loading..",
-                                                                            //     );
-                                                                            //     LeadProgressbarModel
-                                                                            //     object1 = await HttpService.leadProgressbar(
-                                                                            //       widget.token,
-                                                                            //       fromdate,
-                                                                            //       todate,
-                                                                            //       'followupTodayCount',
-                                                                            //     );
-                                                                            //     if (object1.status ==
-                                                                            //         true) {
-                                                                            //       if (context.mounted) {
-                                                                            //         Navigator.pop(
-                                                                            //           context,
-                                                                            //         );
-                                                                            //         showGeneralDialog(
-                                                                            //           barrierLabel: "showGeneralDialog",
-                                                                            //           barrierDismissible: true,
-                                                                            //           barrierColor: Colors.black.withOpacity(
-                                                                            //             0.6,
-                                                                            //           ),
-                                                                            //           transitionDuration: const Duration(
-                                                                            //             milliseconds: 400,
-                                                                            //           ),
-                                                                            //           context: context,
-                                                                            //           pageBuilder:
-                                                                            //               (
-                                                                            //                 context,
-                                                                            //                 _,
-                                                                            //                 __,
-                                                                            //               ) {
-                                                                            //                 return Align(
-                                                                            //                   alignment: Alignment.bottomCenter,
-                                                                            //                   child: IntrinsicHeight(
-                                                                            //                     child: Container(
-                                                                            //                       width: double.maxFinite,
-                                                                            //                       clipBehavior: Clip.antiAlias,
-                                                                            //                       padding: const EdgeInsets.all(
-                                                                            //                         16,
-                                                                            //                       ),
-                                                                            //                       decoration: const BoxDecoration(
-                                                                            //                         color: Colors.white,
-                                                                            //                         borderRadius: BorderRadius.only(
-                                                                            //                           topLeft: Radius.circular(
-                                                                            //                             16,
-                                                                            //                           ),
-                                                                            //                           topRight: Radius.circular(
-                                                                            //                             16,
-                                                                            //                           ),
-                                                                            //                         ),
-                                                                            //                       ),
-                                                                            //                       child: Material(
-                                                                            //                         child: Column(
-                                                                            //                           children: [
-                                                                            //                             const SizedBox(
-                                                                            //                               height: 15,
-                                                                            //                             ),
-                                                                            //                             Row(
-                                                                            //                               mainAxisAlignment: MainAxisAlignment.end,
-                                                                            //                               children: [
-                                                                            //                                 InkWell(
-                                                                            //                                   onTap: () => {
-                                                                            //                                     Navigator.pop(
-                                                                            //                                       context,
-                                                                            //                                     ),
-                                                                            //                                   },
-                                                                            //                                   child: Container(
-                                                                            //                                     width: 25,
-                                                                            //                                     height: 25,
-                                                                            //                                     decoration: BoxDecoration(
-                                                                            //                                       shape: BoxShape.circle,
-                                                                            //                                       color: Colors.white,
-                                                                            //                                       border: Border.all(),
-                                                                            //                                     ),
-                                                                            //                                     child: const Center(
-                                                                            //                                       child: Icon(
-                                                                            //                                         Icons.close,
-                                                                            //                                         color: Colors.black,
-                                                                            //                                         size: 15,
-                                                                            //                                       ),
-                                                                            //                                     ),
-                                                                            //                                   ),
-                                                                            //                                 ),
-                                                                            //                               ],
-                                                                            //                             ),
-                                                                            //                             const Text(
-                                                                            //                               'Follow Up',
-                                                                            //                               style: TextStyle(
-                                                                            //                                 fontSize: 18,
-                                                                            //                                 fontWeight: FontWeight.w500,
-                                                                            //                               ),
-                                                                            //                             ),
-                                                                            //                             const SizedBox(
-                                                                            //                               height: 10,
-                                                                            //                             ),
-                                                                            //                             Text(
-                                                                            //                               object1.data!.totalCount.toString(),
-                                                                            //                               style: TextStyle(
-                                                                            //                                 fontSize: 18,
-                                                                            //                                 fontWeight: FontWeight.w500,
-                                                                            //                                 color: Colors.green.shade900,
-                                                                            //                               ),
-                                                                            //                             ),
-                                                                            //                             object1.data!.staffLeads!.isNotEmpty
-                                                                            //                                 ? const Padding(
-                                                                            //                                     padding: EdgeInsets.only(
-                                                                            //                                       bottom: 20,
-                                                                            //                                     ),
-                                                                            //                                     child: Row(
-                                                                            //                                       children: [
-                                                                            //                                         Text(
-                                                                            //                                           'Staff Wise Lead',
-                                                                            //                                           style: TextStyle(
-                                                                            //                                             fontSize: 16,
-                                                                            //                                             fontWeight: FontWeight.w500,
-                                                                            //                                             color: Colors.black,
-                                                                            //                                           ),
-                                                                            //                                         ),
-                                                                            //                                       ],
-                                                                            //                                     ),
-                                                                            //                                   )
-                                                                            //                                 : const SizedBox(),
-                                                                            //                             object1.data!.staffLeads!.isNotEmpty
-                                                                            //                                 ? SizedBox(
-                                                                            //                                     height:
-                                                                            //                                         60 *
-                                                                            //                                         double.parse(
-                                                                            //                                           object1.data!.staffLeads!.length.toString(),
-                                                                            //                                         ),
-                                                                            //                                     // 70% height
-                                                                            //                                     child: MediaQuery.removePadding(
-                                                                            //                                       context: context,
-                                                                            //                                       removeTop: true,
-                                                                            //                                       child: ListView.builder(
-                                                                            //                                         shrinkWrap: true,
-                                                                            //                                         physics: const NeverScrollableScrollPhysics(),
-                                                                            //                                         itemCount: object1.data!.staffLeads!.length,
-                                                                            //                                         itemBuilder:
-                                                                            //                                             (
-                                                                            //                                               context,
-                                                                            //                                               i,
-                                                                            //                                             ) {
-                                                                            //                                               return Column(
-                                                                            //                                                 children: [
-                                                                            //                                                   Padding(
-                                                                            //                                                     padding: const EdgeInsets.only(
-                                                                            //                                                       left: 15,
-                                                                            //                                                       right: 15,
-                                                                            //                                                     ),
-                                                                            //                                                     child: Row(
-                                                                            //                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            //                                                       children: [
-                                                                            //                                                         Text(
-                                                                            //                                                           object1.data!.staffLeads![i].staffName.toString(),
-                                                                            //                                                           style: const TextStyle(
-                                                                            //                                                             fontSize: 14,
-                                                                            //                                                             fontWeight: FontWeight.w500,
-                                                                            //                                                             color: Colors.black,
-                                                                            //                                                           ),
-                                                                            //                                                         ),
-                                                                            //                                                         Text(
-                                                                            //                                                           'Count : ${object1.data!.staffLeads![i].staffCount}',
-                                                                            //                                                           style: const TextStyle(
-                                                                            //                                                             fontSize: 14,
-                                                                            //                                                             fontWeight: FontWeight.w500,
-                                                                            //                                                             color: Colors.black,
-                                                                            //                                                           ),
-                                                                            //                                                         ),
-                                                                            //                                                       ],
-                                                                            //                                                     ),
-                                                                            //                                                   ),
-                                                                            //                                                   Padding(
-                                                                            //                                                     padding: const EdgeInsets.only(
-                                                                            //                                                       left: 15,
-                                                                            //                                                       right: 15,
-                                                                            //                                                       top: 5,
-                                                                            //                                                     ),
-                                                                            //                                                     child: InkWell(
-                                                                            //                                                       onTap: () {
-                                                                            //                                                         Navigator.push(
-                                                                            //                                                           context,
-                                                                            //                                                           MaterialPageRoute(
-                                                                            //                                                             builder:
-                                                                            //                                                                 (
-                                                                            //                                                                   context,
-                                                                            //                                                                 ) => ViewLeads(
-                                                                            //                                                                   widget.token,
-                                                                            //                                                                   leadDashboard!.data!.updateLead!,
-                                                                            //                                                                   leadDashboard!.data!.deleteLead!,
-                                                                            //                                                                   leadDashboard!.data!.cloudCall!,
-                                                                            //                                                                   pageName: 'Follow Up',
-                                                                            //                                                                   fromDate: fromdate.toString(),
-                                                                            //                                                                   toDate: todate.toString(),
-                                                                            //                                                                   status: 'followupTodayCount',
-                                                                            //                                                                   staff: object1.data!.staffLeads![i].staffId.toString(),
-                                                                            //                                                                 ),
-                                                                            //                                                           ),
-                                                                            //                                                         );
-                                                                            //                                                       },
-                                                                            //                                                       child: LinearPercentIndicator(
-                                                                            //                                                         width:
-                                                                            //                                                             MediaQuery.of(
-                                                                            //                                                               context,
-                                                                            //                                                             ).size.width *
-                                                                            //                                                             0.82,
-                                                                            //                                                         animation: true,
-                                                                            //                                                         lineHeight: 15.0,
-                                                                            //                                                         animationDuration: 2500,
-                                                                            //                                                         percent: double.parse(
-                                                                            //                                                           object1.data!.staffLeads![i].staffPercentage.toString(),
-                                                                            //                                                         ),
-                                                                            //                                                         progressColor:
-                                                                            //                                                             object1.data!.staffLeads!.length >
-                                                                            //                                                                 _colors.length
-                                                                            //                                                             ? Colors.red
-                                                                            //                                                             : _colors[i],
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                   ),
-                                                                            //                                                   const SizedBox(
-                                                                            //                                                     height: 15,
-                                                                            //                                                   ),
-                                                                            //                                                 ],
-                                                                            //                                               );
-                                                                            //                                             },
-                                                                            //                                       ),
-                                                                            //                                     ),
-                                                                            //                                   )
-                                                                            //                                 : const SizedBox(),
-                                                                            //                             object1.data!.categoryLeads!.isNotEmpty
-                                                                            //                                 ? const Padding(
-                                                                            //                                     padding: EdgeInsets.only(
-                                                                            //                                       bottom: 20,
-                                                                            //                                     ),
-                                                                            //                                     child: Row(
-                                                                            //                                       children: [
-                                                                            //                                         Text(
-                                                                            //                                           'Category Wise Lead',
-                                                                            //                                           style: TextStyle(
-                                                                            //                                             fontSize: 16,
-                                                                            //                                             fontWeight: FontWeight.w500,
-                                                                            //                                             color: Colors.black,
-                                                                            //                                           ),
-                                                                            //                                         ),
-                                                                            //                                       ],
-                                                                            //                                     ),
-                                                                            //                                   )
-                                                                            //                                 : const SizedBox(),
-                                                                            //                             object1.data!.categoryLeads!.isNotEmpty
-                                                                            //                                 ? SizedBox(
-                                                                            //                                     height:
-                                                                            //                                         60 *
-                                                                            //                                         double.parse(
-                                                                            //                                           object1.data!.categoryLeads!.length.toString(),
-                                                                            //                                         ),
-                                                                            //                                     // 70% height
-                                                                            //                                     child: MediaQuery.removePadding(
-                                                                            //                                       context: context,
-                                                                            //                                       removeTop: true,
-                                                                            //                                       child: ListView.builder(
-                                                                            //                                         shrinkWrap: true,
-                                                                            //                                         physics: const NeverScrollableScrollPhysics(),
-                                                                            //                                         itemCount: object1.data!.categoryLeads!.length,
-                                                                            //                                         itemBuilder:
-                                                                            //                                             (
-                                                                            //                                               context,
-                                                                            //                                               i,
-                                                                            //                                             ) {
-                                                                            //                                               return Column(
-                                                                            //                                                 children: [
-                                                                            //                                                   Padding(
-                                                                            //                                                     padding: const EdgeInsets.only(
-                                                                            //                                                       left: 15,
-                                                                            //                                                       right: 15,
-                                                                            //                                                     ),
-                                                                            //                                                     child: Row(
-                                                                            //                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            //                                                       children: [
-                                                                            //                                                         Text(
-                                                                            //                                                           object1.data!.categoryLeads![i].categoryName.toString(),
-                                                                            //                                                           style: const TextStyle(
-                                                                            //                                                             fontSize: 14,
-                                                                            //                                                             fontWeight: FontWeight.w500,
-                                                                            //                                                             color: Colors.black,
-                                                                            //                                                           ),
-                                                                            //                                                         ),
-                                                                            //                                                         Text(
-                                                                            //                                                           'Count : ${object1.data!.categoryLeads![i].categoryCount}',
-                                                                            //                                                           style: const TextStyle(
-                                                                            //                                                             fontSize: 14,
-                                                                            //                                                             fontWeight: FontWeight.w500,
-                                                                            //                                                             color: Colors.black,
-                                                                            //                                                           ),
-                                                                            //                                                         ),
-                                                                            //                                                       ],
-                                                                            //                                                     ),
-                                                                            //                                                   ),
-                                                                            //                                                   Padding(
-                                                                            //                                                     padding: const EdgeInsets.only(
-                                                                            //                                                       left: 15,
-                                                                            //                                                       right: 15,
-                                                                            //                                                       top: 5,
-                                                                            //                                                     ),
-                                                                            //                                                     child: InkWell(
-                                                                            //                                                       onTap: () {
-                                                                            //                                                         Navigator.push(
-                                                                            //                                                           context,
-                                                                            //                                                           MaterialPageRoute(
-                                                                            //                                                             builder:
-                                                                            //                                                                 (
-                                                                            //                                                                   context,
-                                                                            //                                                                 ) => ViewLeads(
-                                                                            //                                                                   widget.token,
-                                                                            //                                                                   leadDashboard!.data!.updateLead!,
-                                                                            //                                                                   leadDashboard!.data!.deleteLead!,
-                                                                            //                                                                   leadDashboard!.data!.cloudCall!,
-                                                                            //                                                                   pageName: 'Follow Up',
-                                                                            //                                                                   fromDate: fromdate.toString(),
-                                                                            //                                                                   toDate: todate.toString(),
-                                                                            //                                                                   status: 'followupTodayCount',
-                                                                            //                                                                   category: object1.data!.categoryLeads![i].categoryId.toString(),
-                                                                            //                                                                 ),
-                                                                            //                                                           ),
-                                                                            //                                                         );
-                                                                            //                                                       },
-                                                                            //                                                       child: LinearPercentIndicator(
-                                                                            //                                                         width:
-                                                                            //                                                             MediaQuery.of(
-                                                                            //                                                               context,
-                                                                            //                                                             ).size.width *
-                                                                            //                                                             0.82,
-                                                                            //                                                         animation: true,
-                                                                            //                                                         lineHeight: 15.0,
-                                                                            //                                                         animationDuration: 2500,
-                                                                            //                                                         percent: double.parse(
-                                                                            //                                                           object1.data!.categoryLeads![i].categoryPercentage.toString(),
-                                                                            //                                                         ),
-                                                                            //                                                         progressColor:
-                                                                            //                                                             object1.data!.categoryLeads!.length >
-                                                                            //                                                                 _colors.length
-                                                                            //                                                             ? Colors.red
-                                                                            //                                                             : _colors[i],
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                   ),
-                                                                            //                                                   const SizedBox(
-                                                                            //                                                     height: 15,
-                                                                            //                                                   ),
-                                                                            //                                                 ],
-                                                                            //                                               );
-                                                                            //                                             },
-                                                                            //                                       ),
-                                                                            //                                     ),
-                                                                            //                                   )
-                                                                            //                                 : const SizedBox(),
-                                                                            //                             object1.data!.statusLeads!.isNotEmpty
-                                                                            //                                 ? const Padding(
-                                                                            //                                     padding: EdgeInsets.only(
-                                                                            //                                       bottom: 20,
-                                                                            //                                     ),
-                                                                            //                                     child: Row(
-                                                                            //                                       children: [
-                                                                            //                                         Text(
-                                                                            //                                           'Status Wise Lead',
-                                                                            //                                           style: TextStyle(
-                                                                            //                                             fontSize: 16,
-                                                                            //                                             fontWeight: FontWeight.w500,
-                                                                            //                                             color: Colors.black,
-                                                                            //                                           ),
-                                                                            //                                         ),
-                                                                            //                                       ],
-                                                                            //                                     ),
-                                                                            //                                   )
-                                                                            //                                 : const SizedBox(),
-                                                                            //                             object1.data!.statusLeads!.isNotEmpty
-                                                                            //                                 ? SizedBox(
-                                                                            //                                     height:
-                                                                            //                                         60 *
-                                                                            //                                         double.parse(
-                                                                            //                                           object1.data!.statusLeads!.length.toString(),
-                                                                            //                                         ),
-                                                                            //                                     // 70% height
-                                                                            //                                     child: MediaQuery.removePadding(
-                                                                            //                                       context: context,
-                                                                            //                                       removeTop: true,
-                                                                            //                                       child: ListView.builder(
-                                                                            //                                         shrinkWrap: true,
-                                                                            //                                         physics: const NeverScrollableScrollPhysics(),
-                                                                            //                                         itemCount: object1.data!.statusLeads!.length,
-                                                                            //                                         itemBuilder:
-                                                                            //                                             (
-                                                                            //                                               context,
-                                                                            //                                               i,
-                                                                            //                                             ) {
-                                                                            //                                               return Column(
-                                                                            //                                                 children: [
-                                                                            //                                                   Padding(
-                                                                            //                                                     padding: const EdgeInsets.only(
-                                                                            //                                                       left: 15,
-                                                                            //                                                       right: 15,
-                                                                            //                                                     ),
-                                                                            //                                                     child: Row(
-                                                                            //                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            //                                                       children: [
-                                                                            //                                                         Text(
-                                                                            //                                                           object1.data!.statusLeads![i].statusName.toString(),
-                                                                            //                                                           style: const TextStyle(
-                                                                            //                                                             fontSize: 14,
-                                                                            //                                                             fontWeight: FontWeight.w500,
-                                                                            //                                                             color: Colors.black,
-                                                                            //                                                           ),
-                                                                            //                                                         ),
-                                                                            //                                                         Text(
-                                                                            //                                                           'Count : ${object1.data!.statusLeads![i].statusCount}',
-                                                                            //                                                           style: const TextStyle(
-                                                                            //                                                             fontSize: 14,
-                                                                            //                                                             fontWeight: FontWeight.w500,
-                                                                            //                                                             color: Colors.black,
-                                                                            //                                                           ),
-                                                                            //                                                         ),
-                                                                            //                                                       ],
-                                                                            //                                                     ),
-                                                                            //                                                   ),
-                                                                            //                                                   Padding(
-                                                                            //                                                     padding: const EdgeInsets.only(
-                                                                            //                                                       left: 15,
-                                                                            //                                                       right: 15,
-                                                                            //                                                       top: 5,
-                                                                            //                                                     ),
-                                                                            //                                                     child: InkWell(
-                                                                            //                                                       onTap: () {
-                                                                            //                                                         Navigator.push(
-                                                                            //                                                           context,
-                                                                            //                                                           MaterialPageRoute(
-                                                                            //                                                             builder:
-                                                                            //                                                                 (
-                                                                            //                                                                   context,
-                                                                            //                                                                 ) => ViewLeads(
-                                                                            //                                                                   widget.token,
-                                                                            //                                                                   leadDashboard!.data!.updateLead!,
-                                                                            //                                                                   leadDashboard!.data!.deleteLead!,
-                                                                            //                                                                   leadDashboard!.data!.cloudCall!,
-                                                                            //                                                                   pageName: 'Total Called',
-                                                                            //                                                                   fromDate: fromdate.toString(),
-                                                                            //                                                                   toDate: todate.toString(),
-                                                                            //                                                                   status: object1.data!.statusLeads![i].statusId.toString(),
-                                                                            //                                                                 ),
-                                                                            //                                                           ),
-                                                                            //                                                         );
-                                                                            //                                                       },
-                                                                            //                                                       child: LinearPercentIndicator(
-                                                                            //                                                         width:
-                                                                            //                                                             MediaQuery.of(
-                                                                            //                                                               context,
-                                                                            //                                                             ).size.width *
-                                                                            //                                                             0.82,
-                                                                            //                                                         animation: true,
-                                                                            //                                                         lineHeight: 15.0,
-                                                                            //                                                         animationDuration: 2500,
-                                                                            //                                                         percent: double.parse(
-                                                                            //                                                           object1.data!.statusLeads![i].statusPercentage.toString(),
-                                                                            //                                                         ),
-                                                                            //                                                         progressColor:
-                                                                            //                                                             object1.data!.statusLeads!.length >
-                                                                            //                                                                 _colors.length
-                                                                            //                                                             ? Colors.red
-                                                                            //                                                             : _colors[i],
-                                                                            //                                                       ),
-                                                                            //                                                     ),
-                                                                            //                                                   ),
-                                                                            //                                                   const SizedBox(
-                                                                            //                                                     height: 15,
-                                                                            //                                                   ),
-                                                                            //                                                 ],
-                                                                            //                                               );
-                                                                            //                                             },
-                                                                            //                                       ),
-                                                                            //                                     ),
-                                                                            //                                   )
-                                                                            //                                 : const SizedBox(),
-                                                                            //                           ],
-                                                                            //                         ),
-                                                                            //                       ),
-                                                                            //                     ),
-                                                                            //                   ),
-                                                                            //                 );
-                                                                            //               },
-                                                                            //           transitionBuilder:
-                                                                            //               (
-                                                                            //                 _,
-                                                                            //                 animation1,
-                                                                            //                 __,
-                                                                            //                 child,
-                                                                            //               ) {
-                                                                            //                 return SlideTransition(
-                                                                            //                   position:
-                                                                            //                       Tween(
-                                                                            //                         begin: const Offset(
-                                                                            //                           0,
-                                                                            //                           1,
-                                                                            //                         ),
-                                                                            //                         end: const Offset(
-                                                                            //                           0,
-                                                                            //                           0,
-                                                                            //                         ),
-                                                                            //                       ).animate(
-                                                                            //                         animation1,
-                                                                            //                       ),
-                                                                            //                   child: child,
-                                                                            //                 );
-                                                                            //               },
-                                                                            //         );
-                                                                            //       }
-                                                                            //     }
-                                                                            //   },
-                                                                            //   child: Container(
-                                                                            //     width: 30,
-                                                                            //     height: 30,
-                                                                            //     decoration: BoxDecoration(
-                                                                            //       boxShadow: [
-                                                                            //         BoxShadow(
-                                                                            //           color: Colors.grey.shade500,
-                                                                            //           offset: const Offset(
-                                                                            //             0,
-                                                                            //             2.0,
-                                                                            //           ),
-                                                                            //         ),
-                                                                            //       ],
-                                                                            //       color: Colors.white,
-                                                                            //       borderRadius: BorderRadius.circular(
-                                                                            //         5,
-                                                                            //       ),
-                                                                            //     ),
-                                                                            //     child: Padding(
-                                                                            //       padding: const EdgeInsets.all(
-                                                                            //         4,
-                                                                            //       ),
-                                                                            //       child: Center(
-                                                                            //         child: Image.asset(
-                                                                            //           "assets/icons/lineSegment.png",
-                                                                            //         ),
-                                                                            //       ),
-                                                                            //     ),
-                                                                            //   ),
-                                                                            // ),
+                                                                            InkWell(
+                                                                              onTap: () async {
+                                                                                Common.showProgressDialog(
+                                                                                  context,
+                                                                                  "Loading..",
+                                                                                );
+                                                                                LeadProgressbarModel
+                                                                                object1 = await HttpService.leadProgressbar(
+                                                                                  widget.token,
+                                                                                  fromdate,
+                                                                                  todate,
+                                                                                  '-1',
+                                                                                );
+                                                                                if (object1.status ==
+                                                                                    true) {
+                                                                                  if (context.mounted) {
+                                                                                    Navigator.pop(
+                                                                                      context,
+                                                                                    );
+                                                                                    showGeneralDialog(
+                                                                                      barrierLabel: "showGeneralDialog",
+                                                                                      barrierDismissible: true,
+                                                                                      barrierColor: Colors.black.withOpacity(
+                                                                                        0.6,
+                                                                                      ),
+                                                                                      transitionDuration: const Duration(
+                                                                                        milliseconds: 400,
+                                                                                      ),
+                                                                                      context: context,
+                                                                                      pageBuilder:
+                                                                                          (
+                                                                                            context,
+                                                                                            _,
+                                                                                            __,
+                                                                                          ) {
+                                                                                            return Align(
+                                                                                              alignment: Alignment.bottomCenter,
+                                                                                              child: IntrinsicHeight(
+                                                                                                child: Container(
+                                                                                                  width: double.maxFinite,
+                                                                                                  clipBehavior: Clip.antiAlias,
+                                                                                                  padding: const EdgeInsets.all(
+                                                                                                    16,
+                                                                                                  ),
+                                                                                                  decoration: const BoxDecoration(
+                                                                                                    color: Colors.white,
+                                                                                                    borderRadius: BorderRadius.only(
+                                                                                                      topLeft: Radius.circular(
+                                                                                                        16,
+                                                                                                      ),
+                                                                                                      topRight: Radius.circular(
+                                                                                                        16,
+                                                                                                      ),
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                  child: Material(
+                                                                                                    child: Column(
+                                                                                                      children: [
+                                                                                                        const SizedBox(
+                                                                                                          height: 15,
+                                                                                                        ),
+                                                                                                        Row(
+                                                                                                          mainAxisAlignment: MainAxisAlignment.end,
+                                                                                                          children: [
+                                                                                                            InkWell(
+                                                                                                              onTap: () => {
+                                                                                                                Navigator.pop(
+                                                                                                                  context,
+                                                                                                                ),
+                                                                                                              },
+                                                                                                              child: Container(
+                                                                                                                width: 25,
+                                                                                                                height: 25,
+                                                                                                                decoration: BoxDecoration(
+                                                                                                                  shape: BoxShape.circle,
+                                                                                                                  color: Colors.white,
+                                                                                                                  border: Border.all(),
+                                                                                                                ),
+                                                                                                                child: const Center(
+                                                                                                                  child: Icon(
+                                                                                                                    Icons.close,
+                                                                                                                    color: Colors.black,
+                                                                                                                    size: 15,
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              ),
+                                                                                                            ),
+                                                                                                          ],
+                                                                                                        ),
+                                                                                                        const Text(
+                                                                                                          'Total Called',
+                                                                                                          style: TextStyle(
+                                                                                                            fontSize: 18,
+                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                        const SizedBox(
+                                                                                                          height: 10,
+                                                                                                        ),
+                                                                                                        Text(
+                                                                                                          object1.data!.totalCount.toString(),
+                                                                                                          style: TextStyle(
+                                                                                                            fontSize: 18,
+                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                            color: Colors.green.shade900,
+                                                                                                          ),
+                                                                                                        ),
+                                                                                                        object1.data!.staffLeads!.isNotEmpty
+                                                                                                            ? const Padding(
+                                                                                                                padding: EdgeInsets.only(
+                                                                                                                  bottom: 20,
+                                                                                                                ),
+                                                                                                                child: Row(
+                                                                                                                  children: [
+                                                                                                                    Text(
+                                                                                                                      'Staff Wise Lead',
+                                                                                                                      style: TextStyle(
+                                                                                                                        fontSize: 16,
+                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                        color: Colors.black,
+                                                                                                                      ),
+                                                                                                                    ),
+                                                                                                                  ],
+                                                                                                                ),
+                                                                                                              )
+                                                                                                            : const SizedBox(),
+                                                                                                        object1.data!.staffLeads!.isNotEmpty
+                                                                                                            ? SizedBox(
+                                                                                                                height:
+                                                                                                                    60 *
+                                                                                                                    double.parse(
+                                                                                                                      object1.data!.staffLeads!.length.toString(),
+                                                                                                                    ),
+                                                                                                                // 70% height
+                                                                                                                child: MediaQuery.removePadding(
+                                                                                                                  context: context,
+                                                                                                                  removeTop: true,
+                                                                                                                  child: ListView.builder(
+                                                                                                                    shrinkWrap: true,
+                                                                                                                    physics: const NeverScrollableScrollPhysics(),
+                                                                                                                    itemCount: object1.data!.staffLeads!.length,
+                                                                                                                    itemBuilder:
+                                                                                                                        (
+                                                                                                                          context,
+                                                                                                                          i,
+                                                                                                                        ) {
+                                                                                                                          return Column(
+                                                                                                                            children: [
+                                                                                                                              Padding(
+                                                                                                                                padding: const EdgeInsets.only(
+                                                                                                                                  left: 15,
+                                                                                                                                  right: 15,
+                                                                                                                                ),
+                                                                                                                                child: Row(
+                                                                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                                                                  children: [
+                                                                                                                                    Text(
+                                                                                                                                      object1.data!.staffLeads![i].staffName.toString(),
+                                                                                                                                      style: const TextStyle(
+                                                                                                                                        fontSize: 14,
+                                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                                        color: Colors.black,
+                                                                                                                                      ),
+                                                                                                                                    ),
+                                                                                                                                    Text(
+                                                                                                                                      'Count : ${object1.data!.staffLeads![i].staffCount}',
+                                                                                                                                      style: const TextStyle(
+                                                                                                                                        fontSize: 14,
+                                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                                        color: Colors.black,
+                                                                                                                                      ),
+                                                                                                                                    ),
+                                                                                                                                  ],
+                                                                                                                                ),
+                                                                                                                              ),
+                                                                                                                              Padding(
+                                                                                                                                padding: const EdgeInsets.only(
+                                                                                                                                  left: 15,
+                                                                                                                                  right: 15,
+                                                                                                                                  top: 5,
+                                                                                                                                ),
+                                                                                                                                child: InkWell(
+                                                                                                                                  onTap: () {
+                                                                                                                                    Navigator.push(
+                                                                                                                                      context,
+                                                                                                                                      MaterialPageRoute(
+                                                                                                                                        builder:
+                                                                                                                                            (
+                                                                                                                                              context,
+                                                                                                                                            ) => ViewLeads(
+                                                                                                                                              widget.token,
+                                                                                                                                              leadDashboard!.data!.updateLead!,
+                                                                                                                                              leadDashboard!.data!.deleteLead!,
+                                                                                                                                              leadDashboard!.data!.cloudCall!,
+                                                                                                                                              pageName: 'Total Called',
+                                                                                                                                              fromDate: fromdate.toString(),
+                                                                                                                                              toDate: todate.toString(),
+                                                                                                                                              status: '-1',
+                                                                                                                                              staff: object1.data!.staffLeads![i].staffId.toString(),
+                                                                                                                                            ),
+                                                                                                                                      ),
+                                                                                                                                    );
+                                                                                                                                  },
+                                                                                                                                  child: LinearPercentIndicator(
+                                                                                                                                    width:
+                                                                                                                                        MediaQuery.of(
+                                                                                                                                          context,
+                                                                                                                                        ).size.width *
+                                                                                                                                        0.82,
+                                                                                                                                    animation: true,
+                                                                                                                                    lineHeight: 15.0,
+                                                                                                                                    animationDuration: 2500,
+                                                                                                                                    percent: double.parse(
+                                                                                                                                      object1.data!.staffLeads![i].staffPercentage.toString(),
+                                                                                                                                    ),
+                                                                                                                                    progressColor:
+                                                                                                                                        object1.data!.staffLeads!.length >
+                                                                                                                                            _colors.length
+                                                                                                                                        ? Colors.red
+                                                                                                                                        : _colors[i],
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                              ),
+                                                                                                                              const SizedBox(
+                                                                                                                                height: 15,
+                                                                                                                              ),
+                                                                                                                            ],
+                                                                                                                          );
+                                                                                                                        },
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              )
+                                                                                                            : const SizedBox(),
+                                                                                                        object1.data!.categoryLeads!.isNotEmpty
+                                                                                                            ? const Padding(
+                                                                                                                padding: EdgeInsets.only(
+                                                                                                                  bottom: 20,
+                                                                                                                ),
+                                                                                                                child: Row(
+                                                                                                                  children: [
+                                                                                                                    Text(
+                                                                                                                      'Category Wise Lead',
+                                                                                                                      style: TextStyle(
+                                                                                                                        fontSize: 16,
+                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                        color: Colors.black,
+                                                                                                                      ),
+                                                                                                                    ),
+                                                                                                                  ],
+                                                                                                                ),
+                                                                                                              )
+                                                                                                            : const SizedBox(),
+                                                                                                        object1.data!.categoryLeads!.isNotEmpty
+                                                                                                            ? SizedBox(
+                                                                                                                height:
+                                                                                                                    60 *
+                                                                                                                    double.parse(
+                                                                                                                      object1.data!.categoryLeads!.length.toString(),
+                                                                                                                    ),
+                                                                                                                // 70% height
+                                                                                                                child: MediaQuery.removePadding(
+                                                                                                                  context: context,
+                                                                                                                  removeTop: true,
+                                                                                                                  child: ListView.builder(
+                                                                                                                    shrinkWrap: true,
+                                                                                                                    physics: const NeverScrollableScrollPhysics(),
+                                                                                                                    itemCount: object1.data!.categoryLeads!.length,
+                                                                                                                    itemBuilder:
+                                                                                                                        (
+                                                                                                                          context,
+                                                                                                                          i,
+                                                                                                                        ) {
+                                                                                                                          return Column(
+                                                                                                                            children: [
+                                                                                                                              Padding(
+                                                                                                                                padding: const EdgeInsets.only(
+                                                                                                                                  left: 15,
+                                                                                                                                  right: 15,
+                                                                                                                                ),
+                                                                                                                                child: Row(
+                                                                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                                                                  children: [
+                                                                                                                                    Text(
+                                                                                                                                      object1.data!.categoryLeads![i].categoryName.toString(),
+                                                                                                                                      style: const TextStyle(
+                                                                                                                                        fontSize: 14,
+                                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                                        color: Colors.black,
+                                                                                                                                      ),
+                                                                                                                                    ),
+                                                                                                                                    Text(
+                                                                                                                                      'Count : ${object1.data!.categoryLeads![i].categoryCount}',
+                                                                                                                                      style: const TextStyle(
+                                                                                                                                        fontSize: 14,
+                                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                                        color: Colors.black,
+                                                                                                                                      ),
+                                                                                                                                    ),
+                                                                                                                                  ],
+                                                                                                                                ),
+                                                                                                                              ),
+                                                                                                                              Padding(
+                                                                                                                                padding: const EdgeInsets.only(
+                                                                                                                                  left: 15,
+                                                                                                                                  right: 15,
+                                                                                                                                  top: 5,
+                                                                                                                                ),
+                                                                                                                                child: InkWell(
+                                                                                                                                  onTap: () {
+                                                                                                                                    Navigator.push(
+                                                                                                                                      context,
+                                                                                                                                      MaterialPageRoute(
+                                                                                                                                        builder:
+                                                                                                                                            (
+                                                                                                                                              context,
+                                                                                                                                            ) => ViewLeads(
+                                                                                                                                              widget.token,
+                                                                                                                                              leadDashboard!.data!.updateLead!,
+                                                                                                                                              leadDashboard!.data!.deleteLead!,
+                                                                                                                                              leadDashboard!.data!.cloudCall!,
+                                                                                                                                              pageName: 'Total Called',
+                                                                                                                                              fromDate: fromdate.toString(),
+                                                                                                                                              toDate: todate.toString(),
+                                                                                                                                              status: '-1',
+                                                                                                                                              category: object1.data!.categoryLeads![i].categoryId.toString(),
+                                                                                                                                            ),
+                                                                                                                                      ),
+                                                                                                                                    );
+                                                                                                                                  },
+                                                                                                                                  child: LinearPercentIndicator(
+                                                                                                                                    width:
+                                                                                                                                        MediaQuery.of(
+                                                                                                                                          context,
+                                                                                                                                        ).size.width *
+                                                                                                                                        0.82,
+                                                                                                                                    animation: true,
+                                                                                                                                    lineHeight: 15.0,
+                                                                                                                                    animationDuration: 2500,
+                                                                                                                                    percent: double.parse(
+                                                                                                                                      object1.data!.categoryLeads![i].categoryPercentage.toString(),
+                                                                                                                                    ),
+                                                                                                                                    progressColor:
+                                                                                                                                        object1.data!.categoryLeads!.length >
+                                                                                                                                            _colors.length
+                                                                                                                                        ? Colors.red
+                                                                                                                                        : _colors[i],
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                              ),
+                                                                                                                              const SizedBox(
+                                                                                                                                height: 15,
+                                                                                                                              ),
+                                                                                                                            ],
+                                                                                                                          );
+                                                                                                                        },
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              )
+                                                                                                            : const SizedBox(),
+                                                                                                        object1.data!.statusLeads!.isNotEmpty
+                                                                                                            ? const Padding(
+                                                                                                                padding: EdgeInsets.only(
+                                                                                                                  bottom: 20,
+                                                                                                                ),
+                                                                                                                child: Row(
+                                                                                                                  children: [
+                                                                                                                    Text(
+                                                                                                                      'Status Wise Lead',
+                                                                                                                      style: TextStyle(
+                                                                                                                        fontSize: 16,
+                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                        color: Colors.black,
+                                                                                                                      ),
+                                                                                                                    ),
+                                                                                                                  ],
+                                                                                                                ),
+                                                                                                              )
+                                                                                                            : const SizedBox(),
+                                                                                                        object1.data!.statusLeads!.isNotEmpty
+                                                                                                            ? SizedBox(
+                                                                                                                height:
+                                                                                                                    60 *
+                                                                                                                    double.parse(
+                                                                                                                      object1.data!.statusLeads!.length.toString(),
+                                                                                                                    ),
+                                                                                                                // 70% height
+                                                                                                                child: MediaQuery.removePadding(
+                                                                                                                  context: context,
+                                                                                                                  removeTop: true,
+                                                                                                                  child: ListView.builder(
+                                                                                                                    shrinkWrap: true,
+                                                                                                                    physics: const NeverScrollableScrollPhysics(),
+                                                                                                                    itemCount: object1.data!.statusLeads!.length,
+                                                                                                                    itemBuilder:
+                                                                                                                        (
+                                                                                                                          context,
+                                                                                                                          i,
+                                                                                                                        ) {
+                                                                                                                          return Column(
+                                                                                                                            children: [
+                                                                                                                              Padding(
+                                                                                                                                padding: const EdgeInsets.only(
+                                                                                                                                  left: 15,
+                                                                                                                                  right: 15,
+                                                                                                                                ),
+                                                                                                                                child: Row(
+                                                                                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                                                                  children: [
+                                                                                                                                    Text(
+                                                                                                                                      object1.data!.statusLeads![i].statusName.toString(),
+                                                                                                                                      style: const TextStyle(
+                                                                                                                                        fontSize: 14,
+                                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                                        color: Colors.black,
+                                                                                                                                      ),
+                                                                                                                                    ),
+                                                                                                                                    Text(
+                                                                                                                                      'Count : ${object1.data!.statusLeads![i].statusCount}',
+                                                                                                                                      style: const TextStyle(
+                                                                                                                                        fontSize: 14,
+                                                                                                                                        fontWeight: FontWeight.w500,
+                                                                                                                                        color: Colors.black,
+                                                                                                                                      ),
+                                                                                                                                    ),
+                                                                                                                                  ],
+                                                                                                                                ),
+                                                                                                                              ),
+                                                                                                                              Padding(
+                                                                                                                                padding: const EdgeInsets.only(
+                                                                                                                                  left: 15,
+                                                                                                                                  right: 15,
+                                                                                                                                  top: 5,
+                                                                                                                                ),
+                                                                                                                                child: InkWell(
+                                                                                                                                  onTap: () {
+                                                                                                                                    Navigator.push(
+                                                                                                                                      context,
+                                                                                                                                      MaterialPageRoute(
+                                                                                                                                        builder:
+                                                                                                                                            (
+                                                                                                                                              context,
+                                                                                                                                            ) => ViewLeads(
+                                                                                                                                              widget.token,
+                                                                                                                                              leadDashboard!.data!.updateLead!,
+                                                                                                                                              leadDashboard!.data!.deleteLead!,
+                                                                                                                                              leadDashboard!.data!.cloudCall!,
+                                                                                                                                              pageName: 'Total Called',
+                                                                                                                                              fromDate: fromdate.toString(),
+                                                                                                                                              toDate: todate.toString(),
+                                                                                                                                              status: object1.data!.statusLeads![i].statusId.toString(),
+                                                                                                                                            ),
+                                                                                                                                      ),
+                                                                                                                                    );
+                                                                                                                                  },
+                                                                                                                                  child: LinearPercentIndicator(
+                                                                                                                                    width:
+                                                                                                                                        MediaQuery.of(
+                                                                                                                                          context,
+                                                                                                                                        ).size.width *
+                                                                                                                                        0.82,
+                                                                                                                                    animation: true,
+                                                                                                                                    lineHeight: 15.0,
+                                                                                                                                    animationDuration: 2500,
+                                                                                                                                    percent: double.parse(
+                                                                                                                                      object1.data!.statusLeads![i].statusPercentage.toString(),
+                                                                                                                                    ),
+                                                                                                                                    progressColor:
+                                                                                                                                        object1.data!.statusLeads!.length >
+                                                                                                                                            _colors.length
+                                                                                                                                        ? Colors.red
+                                                                                                                                        : _colors[i],
+                                                                                                                                  ),
+                                                                                                                                ),
+                                                                                                                              ),
+                                                                                                                              const SizedBox(
+                                                                                                                                height: 15,
+                                                                                                                              ),
+                                                                                                                            ],
+                                                                                                                          );
+                                                                                                                        },
+                                                                                                                  ),
+                                                                                                                ),
+                                                                                                              )
+                                                                                                            : const SizedBox(),
+                                                                                                      ],
+                                                                                                    ),
+                                                                                                  ),
+                                                                                                ),
+                                                                                              ),
+                                                                                            );
+                                                                                          },
+                                                                                      transitionBuilder:
+                                                                                          (
+                                                                                            _,
+                                                                                            animation1,
+                                                                                            __,
+                                                                                            child,
+                                                                                          ) {
+                                                                                            return SlideTransition(
+                                                                                              position:
+                                                                                                  Tween(
+                                                                                                    begin: const Offset(
+                                                                                                      0,
+                                                                                                      1,
+                                                                                                    ),
+                                                                                                    end: const Offset(
+                                                                                                      0,
+                                                                                                      0,
+                                                                                                    ),
+                                                                                                  ).animate(
+                                                                                                    animation1,
+                                                                                                  ),
+                                                                                              child: child,
+                                                                                            );
+                                                                                          },
+                                                                                    );
+                                                                                  }
+                                                                                }
+                                                                              },
+                                                                              child: Container(
+                                                                                width: 30,
+                                                                                height: 30,
+                                                                                decoration: BoxDecoration(
+                                                                                  boxShadow: [
+                                                                                    BoxShadow(
+                                                                                      color: Colors.grey.shade500,
+                                                                                      offset: const Offset(
+                                                                                        0,
+                                                                                        2.0,
+                                                                                      ),
+                                                                                    ),
+                                                                                  ],
+                                                                                  color: Colors.white,
+                                                                                  borderRadius: BorderRadius.circular(
+                                                                                    5,
+                                                                                  ),
+                                                                                ),
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.all(
+                                                                                    4,
+                                                                                  ),
+                                                                                  child: Center(
+                                                                                    child: Image.asset(
+                                                                                      "assets/icons/lineSegment.png",
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ),
                                                                           ],
                                                                         ),
                                                                       ),
@@ -7761,62 +7760,6 @@ class _DashboardState extends State<Dashboard> {
 
   bool toBoolean(String val) {
     return (val == "true" || val == "1") ? true : false;
-  }
-
-  Widget _buildDashboardPill(String title, dynamic value, Color bgColor, [Color textColor = Colors.black, String? status]) {
-    return InkWell(
-      onTap: () {
-        if (status != null && status.isNotEmpty) {
-          Common.saveSharedPref("statusWise", 'no');
-          leadDashboard?.data?.viewLead == true
-              ? Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ViewLeads(
-                      widget.token,
-                      leadDashboard!.data!.updateLead!,
-                      leadDashboard!.data!.deleteLead!,
-                      leadDashboard!.data!.cloudCall!,
-                      pageName: title,
-                      fromDate: fromdate.toString(),
-                      toDate: todate.toString(),
-                      status: status,
-                    ),
-                  ),
-                )
-              : _dialogue(context, 'View Leads');
-        }
-      },
-      child: Container(
-        margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "$title: ",
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: textColor,
-              ),
-            ),
-            Text(
-              "$value",
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: textColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 

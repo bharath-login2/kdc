@@ -331,28 +331,33 @@ class _LeadDetailsState extends State<LeadDetails> {
             ),
           );
         } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ViewLeads(
-                widget.token,
-                widget.editLead,
-                widget.deleteLead,
-                widget.cloudCall,
-                pageName: widget.pageName,
-                status: widget.status,
-                staff: widget.staff,
-                isCalled: widget.isCalled,
-                fromDate: widget.fromDate,
-                toDate: widget.toDate,
-                category: widget.category,
-                scrollToIndex: widget.scrollToIndex,
-                page: widget.page,
-                pageSize: widget.pageSize,
-                leadType: widget.leadType,
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          } else {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ViewLeads(
+                  widget.token,
+                  widget.editLead,
+                  widget.deleteLead,
+                  widget.cloudCall,
+                  pageName: widget.pageName,
+                  status: widget.status,
+                  staff: widget.staff,
+                  isCalled: widget.isCalled,
+                  fromDate: widget.fromDate,
+                  toDate: widget.toDate,
+                  category: widget.category,
+                  scrollToIndex: widget.scrollToIndex,
+                  page: widget.page,
+                  pageSize: widget.pageSize,
+                  leadType: widget.leadType,
+                  callResultId: (widget.status == 'missedLeads' || widget.pageName == 'Total Missed Leads' || widget.pageName == 'Missed Leads') ? '' : null,
+                ),
               ),
-            ),
-          );
+            );
+          }
         }
         return true;
       },
@@ -466,28 +471,33 @@ class _LeadDetailsState extends State<LeadDetails> {
                                       ),
                                     );
                                   } else {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ViewLeads(
-                                          widget.token,
-                                          widget.editLead,
-                                          widget.deleteLead,
-                                          widget.cloudCall,
-                                          pageName: widget.pageName,
-                                          status: widget.status,
-                                          staff: widget.staff,
-                                          isCalled: widget.isCalled,
-                                          fromDate: widget.fromDate,
-                                          toDate: widget.toDate,
-                                          category: widget.category,
-                                          scrollToIndex: widget.scrollToIndex,
-                                          page: widget.page,
-                                          pageSize: widget.pageSize,
-                                          leadType: widget.leadType,
+                                    if (Navigator.canPop(context)) {
+                                      Navigator.pop(context);
+                                    } else {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ViewLeads(
+                                            widget.token,
+                                            widget.editLead,
+                                            widget.deleteLead,
+                                            widget.cloudCall,
+                                            pageName: widget.pageName,
+                                            status: widget.status,
+                                            staff: widget.staff,
+                                            isCalled: widget.isCalled,
+                                            fromDate: widget.fromDate,
+                                            toDate: widget.toDate,
+                                            category: widget.category,
+                                            scrollToIndex: widget.scrollToIndex,
+                                            page: widget.page,
+                                            pageSize: widget.pageSize,
+                                            leadType: widget.leadType,
+                                            callResultId: (widget.status == 'missedLeads' || widget.pageName == 'Total Missed Leads' || widget.pageName == 'Missed Leads') ? '' : null,
+                                          ),
                                         ),
-                                      ),
-                                    );
+                                      );
+                                    }
                                   }
                                 },
                                 child: Container(
@@ -1874,12 +1884,7 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                 Container(
                                                   decoration: BoxDecoration(
                                                     color:
-                                                        _colors[int.parse(
-                                                          leadDetails!
-                                                              .data!
-                                                              .callResultId
-                                                              .toString(),
-                                                        )],
+                                                        _colors[(int.tryParse(leadDetails?.data?.callResultId?.toString() ?? '') ?? 0).abs() % _colors.length],
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                           5,
@@ -3551,6 +3556,7 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                                                                                           child: const Text(
                                                                                                                             'Unset Reminder',
                                                                                                                             style: TextStyle(
+                                               
                                                                                                                               fontSize: 13,
                                                                                                                               color: Colors.red,
                                                                                                                             ),
@@ -3767,7 +3773,7 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                                 height: 15,
                                                               ),
                                                               Text(
-                                                                'Scheduled Date : ${leadDetailsAdditional!.data!.followUpData![index].scheduledDate}',
+                                                                '${leadDetailsAdditional!.data!.followUpData![index].callResultId.toString() == '1' ? 'Created Date' : 'Scheduled Date'} : ${leadDetailsAdditional!.data!.followUpData![index].scheduledDate}',
                                                                 style: const TextStyle(
                                                                   fontSize: 12,
                                                                   fontWeight:
@@ -3793,75 +3799,58 @@ class _LeadDetailsState extends State<LeadDetails> {
                                                               Row(
                                                                 mainAxisAlignment:
                                                                     MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
                                                                         .start,
                                                                 children: [
                                                                   Row(
                                                                     children: [
                                                                       const Text(
-                                                                        'Status :',
+                                                                        'Call Status :',
                                                                         style: TextStyle(
-                                                                          fontSize:
-                                                                              12,
-                                                                          fontWeight:
-                                                                              FontWeight.w400,
+                                                                          fontSize: 12,
+                                                                          fontWeight: FontWeight.w400,
                                                                         ),
                                                                       ),
                                                                       const SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      Container(
-                                                                        decoration: BoxDecoration(
-                                                                          color:
-                                                                              _colors[int.parse(
-                                                                                leadDetailsAdditional!.data!.followUpData![index].callResultId.toString(),
-                                                                              )],
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(
-                                                                                5,
-                                                                              ),
-                                                                        ),
-                                                                        child: Padding(
-                                                                          padding: const EdgeInsets.only(
-                                                                            left:
-                                                                                5,
-                                                                            right:
-                                                                                5,
-                                                                            top:
-                                                                                2,
-                                                                            bottom:
-                                                                                2,
-                                                                          ),
-                                                                          child: Text(
-                                                                            leadDetailsAdditional!.data!.followUpData![index].callResult.toString(),
-                                                                            style: const TextStyle(
-                                                                              fontSize: 13,
-                                                                              color: Colors.white,
-                                                                              fontWeight: FontWeight.w500,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      const SizedBox(
-                                                                        width:
-                                                                            10,
-                                                                      ),
-                                                                      leadDetailsAdditional!.data!.followUpData![index].isCalled ==
-                                                                              false
-                                                                          ? const Text(
-                                                                              '( Pending )',
-                                                                              style: TextStyle(
-                                                                                color: Colors.red,
-                                                                                fontWeight: FontWeight.bold,
-                                                                              ),
-                                                                            )
-                                                                          : const SizedBox(),
-                                                                    ],
-                                                                  ),
-                                                                ],
+                                                                         width: 10,
+                                                                       ),
+                                                                       Container(
+                                                                         decoration: BoxDecoration(
+                                                                           color: _colors[(int.tryParse(leadDetailsAdditional?.data?.followUpData?[index].callResultId?.toString() ?? '') ?? 0).abs() % _colors.length],
+                                                                           borderRadius: BorderRadius.circular(5),
+                                                                         ),
+                                                                         child: Padding(
+                                                                           padding: const EdgeInsets.only(
+                                                                             left: 5,
+                                                                             right: 5,
+                                                                             top: 2,
+                                                                             bottom: 2,
+                                                                           ),
+                                                                           child: Text(
+                                                                             leadDetailsAdditional!.data!.followUpData![index].callResult.toString(),
+                                                                             style: const TextStyle(
+                                                                               fontSize: 13,
+                                                                               color: Colors.white,
+                                                                               fontWeight: FontWeight.w500,
+                                                                             ),
+                                                                           ),
+                                                                         ),
+                                                                       ),
+                                                                       const SizedBox(
+                                                                         width: 10,
+                                                                       ),
+                                                                       leadDetailsAdditional!.data!.followUpData![index].isCalled == false
+                                                                           ? const Text(
+                                                                               '( Pending )',
+                                                                               style: TextStyle(
+                                                                                 color: Colors.red,
+                                                                                 fontWeight: FontWeight.bold,
+                                                                               ),
+                                                                             )
+                                                                           : const SizedBox(),
+                                                                     ],
+                                                                   ),
+                                                                 ],
+
                                                               ),
                                                               const SizedBox(
                                                                 height: 8,

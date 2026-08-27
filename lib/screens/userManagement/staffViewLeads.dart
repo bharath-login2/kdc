@@ -1153,16 +1153,25 @@ class _StaffViewLeadsState extends State<StaffViewLeads> {
                                                                                 overflow: TextOverflow.ellipsis,
                                                                               ),
                                                                             ),
-                                                                            Container(
-                                                                              decoration: BoxDecoration(color: _colors[items[index].callResultId!], borderRadius: BorderRadius.circular(5)),
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.only(left: 5, right: 5, top: 2, bottom: 2),
-                                                                                child: Text(
-                                                                                  items[index].callResult.toString(),
-                                                                                  style: const TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
+                                                                            if (items[index].callResult != null &&
+                                                                                items[index].callResult.toString().trim().isNotEmpty)
+                                                                              Container(
+                                                                                decoration: BoxDecoration(
+                                                                                  color: (items[index].callResultId != null &&
+                                                                                          items[index].callResultId! >= 0 &&
+                                                                                          items[index].callResultId! < _colors.length)
+                                                                                      ? _colors[items[index].callResultId!]
+                                                                                      : Colors.teal,
+                                                                                  borderRadius: BorderRadius.circular(5),
+                                                                                ),
+                                                                                child: Padding(
+                                                                                  padding: const EdgeInsets.only(left: 5, right: 5, top: 2, bottom: 2),
+                                                                                  child: Text(
+                                                                                    items[index].callResult.toString(),
+                                                                                    style: const TextStyle(fontSize: 13, color: Colors.white, fontWeight: FontWeight.w500),
+                                                                                  ),
                                                                                 ),
                                                                               ),
-                                                                            ),
                                                                           ],
                                                                         ),
                                                                         const SizedBox(

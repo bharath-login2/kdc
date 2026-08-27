@@ -58,6 +58,26 @@ class Data {
   String? totalStaffLeads;
   int? unreadNotification;
 
+  int? dayCallCount;
+  int? connectedCount;
+  int? pendingCount;
+  int? totalProspectCount;
+  int? achievedCount;
+  int? saleClosedCount;
+  int? relationshipBuildCount;
+  int? todayProspectCount;
+  int? todayCreatedCount;
+  int? todayNewCalledCount;
+  int? reassignedCount;
+  int? reassignedCalledCount;
+  int? prospectTodayCount;
+  int? prospectTodayCalledCount;
+  int? followupTodayCount;
+  int? followupTodayCalledCount;
+  int? demandTorecallTodayCount;
+  int? demandTorecallCalledTodayCount;
+  int? aboveOneMinCount;
+
   Data({
     this.newLeads,
     this.followupLeads,
@@ -85,23 +105,49 @@ class Data {
     this.accessCallRecording,
     this.fileManager,
     this.phoneCallLog,
-        this.callTarget,
-            this.callAchieved,
-                this.targetPoints,
-                    this.achievedPoints,
-                        this.pendingCalls,
-                            this.pendingPoints,
+    this.callTarget,
+    this.callAchieved,
+    this.targetPoints,
+    this.achievedPoints,
+    this.pendingCalls,
+    this.pendingPoints,
     this.totalStaffLeads,
     this.unreadNotification,
+    this.dayCallCount,
+    this.connectedCount,
+    this.pendingCount,
+    this.totalProspectCount,
+    this.achievedCount,
+    this.saleClosedCount,
+    this.relationshipBuildCount,
+    this.todayProspectCount,
+    this.todayCreatedCount,
+    this.todayNewCalledCount,
+    this.reassignedCount,
+    this.reassignedCalledCount,
+    this.prospectTodayCount,
+    this.prospectTodayCalledCount,
+    this.followupTodayCount,
+    this.followupTodayCalledCount,
+    this.demandTorecallTodayCount,
+    this.demandTorecallCalledTodayCount,
+    this.aboveOneMinCount,
   });
 
+  static int? _parseInt(dynamic val) {
+    if (val == null) return null;
+    if (val is int) return val;
+    if (val is double) return val.toInt();
+    return int.tryParse(val.toString());
+  }
+
   Data.fromJson(Map<String, dynamic> json) {
-    newLeads = json['newLeads'];
-    followupLeads = json['followupLeads'];
-    closedLeads = json['closedLeads'];
-    totalCalled = json['totalCalled'];
-    missedLeads = json['missedLeads'];
-    transferLeads = json['transferLeads'];
+    newLeads = _parseInt(json['newLeads']);
+    followupLeads = _parseInt(json['followupLeads']);
+    closedLeads = _parseInt(json['closedLeads']);
+    totalCalled = _parseInt(json['totalCalled']);
+    missedLeads = _parseInt(json['missedLeads']);
+    transferLeads = _parseInt(json['transferLeads']);
     createLead = json['create_lead'];
     viewLead = json['view_lead'];
     updateLead = json['update_lead'];
@@ -122,14 +168,34 @@ class Data {
     accessCallRecording = json['access_call_recording'];
     fileManager = json['file_manager'];
     phoneCallLog = json['phone_call_log'];
-    callTarget = json['call_target'];
-    callAchieved = json['call_achieved'];
-    targetPoints = json['target_point'];
-    achievedPoints = json['achieved_points'];
-    pendingCalls = json['pending_calls'];
-    pendingPoints = json['pending_points'];
-    totalStaffLeads = json['total_staff_leads'];
-    unreadNotification = json['unread_notification'];
+    callTarget = json['call_target']?.toString();
+    callAchieved = json['call_achieved']?.toString();
+    targetPoints = json['target_point']?.toString();
+    achievedPoints = json['achieved_points']?.toString();
+    pendingCalls = json['pending_calls']?.toString();
+    pendingPoints = json['pending_points']?.toString();
+    totalStaffLeads = json['total_staff_leads']?.toString();
+    unreadNotification = _parseInt(json['unread_notification']);
+
+    dayCallCount = _parseInt(json['dayCallCount']);
+    connectedCount = _parseInt(json['connectedCount']);
+    pendingCount = _parseInt(json['pendingCount']);
+    totalProspectCount = _parseInt(json['totalProspectCount']);
+    achievedCount = _parseInt(json['achievedCount']);
+    saleClosedCount = _parseInt(json['saleClosedCount']);
+    relationshipBuildCount = _parseInt(json['relationshipBuildCount']);
+    todayProspectCount = _parseInt(json['todayProspectCount']);
+    todayCreatedCount = _parseInt(json['todayCreatedCount']);
+    todayNewCalledCount = _parseInt(json['todayNewCalledCount']);
+    reassignedCount = _parseInt(json['reassignedCount']);
+    reassignedCalledCount = _parseInt(json['reassignedCalledCount']);
+    prospectTodayCount = _parseInt(json['prospectTodayCount']);
+    prospectTodayCalledCount = _parseInt(json['prospectTodayCalledCount']);
+    followupTodayCount = _parseInt(json['followupTodayCount']);
+    followupTodayCalledCount = _parseInt(json['followupTodayCalledCount']);
+    demandTorecallTodayCount = _parseInt(json['demandTorecallTodayCount']);
+    demandTorecallCalledTodayCount = _parseInt(json['demandTorecallCalledTodayCount']);
+    aboveOneMinCount = _parseInt(json['aboveOneMinCount']);
   }
 
   Map<String, dynamic> toJson() {
@@ -162,6 +228,27 @@ class Data {
     data['phone_call_log'] = phoneCallLog;
     data['total_staff_leads'] = totalStaffLeads;
     data['unread_notification'] = unreadNotification;
+
+    data['dayCallCount'] = dayCallCount;
+    data['connectedCount'] = connectedCount;
+    data['pendingCount'] = pendingCount;
+    data['totalProspectCount'] = totalProspectCount;
+    data['achievedCount'] = achievedCount;
+    data['saleClosedCount'] = saleClosedCount;
+    data['relationshipBuildCount'] = relationshipBuildCount;
+    data['todayProspectCount'] = todayProspectCount;
+    data['todayCreatedCount'] = todayCreatedCount;
+    data['todayNewCalledCount'] = todayNewCalledCount;
+    data['reassignedCount'] = reassignedCount;
+    data['reassignedCalledCount'] = reassignedCalledCount;
+    data['prospectTodayCount'] = prospectTodayCount;
+    data['prospectTodayCalledCount'] = prospectTodayCalledCount;
+    data['followupTodayCount'] = followupTodayCount;
+    data['followupTodayCalledCount'] = followupTodayCalledCount;
+    data['demandTorecallTodayCount'] = demandTorecallTodayCount;
+    data['demandTorecallCalledTodayCount'] = demandTorecallCalledTodayCount;
+    data['aboveOneMinCount'] = aboveOneMinCount;
+
     return data;
   }
 }

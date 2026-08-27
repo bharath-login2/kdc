@@ -2684,6 +2684,9 @@ class _AddLeadsState extends State<AddLeads> {
                                                                'customer_summary': currentFormData.customerSummary,
                                                                'customer_challenges': currentFormData.customerChallenges,
                                                                'customer_rating': currentFormData.customerRating,
+                                                               'relationship_build': currentFormData.relationshipBuild,
+                                                               'relationship_parameters': jsonEncode(currentFormData.relationshipParameterIds),
+                                                               'relationship_challenges': currentFormData.relationshipChallenges,
                                                              };
                                                              AddLeadModel object = await HttpService.addLeads(
                                                                widget.token,

@@ -6,18 +6,20 @@ class ViewLeadsModel {
   ViewLeadsModel({this.data, this.status, this.message});
 
   ViewLeadsModel.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
-    status = json['status'];
-    message = json['message'];
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    status = json['status'] is bool
+        ? json['status']
+        : (json['status']?.toString().toLowerCase() == 'true');
+    message = json['message']?.toString();
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['status'] = this.status;
-    data['message'] = this.message;
+    data['status'] = status;
+    data['message'] = message;
     return data;
   }
 }
@@ -44,19 +46,27 @@ class Data {
   });
 
   Data.fromJson(Map<String, dynamic> json) {
-    if (json['details'] != null) {
+    if (json['details'] != null && json['details'] is List) {
       details = <Details>[];
       json['details'].forEach((v) {
-        details!.add(Details.fromJson(v));
+        if (v != null) {
+          details!.add(Details.fromJson(v));
+        }
       });
     }
-    totalLeads = json['totalLeads'];
-    fromdate = json['fromdate'];
-    todate = json['todate'];
-    callPermission = json['callPermission'];
-    warningMessage = json['warningMessage'];
-    callLeadId = json['callLeadId'];
-    leadDeletePermission = json['leadDeletePermission'];
+    totalLeads = json['totalLeads'] != null
+        ? int.tryParse(json['totalLeads'].toString())
+        : null;
+    fromdate = json['fromdate']?.toString();
+    todate = json['todate']?.toString();
+    callPermission = json['callPermission'] is bool
+        ? json['callPermission']
+        : (json['callPermission']?.toString().toLowerCase() == 'true');
+    warningMessage = json['warningMessage']?.toString();
+    callLeadId = json['callLeadId']?.toString();
+    leadDeletePermission = json['leadDeletePermission'] is bool
+        ? json['leadDeletePermission']
+        : (json['leadDeletePermission']?.toString().toLowerCase() == 'true');
   }
 
   Map<String, dynamic> toJson() {
@@ -121,26 +131,37 @@ class Details {
   });
 
   Details.fromJson(Map<String, dynamic> json) {
-    callDetailsId = json['call_details_id'];
-    callMasterId = json['call_master_id'];
-    calledDate = json['called_date'];
-    createdDate = json['created_date'];
-    lastCalledDate = json['last_called_date'];
-    callResultId = json['call_result_id'];
-    callStatusId = json['call_status_id'];
-    isNewCall = json['is_new_call'];
-    followupDate = json['followup_date'];
-    scheduledDate = json['scheduled_date'];
-    clientName = json['client_name'];
-    contactNumber1 = json['contact_number1'];
-    callResult = json['call_result'];
-    proPicThumb = json['pro_pic_thumb'];
-    staffName = json['staff_name'];
-    leadCategory = json['lead_category'];
-    priority = json['priority'];
-    profilePic = json['profile_pic'];
-    isCalled = json['is_called'];
-    isSelected = json['is_selected'];
+    callDetailsId = json['call_details_id']?.toString();
+    callMasterId = json['call_master_id']?.toString();
+    calledDate = json['called_date']?.toString();
+    createdDate = json['created_date']?.toString();
+    lastCalledDate = json['last_called_date']?.toString();
+    callResultId = json['call_result_id'] != null
+        ? int.tryParse(json['call_result_id'].toString())
+        : null;
+    callStatusId = json['call_status_id']?.toString();
+    isNewCall = json['is_new_call'] is bool
+        ? json['is_new_call']
+        : (json['is_new_call']?.toString().toLowerCase() == 'true' ||
+            json['is_new_call']?.toString() == '1');
+    followupDate = json['followup_date']?.toString();
+    scheduledDate = json['scheduled_date']?.toString();
+    clientName = json['client_name']?.toString();
+    contactNumber1 = json['contact_number1']?.toString();
+    callResult = json['call_result']?.toString();
+    proPicThumb = json['pro_pic_thumb']?.toString();
+    staffName = json['staff_name']?.toString();
+    leadCategory = json['lead_category']?.toString();
+    priority = json['priority']?.toString();
+    profilePic = json['profile_pic']?.toString();
+    isCalled = json['is_called'] is bool
+        ? json['is_called']
+        : (json['is_called']?.toString().toLowerCase() == 'true' ||
+            json['is_called']?.toString() == '1');
+    isSelected = json['is_selected'] is bool
+        ? json['is_selected']
+        : (json['is_selected']?.toString().toLowerCase() == 'true' ||
+            json['is_selected']?.toString() == '1');
   }
 
   Map<String, dynamic> toJson() {

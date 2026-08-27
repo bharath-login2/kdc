@@ -38,6 +38,7 @@ class ViewLeads extends StatefulWidget {
   int? page;
   int? pageSize;
   String? leadType;
+  String? callResultId;
 
   ViewLeads(
     this.token,
@@ -56,6 +57,7 @@ class ViewLeads extends StatefulWidget {
     this.page,
     this.pageSize,
     this.leadType,
+    this.callResultId,
   });
 
   @override
@@ -75,6 +77,7 @@ class _ViewLeadsState extends State<ViewLeads> {
   dynamic staff;
   dynamic priority;
   dynamic transferStaff;
+  dynamic callResultId;
   bool? isCalled = true;
   List selectedIUsers = [];
   List selectedUserNumbers = [];
@@ -153,6 +156,7 @@ class _ViewLeadsState extends State<ViewLeads> {
       }
     }
     status = widget.status;
+    callResultId = widget.callResultId;
     category = widget.category;
     staff = widget.staff;
     if (isCalled == false) isCalled = widget.isCalled!;
@@ -184,6 +188,10 @@ class _ViewLeadsState extends State<ViewLeads> {
       setState(() {
         isLoading = true;
       });
+      if (isFirst) {
+        items.clear();
+        page = 1;
+      }
       selectedIUsers.clear();
       selectedUserNumbers.clear();
       final connectivityResult = await (Connectivity().checkConnectivity());
@@ -219,13 +227,15 @@ class _ViewLeadsState extends State<ViewLeads> {
           branch,
         );
         if (viewLeads != null) {
-          if (viewLeads!.data!.fromdate != null &&
+          if (viewLeads!.data != null &&
+              viewLeads!.data!.fromdate != null &&
               viewLeads!.data!.fromdate!.isNotEmpty) {
             fromdate =
                 DateTime.tryParse(viewLeads!.data!.fromdate.toString()) ??
                 fromdate;
           }
-          if (viewLeads!.data!.todate != null &&
+          if (viewLeads!.data != null &&
+              viewLeads!.data!.todate != null &&
               viewLeads!.data!.todate!.isNotEmpty) {
             todate =
                 DateTime.tryParse(viewLeads!.data!.todate.toString()) ?? todate;
@@ -248,9 +258,10 @@ class _ViewLeadsState extends State<ViewLeads> {
           isFirst,
           widget.leadType,
           branch,
+          callResultId: callResultId,
         );
       }
-      if (viewLeads != null) {
+      if (viewLeads != null && viewLeads!.data != null) {
         if (viewLeads!.data!.fromdate != null &&
             viewLeads!.data!.fromdate!.isNotEmpty) {
           fromdate =
@@ -271,7 +282,11 @@ class _ViewLeadsState extends State<ViewLeads> {
       }
       configure = await HttpService.configure(widget.token);
       setState(() {
-        items.addAll(viewLeads!.data!.details as Iterable);
+        if (viewLeads != null &&
+            viewLeads!.data != null &&
+            viewLeads!.data!.details != null) {
+          items.addAll(viewLeads!.data!.details!);
+        }
         page++;
         isLoading = false;
       });
@@ -417,7 +432,7 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                               height: 20,
                                                             ),
                                                             const Text(
-                                                              'Filtration',
+                                                              'Filtrations',
                                                               style: TextStyle(
                                                                 fontSize: 18,
                                                                 fontWeight:
@@ -717,66 +732,37 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                                       state,
                                                                                     ) {
                                                                                       return Container(
-                                                                                        width:
-                                                                                            MediaQuery.of(
-                                                                                              context,
-                                                                                            ).size.width *
-                                                                                            0.9,
+                                                                                        width: MediaQuery.of(context).size.width * 0.9,
                                                                                         decoration: BoxDecoration(
-                                                                                          border: Border.all(
-                                                                                            color: Colors.grey.shade900,
-                                                                                            width: 0,
-                                                                                          ),
+                                                                                          border: Border.all(color: Colors.grey.shade900, width: 0),
                                                                                           color: Colors.white,
-                                                                                          borderRadius: const BorderRadius.all(
-                                                                                            Radius.circular(
-                                                                                              5,
-                                                                                            ),
-                                                                                          ),
+                                                                                          borderRadius: const BorderRadius.all(Radius.circular(5)),
                                                                                         ),
                                                                                         child: DropdownButtonHideUnderline(
-                                                                                          child:
-                                                                                              DropdownButton<
-                                                                                                String
-                                                                                              >(
-                                                                                                isExpanded: true,
-                                                                                                hint: const Padding(
-                                                                                                  padding: EdgeInsets.only(
-                                                                                                    left: 20,
+                                                                                          child: DropdownButton<String>(
+                                                                                            isExpanded: true,
+                                                                                            hint: const Padding(
+                                                                                              padding: EdgeInsets.only(left: 20),
+                                                                                              child: Text('Branch'),
+                                                                                            ),
+                                                                                            value: (branch != null && commonDetails?.data?.branch?.any((data) => data.branchId.toString() == branch.toString()) == true ? branch.toString() : null),
+                                                                                            items: commonDetails!.data!.branch!.map(
+                                                                                              (data) {
+                                                                                                return DropdownMenuItem(
+                                                                                                  value: data.branchId.toString(),
+                                                                                                  child: Padding(
+                                                                                                    padding: const EdgeInsets.only(left: 20),
+                                                                                                    child: Text(data.branchName.toString()),
                                                                                                   ),
-                                                                                                  child: Text(
-                                                                                                    'Branch',
-                                                                                                  ),
-                                                                                                ),
-                                                                                                value: branch,
-                                                                                                items: commonDetails!.data!.branch!.map(
-                                                                                                  (
-                                                                                                    data,
-                                                                                                  ) {
-                                                                                                    return DropdownMenuItem(
-                                                                                                      value: data.branchId.toString(),
-                                                                                                      child: Padding(
-                                                                                                        padding: const EdgeInsets.only(
-                                                                                                          left: 20,
-                                                                                                        ),
-                                                                                                        child: Text(
-                                                                                                          data.branchName.toString(),
-                                                                                                        ),
-                                                                                                      ),
-                                                                                                    );
-                                                                                                  },
-                                                                                                ).toList(),
-                                                                                                onChanged:
-                                                                                                    (
-                                                                                                      newValue1,
-                                                                                                    ) {
-                                                                                                      setState(
-                                                                                                        () {
-                                                                                                          branch = newValue1;
-                                                                                                        },
-                                                                                                      );
-                                                                                                    },
-                                                                                              ),
+                                                                                                );
+                                                                                              },
+                                                                                            ).toList(),
+                                                                                            onChanged: (newValue1) {
+                                                                                              setState(() {
+                                                                                                branch = newValue1;
+                                                                                              });
+                                                                                            },
+                                                                                          ),
                                                                                         ),
                                                                                       );
                                                                                     },
@@ -850,7 +836,7 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                                           'Customer Interested Product',
                                                                                         ),
                                                                                       ),
-                                                                                      value: category,
+                                                                                      value: (category != null && commonDetails?.data?.leadCategory?.any((data) => data.leadCategoryId.toString() == category.toString()) == true ? category.toString() : null),
                                                                                       items: commonDetails!.data!.leadCategory!.map(
                                                                                         (
                                                                                           data,
@@ -1073,7 +1059,7 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                             CrossAxisAlignment.start,
                                                                         children: [
                                                                           const Text(
-                                                                            'Lead Status',
+                                                                            'Call Status',
                                                                             style: TextStyle(
                                                                               fontSize: 15,
                                                                               fontWeight: FontWeight.w500,
@@ -1112,10 +1098,7 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                                       ),
                                                                                     ),
                                                                                     child: DropdownButtonHideUnderline(
-                                                                                      child:
-                                                                                          DropdownButton<
-                                                                                            String
-                                                                                          >(
+                                                                                      child: DropdownButton<String>(
                                                                                             isExpanded: true,
                                                                                             hint: const Padding(
                                                                                               padding: EdgeInsets.only(
@@ -1125,7 +1108,17 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                                                 'Status',
                                                                                               ),
                                                                                             ),
-                                                                                            value: status,
+                                                                                             value: (status != null &&
+                                                                                                     (status == '-5' ||
+                                                                                                         status == '-1' ||
+                                                                                                         commonDetails!.data!.callResult!.any((data) => data.callResultId.toString() == status.toString()))
+                                                                                                 ? status.toString()
+                                                                                                 : (callResultId != null &&
+                                                                                                         (callResultId == '-5' ||
+                                                                                                             callResultId == '-1' ||
+                                                                                                             commonDetails!.data!.callResult!.any((data) => data.callResultId.toString() == callResultId.toString()))
+                                                                                                     ? callResultId.toString()
+                                                                                                     : null)),
                                                                                             items: [
                                                                                               if (widget.status !=
                                                                                                   '-1')
@@ -1176,7 +1169,8 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                                                 ) {
                                                                                                   setState(
                                                                                                     () {
-                                                                                                      status = newValue; // Directly set the selected value
+                                                                                                      status = newValue;
+                                                                                                      callResultId = newValue;
                                                                                                     },
                                                                                                   );
                                                                                                 },
@@ -1356,7 +1350,7 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                                           'Staff',
                                                                                         ),
                                                                                       ),
-                                                                                      value: staff,
+                                                                                      value: (staff != null && commonDetails?.data?.staff?.any((data) => data.staffId.toString() == staff.toString()) == true ? staff.toString() : null),
                                                                                       items: commonDetails!.data!.staff!.map(
                                                                                         (
                                                                                           data,
@@ -1446,50 +1440,45 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                                 child:
                                                                                     DropdownButton<
                                                                                       String
-                                                                                    >(
-                                                                                      isExpanded: true,
-                                                                                      hint: const Padding(
-                                                                                        padding: EdgeInsets.only(
-                                                                                          left: 20,
-                                                                                        ),
-                                                                                        child: Text(
-                                                                                          'Priority',
-                                                                                        ),
-                                                                                      ),
-                                                                                      value: priority,
-                                                                                      items: commonDetails!.data!.priority!.map(
-                                                                                        (
-                                                                                          data,
-                                                                                        ) {
-                                                                                          return DropdownMenuItem(
-                                                                                            value: data.priorityId.toString(),
-                                                                                            child: Padding(
-                                                                                              padding: const EdgeInsets.only(
-                                                                                                left: 20,
-                                                                                              ),
-                                                                                              child: Text(
-                                                                                                data.priority.toString(),
-                                                                                              ),
-                                                                                            ),
-                                                                                          );
-                                                                                        },
-                                                                                      ).toList(),
-                                                                                      onChanged:
-                                                                                          (
-                                                                                            newValue1,
-                                                                                          ) {
-                                                                                            setState(
-                                                                                              () {
-                                                                                                priority = newValue1;
-                                                                                              },
-                                                                                            );
-                                                                                            if (kDebugMode) {
-                                                                                              print(
-                                                                                                priority,
-                                                                                              );
-                                                                                            }
-                                                                                          },
+                                                                                 >(
+                                                                                  isExpanded: true,
+                                                                                  hint: const Padding(
+                                                                                    padding: EdgeInsets.only(
+                                                                                      left: 20,
                                                                                     ),
+                                                                                    child: Text(
+                                                                                      'Priority',
+                                                                                    ),
+                                                                                  ),
+                                                                                  value: (priority != null && commonDetails?.data?.priority?.any((data) => data.priorityId.toString() == priority.toString()) == true ? priority.toString() : null),
+                                                                                  items: commonDetails!.data!.priority!.map(
+                                                                                    (
+                                                                                      data,
+                                                                                    ) {
+                                                                                      return DropdownMenuItem(
+                                                                                        value: data.priorityId.toString(),
+                                                                                        child: Padding(
+                                                                                          padding: const EdgeInsets.only(
+                                                                                            left: 20,
+                                                                                          ),
+                                                                                          child: Text(
+                                                                                            data.priority.toString(),
+                                                                                          ),
+                                                                                        ),
+                                                                                      );
+                                                                                    },
+                                                                                  ).toList(),
+                                                                                  onChanged:
+                                                                                      (
+                                                                                        newValue1,
+                                                                                      ) {
+                                                                                        setState(
+                                                                                          () {
+                                                                                            priority = newValue1;
+                                                                                          },
+                                                                                        );
+                                                                                      },
+                                                                                ),
                                                                               ),
                                                                             );
                                                                           },
@@ -1655,8 +1644,7 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                         'Staff',
                                                                       ),
                                                                     ),
-                                                                    value:
-                                                                        transferStaff,
+                                                                    value: (transferStaff != null && commonDetails?.data?.transferStaffs?.any((data) => data.tranStaffId.toString() == transferStaff.toString()) == true ? transferStaff.toString() : null),
                                                                     items: commonDetails!.data!.transferStaffs!.map((
                                                                       data,
                                                                     ) {
@@ -2055,14 +2043,14 @@ class _ViewLeadsState extends State<ViewLeads> {
 
                           const SizedBox(height: 5),
                           Text(
-                            'Total Leads : ${viewLeads!.data!.totalLeads}',
+                            'Total Leads : ${viewLeads?.data?.totalLeads ?? items.length}',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 10),
-                          viewLeads!.data!.details!.isNotEmpty
+                          items.isNotEmpty
                               ? Expanded(
                                   child: ScrollablePositionedList.builder(
                                     initialScrollIndex:
@@ -2698,30 +2686,36 @@ class _ViewLeadsState extends State<ViewLeads> {
                                                                                 overflow: TextOverflow.ellipsis,
                                                                               ),
                                                                             ),
-                                                                            Container(
-                                                                              decoration: BoxDecoration(
-                                                                                color: _colors[item.callResultId!],
-                                                                                borderRadius: BorderRadius.circular(
-                                                                                  5,
-                                                                                ),
-                                                                              ),
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsets.only(
-                                                                                  left: 5,
-                                                                                  right: 5,
-                                                                                  top: 2,
-                                                                                  bottom: 2,
-                                                                                ),
-                                                                                child: Text(
-                                                                                  item.callResult.toString(),
-                                                                                  style: const TextStyle(
-                                                                                    fontSize: 13,
-                                                                                    color: Colors.white,
-                                                                                    fontWeight: FontWeight.w500,
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
+                                                                             if (item.callResult != null &&
+                                                                                 item.callResult.toString().trim().isNotEmpty)
+                                                                               Container(
+                                                                                 decoration: BoxDecoration(
+                                                                                   color: (item.callResultId != null &&
+                                                                                           item.callResultId! >= 0 &&
+                                                                                           item.callResultId! < _colors.length)
+                                                                                       ? _colors[item.callResultId!]
+                                                                                       : Colors.teal,
+                                                                                   borderRadius: BorderRadius.circular(
+                                                                                     5,
+                                                                                   ),
+                                                                                 ),
+                                                                                 child: Padding(
+                                                                                   padding: const EdgeInsets.only(
+                                                                                     left: 5,
+                                                                                     right: 5,
+                                                                                     top: 2,
+                                                                                     bottom: 2,
+                                                                                   ),
+                                                                                   child: Text(
+                                                                                     item.callResult.toString(),
+                                                                                     style: const TextStyle(
+                                                                                       fontSize: 13,
+                                                                                       color: Colors.white,
+                                                                                       fontWeight: FontWeight.w500,
+                                                                                     ),
+                                                                                   ),
+                                                                                 ),
+                                                                               ),
                                                                           ],
                                                                         ),
                                                                         const SizedBox(
